@@ -1,0 +1,6 @@
+2014-10-03  Jared Lash  <jared.c.lash@gmail.com>
+
+	* FolderSearchService.cs:
+	* FolderSearchServiceResult.cs:
+	* Infrastructure.IO.Filesystem.csproj: 
+

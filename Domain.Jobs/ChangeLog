@@ -1,0 +1,59 @@
+2014-10-22  Jared Lash  <jared.c.lash@gmail.com>
+
+	* PriorityQueue.cs:
+	* Domain.Jobs.csproj: 
+
+2014-10-22  Jared Lash  <jared.c.lash@gmail.com>
+
+	* PriorityQueue.cs:
+	* Domain.Jobs.csproj: 
+
+2014-10-21  Jared Lash  <jared.c.lash@gmail.com>
+
+	* PriorityQueue.cs:
+	* IPriorityQueue.cs:
+	* Domain.Jobs.csproj: 
+
+2014-10-20  Jared Lash  <jared.c.lash@gmail.com>
+
+	* PriorityQueue.cs: 
+
+2014-10-18  Jared Lash  <jared.c.lash@gmail.com>
+
+	* PriorityQueue.cs: 
+
+2014-10-18  Jared Lash  <jared.c.lash@gmail.com>
+
+	* Domain.Jobs.csproj: 
+
+2014-10-16  Jared Lash  <jared.c.lash@gmail.com>
+
+	* IJob.cs:
+	* IRequest.cs:
+	* IPriority.cs:
+	* JobScheduler.cs:
+	* Domain.Jobs.csproj: 
+
+2014-10-16  Jared Lash  <jared.c.lash@gmail.com>
+
+	* PriorityQueue.cs: 
+
+2014-10-16  Jared Lash  <jared.c.lash@gmail.com>
+
+	* PriorityQueue.cs: 
+
+2014-10-15  Jared Lash  <jared.c.lash@gmail.com>
+
+	* IJob.cs:
+	* IPriority.cs:
+	* JobScheduler.cs:
+	* PriorityQueue.cs:
+	* JobEngineBase.cs:
+	* Domain.Jobs.csproj: 
+
+2014-10-03  Jared Lash  <jared.c.lash@gmail.com>
+
+	* JobEngineBase.cs:
+	* Domain.Jobs.csproj:
+	* AssemblyInfo.cs: 
+
