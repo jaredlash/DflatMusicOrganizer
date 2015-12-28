@@ -16,7 +16,7 @@ namespace Tests.Domain.Jobs
 		{
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetUp()
 		{
 			data = new List<Tuple<int, String>> () {
@@ -75,12 +75,11 @@ namespace Tests.Domain.Jobs
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestRemoveFromEmpty()
+		public void TestRemoveFromEmptyThrowsInvalidOperationException()
 		{
 			var q = new PriorityQueue<int, String> ();
 
-			q.Remove ();
+			Assert.That(() => q.Remove (), Throws.InvalidOperationException);
 		}
 
 		[Test]

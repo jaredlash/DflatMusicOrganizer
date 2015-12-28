@@ -1,11 +1,9 @@
-using System;
+﻿using System;
 
 namespace Application.Presentation
 {
-	public interface IOrganizerView
-	{
-		// Action
-		event EventHandler<EventArgs> AddMusicSource;
-	}
+    public interface IOrganizerView
+    {
+        Action<object, EventArgs> AddMusicSource { get; set; }
+    }
 }
-
