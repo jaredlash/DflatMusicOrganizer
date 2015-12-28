@@ -17,10 +17,13 @@ namespace Tests.Domain.Jobs
 		}
 
 
-        //[OneTimeSetUp]
-#pragma warning disable CS0618 // Type or member is obsolete
+		#if __MonoCS__
+		#pragma warning disable // Type or member is obsolete
         [TestFixtureSetUp]
-#pragma warning restore CS0618 // Type or member is obsolete
+		#pragma warning restore // Type or member is obsolete
+		#else
+		[OneTimeSetUp]
+		#endif
         public void TestFixtureSetUp()
 		{
 			data = new List<Tuple<int, String>> () {
