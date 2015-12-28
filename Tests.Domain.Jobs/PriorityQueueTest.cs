@@ -16,8 +16,12 @@ namespace Tests.Domain.Jobs
 		{
 		}
 
-		[OneTimeSetUp]
-		public void TestFixtureSetUp()
+
+        //[OneTimeSetUp]
+#pragma warning disable CS0618 // Type or member is obsolete
+        [TestFixtureSetUp]
+#pragma warning restore CS0618 // Type or member is obsolete
+        public void TestFixtureSetUp()
 		{
 			data = new List<Tuple<int, String>> () {
 				new Tuple<int, string>(1, "one"),
