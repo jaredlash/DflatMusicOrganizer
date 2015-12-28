@@ -7,9 +7,17 @@ namespace Infrastructure.IO.Filesystem
 {
 	public class FolderSearchService : IFolderSearchService
 	{
+        private readonly Predicate<string> _searchFilter;
+
 		public FolderSearchService ()
 		{
-		}
+            _searchFilter = (String f) => true;
+        }
+
+        public FolderSearchService (Predicate<string> condition)
+        {
+            _searchFilter = condition;
+        }
 
 		public IFolderSearchServiceResult FindFiles (String sourceDirectory, Predicate<String> condition)
 		{
