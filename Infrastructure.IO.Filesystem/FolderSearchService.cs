@@ -108,7 +108,7 @@ namespace Infrastructure.IO.Filesystem
 
 		public IFolderSearchServiceResult FindFiles (String sourceDirectory)
 		{
-			return FindFiles(sourceDirectory, (String f) => true);
+			return FindFiles(sourceDirectory, _searchFilter);
 		}
 	}
 }

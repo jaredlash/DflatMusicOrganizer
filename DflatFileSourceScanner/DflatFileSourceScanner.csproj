@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DflatFileSourceScanner</RootNamespace>
     <AssemblyName>DflatFileSourceScanner</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -51,11 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure.IO.Filesystem\Infrastructure.IO.Filesystem.csproj">
-      <Project>{7ae7d872-2f65-4b94-8731-08343ff77a95}</Project>
+      <Project>{7AE7D872-2F65-4B94-8731-08343FF77A95}</Project>
       <Name>Infrastructure.IO.Filesystem</Name>
     </ProjectReference>
     <ProjectReference Include="..\Infrastructure.IO.Interfaces.Filesystem\Infrastructure.IO.Interfaces.Filesystem.csproj">
-      <Project>{1beb91b3-392c-4ddc-8db7-2594763afd53}</Project>
+      <Project>{1BEB91B3-392C-4DDC-8DB7-2594763AFD53}</Project>
       <Name>Infrastructure.IO.Interfaces.Filesystem</Name>
     </ProjectReference>
   </ItemGroup>
