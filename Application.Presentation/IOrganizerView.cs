@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Application.Presentation
+namespace DflatApplication.Presentation
 {
     public interface IOrganizerView
     {
-        Action<object, EventArgs> AddMusicSource { get; set; }
+        event EventHandler<EventArgs> AddMusicSource;
     }
 }

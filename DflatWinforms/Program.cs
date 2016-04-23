@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DflatApplication.Presentation;
 
 namespace DflatWinforms
 {
@@ -16,7 +17,11 @@ namespace DflatWinforms
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow());
+
+            var mainWindow = new MainWindow();
+            var presenter = new OrganizerPresenter(mainWindow);
+            
+            Application.Run(mainWindow);
         }
     }
 }

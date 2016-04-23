@@ -8,15 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using DflatApplication.Presentation;
+
 namespace DflatWinforms
 {
-    public partial class MainWindow : Form
+    public partial class MainWindow : Form, IOrganizerView
     {
         private JobsWindow jobsWindow = null;
         private ArtistReleaseViewFilterDialog artistReleaseViewFilterDialog = null;
         private FolderViewFilterDialog folderViewFilterDialog = null;
 
         private List<LibraryViewChoice> _libraryViewChoices = null;
+
+
 
         public MainWindow()
         {
@@ -34,7 +38,8 @@ namespace DflatWinforms
 
         private void addMusicSourceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (AddMusicSource != null)
+                AddMusicSource(this, e);
         }
 
         private void currentJobsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -85,5 +90,8 @@ namespace DflatWinforms
                 tcChildrenViews.SelectTab(1);
             }
         }
+
+        public event EventHandler<EventArgs> AddMusicSource;
+        
     }
 }

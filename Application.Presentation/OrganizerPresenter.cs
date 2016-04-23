@@ -1,6 +1,6 @@
 using System;
 
-namespace Application.Presentation
+namespace DflatApplication.Presentation
 {
 	public class OrganizerPresenter
 	{
@@ -18,7 +18,7 @@ namespace Application.Presentation
 
 		private void OnAddMusicSource(object sender, EventArgs e)
 		{
-
+            Console.WriteLine("Adding a Music source");
 		}
 	}
 }
