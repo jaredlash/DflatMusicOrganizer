@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Infrastructure.IO.Filesystem;
-using Infrastructure.IO.Interfaces.Filesystem;
+using Dflat.Infrastructure.IO.Filesystem;
+using Dflat.Infrastructure.IO.Interfaces.Filesystem;
 using System.IO;
 
 namespace DflatFileSourceScanner

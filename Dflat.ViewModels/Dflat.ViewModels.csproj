@@ -1,21 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C3FA88D1-DFB8-47A5-BDEE-889A13B0361E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{59896E94-E635-4778-908F-491EF3F9CD9F}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DflatFileSourceScanner</RootNamespace>
-    <AssemblyName>DflatFileSourceScanner</AssemblyName>
+    <RootNamespace>Dflat.ViewModels</RootNamespace>
+    <AssemblyName>Dflat.ViewModels</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,17 +21,14 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -46,20 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="IViewModel.cs" />
+    <Compile Include="IViewModelFactory.cs" />
+    <Compile Include="RelayCommand.cs" />
+    <Compile Include="FileSourceManagerViewModel.cs" />
+    <Compile Include="IView.cs" />
+    <Compile Include="IViewService.cs" />
+    <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="ObservableObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModelBase.cs" />
+    <Compile Include="ViewService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Dflat.Infrastructure.IO.Filesystem\Dflat.Infrastructure.IO.Filesystem.csproj">
-      <Project>{7ae7d872-2f65-4b94-8731-08343ff77a95}</Project>
-      <Name>Dflat.Infrastructure.IO.Filesystem</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Dflat.Infrastructure.IO.Interfaces.Filesystem\Dflat.Infrastructure.IO.Interfaces.Filesystem.csproj">
-      <Project>{1beb91b3-392c-4ddc-8db7-2594763afd53}</Project>
-      <Name>Dflat.Infrastructure.IO.Interfaces.Filesystem</Name>
+    <ProjectReference Include="..\Dflat.Business\Dflat.Business.csproj">
+      <Project>{54d1bb8b-0b1a-4543-a47f-4e874221549c}</Project>
+      <Name>Dflat.Business</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
