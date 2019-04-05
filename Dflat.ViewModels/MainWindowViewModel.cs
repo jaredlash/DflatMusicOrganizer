@@ -40,7 +40,7 @@ namespace Dflat.ViewModels
         
         private void OpenFileSourceManager()
         {
-            viewService.ShowViewModel<FileSourceManagerViewModel>();
+            viewService.ShowWindow<FileSourceManagerViewModel>();
         }
 
         private void OpenJobsView()

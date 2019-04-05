@@ -5,26 +5,56 @@ namespace Dflat.ViewModels
 {
     public class ViewService : IViewService
     {
-        private readonly Dictionary<Type, Type> viewModelMappings;
-        private readonly Dictionary<Type, IView> currentViewModels;
-        private readonly IUnitOfWorkFactory unitOfWorkFactory;
-        private readonly IViewModelFactory viewModelFactory;
+        /// <summary>
+        /// Maps a ViewModel type to a Window View
+        /// </summary>
+        private readonly Dictionary<Type, Type> viewModelToWindowMappings;
 
-        public ViewService(IUnitOfWorkFactory unitOfWorkFactory)
+        /// <summary>
+        /// Maps a ViewModel type to a Dialog View
+        /// </summary>
+        private readonly Dictionary<Type, Type> viewModelToDialogMappings;
+
+        /// <summary>
+        /// Maps a ViewModel type to an existing instance of a window view
+        /// </summary>
+        private readonly Dictionary<Type, IView> currentWindows;
+        private readonly IUnitOfWorkFactory unitOfWorkFactory;
+
+        public ViewService(IUnitOfWorkFactory unitOfWorkFactory, object viewParent)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
-            viewModelMappings = new Dictionary<Type, Type>();
-            currentViewModels = new Dictionary<Type, IView>();
+            viewModelToWindowMappings = new Dictionary<Type, Type>();
+            currentWindows = new Dictionary<Type, IView>();
+
+            viewModelToDialogMappings = new Dictionary<Type, Type>();
         }
 
         public void Register<TViewModel, TView>() where TViewModel : ViewModelBase where TView : IView
         {
-            if (viewModelMappings.ContainsKey(typeof(TViewModel)))
+            if (viewModelToWindowMappings.ContainsKey(typeof(TViewModel)))
             {
                 throw new ArgumentException($"Type {typeof(TViewModel)} is already mapped");
             }
 
-            viewModelMappings.Add(typeof(TViewModel), typeof(TView));
+            viewModelToWindowMappings.Add(typeof(TViewModel), typeof(TView));
+        }
+
+
+        /// <summary>
+        /// Registers a ViewModel and DialogView combination.
+        /// </summary>
+        /// <typeparam name="TViewModel">ViewModel Type to register</typeparam>
+        /// <typeparam name="TDialogView">Corresponding DialogView type to register</typeparam>
+        public void RegisterDialog<TViewModel, TDialogView>() where TViewModel : DialogViewModelBase
+                                                              where TDialogView : IDialogView
+        {
+            if (viewModelToDialogMappings.ContainsKey(typeof(TViewModel)))
+            {
+                throw new ArgumentException($"Type {typeof(TViewModel)} is already mapped");
+            }
+
+            viewModelToDialogMappings.Add(typeof(TViewModel), typeof(TDialogView));
         }
 
 
@@ -33,23 +63,24 @@ namespace Dflat.ViewModels
         /// </summary>
         /// <typeparam name="TViewModel">Type of the ViewModel for which this view is being created.</typeparam>
         /// <param name="viewModel">viewModel for which this is being created.</param>
-        public void ShowViewModel<TViewModel>() where TViewModel : ViewModelBase
+        public void ShowWindow<TViewModel>() where TViewModel : ViewModelBase
         {
             IView view;
 
-            if (currentViewModels.TryGetValue(typeof(TViewModel), out view) == false)
+            if (currentWindows.TryGetValue(typeof(TViewModel), out view) == false)
             {
-                Type viewType = viewModelMappings[typeof(TViewModel)];
+                Type viewType = viewModelToWindowMappings[typeof(TViewModel)];
 
+                // TODO: Change this method to take in a viewModel that already exists (create the viewModel in the caller)
                 IViewModel viewModel = (IViewModel)Activator.CreateInstance(typeof(TViewModel), unitOfWorkFactory.Create());
                 view = (IView)Activator.CreateInstance(viewType);
 
                 view.DataContext = viewModel;
 
-                currentViewModels.Add(typeof(TViewModel), view);
+                currentWindows.Add(typeof(TViewModel), view);
 
                 viewModel.OnClose += delegate (object o, EventArgs args) {
-                    currentViewModels.Remove(typeof(TViewModel));
+                    currentWindows.Remove(typeof(TViewModel));
                 };
             }
             
@@ -58,5 +89,33 @@ namespace Dflat.ViewModels
         }
 
         
+        public bool? ShowDialog<TViewModel>(TViewModel viewModel) where TViewModel : DialogViewModelBase
+        {
+            Type viewType = viewModelToDialogMappings[typeof(TViewModel)];
+
+            IDialogView dialog = (IDialogView)Activator.CreateInstance(viewType);
+
+            EventHandler<DialogCloseRequestedEventArgs> handler = null;
+
+            handler = (sender, e) =>
+            {
+                viewModel.CloseRequested -= handler;
+
+                if (e.DialogResult.HasValue)
+                {
+                    dialog.DialogResult = e.DialogResult;
+                }
+                else
+                {
+                    dialog.Close();
+                }
+            };
+
+            viewModel.CloseRequested += handler;
+
+            dialog.DataContext = viewModel;
+
+            return dialog.ShowDialog();
+        }
     }
 }

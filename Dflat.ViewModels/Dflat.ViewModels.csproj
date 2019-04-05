@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DialogCloseRequestedEventArgs.cs" />
+    <Compile Include="DialogViewModelBase.cs" />
+    <Compile Include="IDialogRequestClose.cs" />
+    <Compile Include="IDialogView.cs" />
     <Compile Include="IViewModel.cs" />
     <Compile Include="IViewModelFactory.cs" />
     <Compile Include="RelayCommand.cs" />
