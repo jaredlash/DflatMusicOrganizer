@@ -46,8 +46,9 @@
     <Compile Include="Dialogs\IDialogRequestClose.cs" />
     <Compile Include="Dialogs\IDialogView.cs" />
     <Compile Include="IViewModel.cs" />
-    <Compile Include="IViewModelFactory.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="IViewModelFactory.cs" />
+    <Compile Include="ViewModelFactory.cs" />
     <Compile Include="WindowViewModels\FileSourceManagerViewModel.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="ViewService\IViewService.cs" />

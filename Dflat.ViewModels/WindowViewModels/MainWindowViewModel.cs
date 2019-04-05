@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dflat.Business.Factories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,24 @@ namespace Dflat.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
 
-        private readonly IViewService viewService;
+        #region Private backing fields
 
-        public MainWindowViewModel(IViewService viewService)
+        private readonly IViewService viewService;
+        private readonly IViewModelFactory viewModelFactory;
+        private readonly IUowLifetimeManagerFactory uowLifetimeManagerFactory;
+        
+        #endregion
+
+        #region Constructor
+
+        public MainWindowViewModel(IUowLifetimeManagerFactory uowLifetimeManagerFactory, IViewModelFactory viewModelFactory, IViewService viewService)
         {
+            this.uowLifetimeManagerFactory = uowLifetimeManagerFactory;
+            this.viewModelFactory = viewModelFactory;
             this.viewService = viewService;
         }
 
+        #endregion
 
         #region public ICommands
 
@@ -37,10 +49,15 @@ namespace Dflat.ViewModels
 
         #endregion
 
-        
+
+        #region Private methods
+
         private void OpenFileSourceManager()
         {
-            viewService.ShowWindow<FileSourceManagerViewModel>();
+            var uowManager = uowLifetimeManagerFactory.Create();
+            var fsmvm = viewModelFactory.CreateFileSourceManagerViewModel(uowManager);
+
+            viewService.ShowWindow<FileSourceManagerViewModel>(fsmvm);
         }
 
         private void OpenJobsView()
@@ -48,5 +65,6 @@ namespace Dflat.ViewModels
             throw new NotImplementedException();
         }
 
+        #endregion
     }
 }

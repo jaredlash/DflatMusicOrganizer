@@ -11,9 +11,9 @@ namespace Dflat.ViewModels.Tests
         public void FileSourceManagerViewModelTest_CloseCommandDisposesUnitOfWork()
         {
             var mockUnitOfWork = new Mock<IUnitOfWork>();
-            var fsmvm = new FileSourceManagerViewModel(mockUnitOfWork.Object);
+            //var fsmvm = new FileSourceManagerViewModel(mockUnitOfWork.Object);
 
-            fsmvm.CloseCommand.Execute(null);
+            //fsmvm.CloseCommand.Execute(null);
 
             mockUnitOfWork.Verify(m => m.Dispose(), Times.Once());
         }

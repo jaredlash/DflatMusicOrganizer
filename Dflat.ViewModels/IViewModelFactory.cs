@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dflat.Business;
 
 namespace Dflat.ViewModels
 {
-    interface IViewModelFactory
+    public interface IViewModelFactory
     {
-        IViewModel Create();
+        T Create<T>() where T : ViewModelBase;
+
+        FileSourceManagerViewModel CreateFileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager);
     }
 }

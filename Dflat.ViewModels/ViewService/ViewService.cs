@@ -63,7 +63,7 @@ namespace Dflat.ViewModels
         /// </summary>
         /// <typeparam name="TViewModel">Type of the ViewModel for which this view is being created.</typeparam>
         /// <param name="viewModel">viewModel for which this is being created.</param>
-        public void ShowWindow<TViewModel>() where TViewModel : ViewModelBase
+        public void ShowWindow<TViewModel>(TViewModel viewModel) where TViewModel : ViewModelBase
         {
             IView view;
 
@@ -71,8 +71,6 @@ namespace Dflat.ViewModels
             {
                 Type viewType = viewModelToWindowMappings[typeof(TViewModel)];
 
-                // TODO: Change this method to take in a viewModel that already exists (create the viewModel in the caller)
-                IViewModel viewModel = (IViewModel)Activator.CreateInstance(typeof(TViewModel), unitOfWorkFactory.Create());
                 view = (IView)Activator.CreateInstance(viewType);
 
                 view.DataContext = viewModel;

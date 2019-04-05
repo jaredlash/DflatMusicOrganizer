@@ -1,4 +1,5 @@
-﻿using Dflat.Business.Factories;
+﻿using Dflat.Business;
+using Dflat.Business.Factories;
 using Dflat.EF6.DataAccess;
 using Dflat.ViewModels;
 using System.Windows;
@@ -20,7 +21,8 @@ namespace DflatWPF
             var container = new UnityContainer();
 
             container.RegisterType<IUnitOfWorkFactory, UnitOfWorkFactory>();
-
+            container.RegisterType<IViewModelFactory, ViewModelFactory>();
+            container.RegisterType<IUowLifetimeManagerFactory, UowLifetimeManagerFactory>();
 
             container.RegisterType<IViewService, ViewService>(new ContainerControlledLifetimeManager());
             

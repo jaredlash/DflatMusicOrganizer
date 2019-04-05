@@ -43,7 +43,10 @@
   <ItemGroup>
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Factories\IUnitOfWorkFactory.cs" />
+    <Compile Include="Factories\IUowLifetimeManagerFactory.cs" />
+    <Compile Include="Factories\UowLifetimeManagerFactory.cs" />
     <Compile Include="FolderSearchServiceRequest.cs" />
+    <Compile Include="IUnitOfWorkLifetimeManager.cs" />
     <Compile Include="Repositories\IFileSourceFolderRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="IUnitOfWork.cs" />
@@ -55,6 +58,7 @@
     <Compile Include="Models\FileSourceFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
+    <Compile Include="UnitOfWorkLifetimeManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />

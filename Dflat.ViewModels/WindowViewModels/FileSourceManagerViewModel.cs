@@ -8,23 +8,33 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Specialized;
+using Dflat.Business.Factories;
 
 namespace Dflat.ViewModels
 {
     public class FileSourceManagerViewModel : ViewModelBase, IViewModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        #region Private backing fields
+
         private FileSourceFolder selectedFileSourceFolder;
+        private IUnitOfWorkLifetimeManager uowManager;
 
-        
+        #endregion
 
-        public FileSourceManagerViewModel(IUnitOfWork unitOfWork)
+
+        #region Constructor
+
+        public FileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowManager)
         {
-            this.unitOfWork = unitOfWork;
             this.FileSourceFolders = new ObservableCollection<FileSourceFolder>();
+            this.uowManager = uowManager;
+
             ((ObservableCollection<FileSourceFolder>)FileSourceFolders).CollectionChanged += FileSourceFolders_Changed;
         }
 
+        #endregion
+
+        #region ViewModel Load
 
         public override void ViewModelInitialize()
         {
@@ -38,7 +48,7 @@ namespace Dflat.ViewModels
             FileSourceFolders.Clear();
             SelectedFileSourceFolder = null;
 
-            foreach (var fileSourceFolder in unitOfWork.IFileSourceFolderRepository.GetAll())
+            foreach (var fileSourceFolder in uowManager.UnitOfWork.IFileSourceFolderRepository.GetAll())
                 FileSourceFolders.Add(fileSourceFolder);
 
             // Add in some test file source folders
@@ -56,24 +66,41 @@ namespace Dflat.ViewModels
             });
         }
 
+        #endregion
+
+        #region Override on close
+
         public override void ViewModelClose()
         {
-            unitOfWork.Dispose();
+            if (uowManager != null)
+                uowManager.Dispose();
+
             base.ViewModelClose();
         }
 
+        #endregion
+
+        #region Event callbacks
 
         private void FileSourceFolders_Changed(object sender, NotifyCollectionChangedEventArgs e)
         {
             NotifyPropertyChanged(nameof(Count));
         }
 
+        #endregion
+
+
+        #region Commands
 
         public ICommand SaveCommand {
             get {
-                return new RelayCommand(c => unitOfWork.SaveChanges(), p => unitOfWork.HasChanges());
+                return new RelayCommand(c => uowManager.UnitOfWork.SaveChanges(), p => uowManager.UnitOfWork.HasChanges());
             }
         }
+
+        #endregion
+
+        #region Public Properties
 
         public ICollection<FileSourceFolder> FileSourceFolders { get; private set; }
 
@@ -108,5 +135,7 @@ namespace Dflat.ViewModels
         {
             get { return SelectedFileSourceFolder != null; }
         }
+
+        #endregion
     }
 }

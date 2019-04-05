@@ -5,6 +5,6 @@
         void Register<TViewModel, TView>()
             where TViewModel : ViewModelBase
             where TView : IView;
-        void ShowWindow<TViewModel>() where TViewModel : ViewModelBase;
+        void ShowWindow<TViewModel>(TViewModel viewModel) where TViewModel : ViewModelBase;
     }
 }
