@@ -65,17 +65,6 @@ namespace Dflat.ViewModels
 
         #endregion
 
-        #region Override on close
-
-        //public override void ViewModelClose()
-        //{
-        //    if (uowManager != null)
-        //        uowManager.Dispose();
-        //        
-        //    base.ViewModelClose();
-        //}
-
-        #endregion
 
         #region Override Cleanup
 
@@ -117,13 +106,6 @@ namespace Dflat.ViewModels
             }
         }
 
-
-        #endregion
-
-        #region Public Properties
-
-
-
         public ICommand ClosingCommand
         {
             get
@@ -132,12 +114,6 @@ namespace Dflat.ViewModels
             }
         }
 
-        private void OnClosing(CancelEventArgs args)
-        {
-            args.Cancel = false;
-        }
-
-
         public ICommand CloseCommand
         {
             get
@@ -145,11 +121,12 @@ namespace Dflat.ViewModels
                 return new RelayCommand(() => OnClose());
             }
         }
-        
-        public void OnClose()
-        {
-            Cleanup();
-        }
+
+        #endregion
+
+        #region Bindable Public Properties
+
+
 
         public ICollection<FileSourceFolder> FileSourceFolders { get; private set; }
 
@@ -183,6 +160,22 @@ namespace Dflat.ViewModels
         public bool CanEdit
         {
             get { return SelectedFileSourceFolder != null; }
+        }
+
+        #endregion
+
+
+        #region Private methods
+
+        private void OnClosing(CancelEventArgs args)
+        {
+            args.Cancel = false;
+        }
+
+
+        private void OnClose()
+        {
+            Cleanup();
         }
 
         #endregion
