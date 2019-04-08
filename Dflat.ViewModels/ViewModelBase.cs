@@ -7,7 +7,7 @@ using System.Windows.Input;
 namespace Dflat.ViewModels
 {
     
-    public abstract class ViewModelBase : ObservableObject, IViewModel
+    public abstract class ViewModelBase : GalaSoft.MvvmLight.ViewModelBase, IViewModel
     {
         public ICommand CloseCommand {
             get

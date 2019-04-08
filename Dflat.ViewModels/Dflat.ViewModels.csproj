@@ -72,7 +72,6 @@
     <Compile Include="IView.cs" />
     <Compile Include="ViewService\IViewService.cs" />
     <Compile Include="WindowViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ObservableObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="ViewService\ViewService.cs" />

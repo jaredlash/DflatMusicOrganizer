@@ -81,7 +81,7 @@ namespace Dflat.ViewModels
 
         private void FileSourceFolders_Changed(object sender, NotifyCollectionChangedEventArgs e)
         {
-            NotifyPropertyChanged(nameof(Count));
+            RaisePropertyChanged(nameof(Count));
         }
 
         #endregion
@@ -127,9 +127,9 @@ namespace Dflat.ViewModels
             set
             {
                 selectedFileSourceFolder = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(CanEdit));
-                NotifyPropertyChanged(nameof(SelectedFileSourceFolderExcludeCount));
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(CanEdit));
+                RaisePropertyChanged(nameof(SelectedFileSourceFolderExcludeCount));
             }
         }
 
