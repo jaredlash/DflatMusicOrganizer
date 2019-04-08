@@ -1,4 +1,5 @@
 ﻿using Dflat.Business;
+using GalaSoft.MvvmLight;
 
 namespace Dflat.ViewModels
 {

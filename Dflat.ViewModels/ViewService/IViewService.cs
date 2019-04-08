@@ -1,4 +1,6 @@
-﻿namespace Dflat.ViewModels
+﻿using GalaSoft.MvvmLight;
+
+namespace Dflat.ViewModels
 {
     public interface IViewService
     {

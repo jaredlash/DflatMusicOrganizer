@@ -1,4 +1,5 @@
 ﻿using Dflat.Business.Factories;
+using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 namespace Dflat.ViewModels
@@ -77,7 +78,7 @@ namespace Dflat.ViewModels
 
                 currentWindows.Add(typeof(TViewModel), view);
 
-                viewModel.OnClose += delegate (object o, EventArgs args) {
+                view.Closed += delegate (object o, EventArgs args) {
                     currentWindows.Remove(typeof(TViewModel));
                 };
             }

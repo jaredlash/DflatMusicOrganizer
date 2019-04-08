@@ -17,7 +17,8 @@ namespace Dflat.ViewModels
         /// Shows the view if currently hidden.
         /// </summary>
         void Show();
-        
+
+        event EventHandler Closed;
 
         /// <summary>
         /// Used to bring a window to the foreground.

@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight;
 
 namespace Dflat.ViewModels
 {
@@ -33,9 +34,8 @@ namespace Dflat.ViewModels
 
         #region ViewModel Load
 
-        public override void ViewModelInitialize()
+        public void ViewModelInitialize()
         {
-            base.ViewModelInitialize();
 
             LoadFileSourceFolders();
         }
@@ -67,13 +67,26 @@ namespace Dflat.ViewModels
 
         #region Override on close
 
-        public override void ViewModelClose()
+        //public override void ViewModelClose()
+        //{
+        //    if (uowManager != null)
+        //        uowManager.Dispose();
+        //        
+        //    base.ViewModelClose();
+        //}
+
+        #endregion
+
+        #region Override Cleanup
+
+        public override void Cleanup()
         {
             if (uowManager != null)
                 uowManager.Dispose();
 
-            base.ViewModelClose();
+            base.Cleanup();
         }
+
 
         #endregion
 
@@ -95,21 +108,47 @@ namespace Dflat.ViewModels
             }
         }
 
+
+        public ICommand InitializeCommand
+        {
+            get
+            {
+                return new RelayCommand(() => ViewModelInitialize());
+            }
+        }
+
+
         #endregion
 
         #region Public Properties
+
+
 
         public ICommand ClosingCommand
         {
             get
             {
-                return new GalaSoft.MvvmLight.Command.RelayCommand<CancelEventArgs>((e) => OnClosing(e));
+                return new RelayCommand<CancelEventArgs>((e) => OnClosing(e));
             }
         }
 
         private void OnClosing(CancelEventArgs args)
         {
             args.Cancel = false;
+        }
+
+
+        public ICommand CloseCommand
+        {
+            get
+            {
+                return new RelayCommand(() => OnClose());
+            }
+        }
+        
+        public void OnClose()
+        {
+            Cleanup();
         }
 
         public ICollection<FileSourceFolder> FileSourceFolders { get; private set; }
