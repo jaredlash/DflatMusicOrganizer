@@ -1,4 +1,5 @@
 ﻿using Dflat.Business.Factories;
+using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Windows.Input;
 
 namespace Dflat.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : GalaSoft.MvvmLight.ViewModelBase    //ViewModelBase
     {
 
         #region Private backing fields
@@ -35,7 +36,7 @@ namespace Dflat.ViewModels
         public ICommand OpenFileSourceManagerCommand {
             get
             {
-                return new RelayCommand(p => OpenFileSourceManager());
+                return new RelayCommand(() => OpenFileSourceManager());
             }
         }
 
@@ -43,7 +44,7 @@ namespace Dflat.ViewModels
         {
             get
             {
-                return new RelayCommand(p => OpenJobsView());
+                return new RelayCommand(() => OpenJobsView());
             }
         }
 

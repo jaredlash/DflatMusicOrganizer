@@ -24,13 +24,13 @@ namespace Dflat.ViewModels
 
         public T Create<T>() where T : ViewModelBase
         {
-            T viewModel;
+            //T viewModel;
 
             throw new NotImplementedException($"Creating {typeof(T)} instances not yet implemented");
             
 
 
-            return viewModel;
+            //return viewModel;
         }
     }
 }

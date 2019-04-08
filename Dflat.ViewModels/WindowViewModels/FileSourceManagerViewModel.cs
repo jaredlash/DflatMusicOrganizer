@@ -1,14 +1,11 @@
 ﻿using Dflat.Business;
 using Dflat.Business.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Specialized;
-using Dflat.Business.Factories;
+using System.ComponentModel;
+using GalaSoft.MvvmLight.Command;
 
 namespace Dflat.ViewModels
 {
@@ -94,13 +91,26 @@ namespace Dflat.ViewModels
 
         public ICommand SaveCommand {
             get {
-                return new RelayCommand(c => uowManager.UnitOfWork.SaveChanges(), p => uowManager.UnitOfWork.HasChanges());
+                return new RelayCommand(() => uowManager.UnitOfWork.SaveChanges(), () => uowManager.UnitOfWork.HasChanges());
             }
         }
 
         #endregion
 
         #region Public Properties
+
+        public ICommand ClosingCommand
+        {
+            get
+            {
+                return new GalaSoft.MvvmLight.Command.RelayCommand<CancelEventArgs>((e) => OnClosing(e));
+            }
+        }
+
+        private void OnClosing(CancelEventArgs args)
+        {
+            args.Cancel = false;
+        }
 
         public ICollection<FileSourceFolder> FileSourceFolders { get; private set; }
 

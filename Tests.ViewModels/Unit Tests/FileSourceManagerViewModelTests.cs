@@ -8,14 +8,54 @@ namespace Dflat.ViewModels.Tests
     public class FileSourceManagerViewModelTests
     {
         [Test]
-        public void FileSourceManagerViewModelTest_CloseCommandDisposesUnitOfWork()
+        public void CloseCommand_DisposesUnitOfWorkLifetimeManager()
         {
+            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
+            var fsmvm = new FileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object);
+
+            fsmvm.CloseCommand.Execute(null);
+
+            mockUnitOfWorkLifetimeManager.Verify(m => m.Dispose(), Times.Once());
+        }
+
+        [Test]
+        public void SaveCommand_WhenThereAreChanges_SavesChangesOnUnitOfWork()
+        {
+
             var mockUnitOfWork = new Mock<IUnitOfWork>();
-            //var fsmvm = new FileSourceManagerViewModel(mockUnitOfWork.Object);
+            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(true);
 
-            //fsmvm.CloseCommand.Execute(null);
+            var uow = mockUnitOfWork.Object;
 
-            mockUnitOfWork.Verify(m => m.Dispose(), Times.Once());
+            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
+            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
+            
+
+            var fsmvm = new FileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object);
+
+            fsmvm.SaveCommand.Execute(null);
+
+            mockUnitOfWork.Verify(m => m.SaveChanges(), Times.Once());
+        }
+
+        [Test]
+        public void SaveCommand_WhenThereAreNoChanges_DoesNotSaveChangesOnUnitOfWork()
+        {
+
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(false);
+
+            var uow = mockUnitOfWork.Object;
+
+            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
+            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
+
+
+            var fsmvm = new FileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object);
+
+            fsmvm.SaveCommand.Execute(null);
+
+            mockUnitOfWork.Verify(m => m.SaveChanges(), Times.Never());
         }
     }
 }

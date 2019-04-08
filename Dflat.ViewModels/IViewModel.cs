@@ -5,10 +5,10 @@ namespace Dflat.ViewModels
 {
     public interface IViewModel
     {
-        ICommand CloseCommand { get; }
+        //ICommand CloseCommand { get; }
 
-        void ViewModelClose();
+        //void ViewModelClose();
         
-        event EventHandler OnClose;
+        //event EventHandler OnClose;
     }
 }

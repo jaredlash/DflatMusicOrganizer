@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Command;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,8 @@ namespace Dflat.ViewModels
         {
             Title = title;
             Message = message;
-            OkCommand = new RelayCommand(p => CloseRequested?.Invoke(this, new DialogCloseRequestedEventArgs(true)));
-            CancelCommand = new RelayCommand(p => CloseRequested?.Invoke(this, new DialogCloseRequestedEventArgs(false)));
+            OkCommand = new RelayCommand<DialogCloseRequestedEventArgs>(p => CloseRequested?.Invoke(this, new DialogCloseRequestedEventArgs(true)));
+            CancelCommand = new RelayCommand<DialogCloseRequestedEventArgs>(p => CloseRequested?.Invoke(this, new DialogCloseRequestedEventArgs(false)));
         }
         public event EventHandler<DialogCloseRequestedEventArgs> CloseRequested;
         public string Title { get; }

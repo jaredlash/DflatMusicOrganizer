@@ -1,5 +1,6 @@
 ﻿
 
+using GalaSoft.MvvmLight.Command;
 using System;
 using System.Windows.Input;
 
@@ -11,7 +12,7 @@ namespace Dflat.ViewModels
         public ICommand CloseCommand {
             get
             {
-                return new RelayCommand(p => ViewModelClose());
+                return new RelayCommand(() => ViewModelClose());
             }
         }
 
@@ -26,7 +27,7 @@ namespace Dflat.ViewModels
         {
             get
             {
-                return new RelayCommand(p => ViewModelInitialize());
+                return new RelayCommand(() => ViewModelInitialize());
             }
         }
 
