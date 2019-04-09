@@ -30,6 +30,8 @@ namespace DflatWPF
 
             
             container.RegisterType<IView, FileSourceManager>(nameof(FileSourceManagerViewModel));
+
+            container.RegisterType<IDialogView, ConfirmDialog>(nameof(ConfirmDialogViewModel));
             
             var viewService = container.Resolve<IViewService>();
             

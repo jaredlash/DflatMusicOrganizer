@@ -7,5 +7,7 @@ namespace Dflat.ViewModels
     {
 
         FileSourceManagerViewModel CreateFileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager);
+
+        ConfirmDialogViewModel CreateConfirmDialogViewModel(string title, string message, string confirmButtonText, string denyButtonText);
     }
 }

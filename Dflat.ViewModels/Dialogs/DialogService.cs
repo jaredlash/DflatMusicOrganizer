@@ -48,9 +48,9 @@ namespace Dflat.ViewModels.Dialogs
 
         public bool? ConfirmDialog(string title, string message, string confirmButtonText, string denyButtonText)
         {
-            //var viewModel = viewModelFactory.CreateConfirmDialogViewModel(title, message, confirmButtonText, denyButtonText);
+            var viewModel = viewModelFactory.CreateConfirmDialogViewModel(title, message, confirmButtonText, denyButtonText);
 
-            return false; // ShowDialog<ConfirmDialogViewModel>(viewModel);
+            return ShowDialog(viewModel);
         }
     }
 }

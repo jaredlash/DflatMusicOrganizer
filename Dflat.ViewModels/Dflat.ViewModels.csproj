@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DialogViewModels\ConfirmDialogViewModel.cs" />
     <Compile Include="Dialogs\DialogCloseRequestedEventArgs.cs" />
     <Compile Include="Dialogs\DialogService.cs" />
     <Compile Include="Dialogs\DialogViewModelBase.cs" />

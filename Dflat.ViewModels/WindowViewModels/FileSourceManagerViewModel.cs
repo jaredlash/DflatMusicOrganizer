@@ -176,7 +176,12 @@ namespace Dflat.ViewModels
 
         private void OnClosing(CancelEventArgs args)
         {
-            args.Cancel = false;
+            bool? result = dialogService.ConfirmDialog("Confirm Unsaved Changes", "There are unsaved changes. Click Cancel to Save", "Close", "Cancel");
+
+            if (result == true)
+                args.Cancel = false;
+            else
+                args.Cancel = true;
         }
 
 

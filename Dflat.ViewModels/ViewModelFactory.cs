@@ -25,6 +25,15 @@ namespace Dflat.ViewModels
         {
             return iocContainer.Resolve<FileSourceManagerViewModel>(new ParameterOverride("uowManager", uowLifetimeManager));
         }
+
+        public ConfirmDialogViewModel CreateConfirmDialogViewModel(string title, string message, string confirmButtonText, string denyButtonText)
+        {
+            return iocContainer.Resolve<ConfirmDialogViewModel>(new ResolverOverride[] {
+                new ParameterOverride("title", title),
+                new ParameterOverride("message", message),
+                new ParameterOverride("confirmButtonText", confirmButtonText),
+                new ParameterOverride("denyButtonText", denyButtonText) });
+        }
         
     }
 }
