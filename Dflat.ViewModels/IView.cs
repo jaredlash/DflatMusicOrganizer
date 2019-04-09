@@ -18,6 +18,11 @@ namespace Dflat.ViewModels
         /// </summary>
         void Show();
 
+        /// <summary>
+        /// Closes the view
+        /// </summary>
+        void Close();
+
         event EventHandler Closed;
 
         /// <summary>

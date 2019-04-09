@@ -88,5 +88,12 @@ namespace Dflat.ViewModels.Tests
 
             mockUnitOfWork.Verify(m => m.SaveChanges(), Times.Never());
         }
+
+
+        // Add
+        // Edit
+        // Remove
+        // Cancel
+        // Close
     }
 }

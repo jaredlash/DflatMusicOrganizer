@@ -14,7 +14,8 @@
         Height="300"
         Width="500"
         MinHeight="300"
-        MinWidth="500">
+        MinWidth="500"
+        x:Name="FileSourceManagerWindow">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
 
@@ -106,7 +107,7 @@
                 <!-- Save and Cancel buttons -->
 
                 <Button Grid.Column="2" Margin="0 0 5 0" Command="{Binding SaveCommand}" Content="Save"/>
-                <Button Grid.Column="1" Margin="5 0 0 0" Content="Cancel" />
+                <Button Grid.Column="1" Margin="5 0 0 0" Command="{Binding RequestClose}" CommandParameter="{Binding ElementName=FileSourceManagerWindow}"  Content="Cancel" />
             </Grid>
 
 

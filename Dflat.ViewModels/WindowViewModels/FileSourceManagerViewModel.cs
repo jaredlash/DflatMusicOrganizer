@@ -129,6 +129,14 @@ namespace Dflat.ViewModels
             }
         }
 
+        public ICommand RequestClose
+        {
+            get
+            {
+                return new RelayCommand<IView>((v) => CloseWindow(v));
+            }
+        }
+
         #endregion
 
         #region Bindable Public Properties
@@ -188,6 +196,11 @@ namespace Dflat.ViewModels
         private void OnClose()
         {
             Cleanup();
+        }
+
+        private void CloseWindow(IView view)
+        {
+            view.Close();
         }
 
         #endregion
