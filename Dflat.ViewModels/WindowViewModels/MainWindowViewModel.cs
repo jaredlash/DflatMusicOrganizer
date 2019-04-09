@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Dflat.ViewModels
 {
-    public class MainWindowViewModel : GalaSoft.MvvmLight.ViewModelBase    //ViewModelBase
+    public class MainWindowViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
 
         #region Private backing fields

@@ -2,6 +2,7 @@
 using Dflat.Business.Factories;
 using Dflat.EF6.DataAccess;
 using Dflat.ViewModels;
+using Dflat.ViewModels.Dialogs;
 using System.Windows;
 using Unity;
 using Unity.Injection;
@@ -25,11 +26,13 @@ namespace DflatWPF
             container.RegisterType<IUowLifetimeManagerFactory, UowLifetimeManagerFactory>();
 
             container.RegisterType<IViewService, ViewService>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IDialogService, DialogService>();
+
+            
+            container.RegisterType<IView, FileSourceManager>(nameof(FileSourceManagerViewModel));
             
             var viewService = container.Resolve<IViewService>();
-
-            viewService.Register<FileSourceManagerViewModel, FileSourceManager>();
-
+            
             var viewModel = container.Resolve<MainWindowViewModel>();
 
             var view = new MainWindow();

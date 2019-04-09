@@ -1,62 +1,29 @@
-﻿using Dflat.Business.Factories;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
+using Unity;
+
 namespace Dflat.ViewModels
 {
     public class ViewService : IViewService
     {
-        /// <summary>
-        /// Maps a ViewModel type to a Window View
-        /// </summary>
-        private readonly Dictionary<Type, Type> viewModelToWindowMappings;
 
-        /// <summary>
-        /// Maps a ViewModel type to a Dialog View
-        /// </summary>
-        private readonly Dictionary<Type, Type> viewModelToDialogMappings;
 
         /// <summary>
         /// Maps a ViewModel type to an existing instance of a window view
         /// </summary>
         private readonly Dictionary<Type, IView> currentWindows;
-        private readonly IUnitOfWorkFactory unitOfWorkFactory;
 
-        public ViewService(IUnitOfWorkFactory unitOfWorkFactory, object viewParent)
+        private readonly IUnityContainer iocContainer;
+
+
+        public ViewService(IUnityContainer iocContainer)
         {
-            this.unitOfWorkFactory = unitOfWorkFactory;
-            viewModelToWindowMappings = new Dictionary<Type, Type>();
+            this.iocContainer = iocContainer;
+            
             currentWindows = new Dictionary<Type, IView>();
-
-            viewModelToDialogMappings = new Dictionary<Type, Type>();
         }
 
-        public void Register<TViewModel, TView>() where TViewModel : ViewModelBase where TView : IView
-        {
-            if (viewModelToWindowMappings.ContainsKey(typeof(TViewModel)))
-            {
-                throw new ArgumentException($"Type {typeof(TViewModel)} is already mapped");
-            }
-
-            viewModelToWindowMappings.Add(typeof(TViewModel), typeof(TView));
-        }
-
-
-        /// <summary>
-        /// Registers a ViewModel and DialogView combination.
-        /// </summary>
-        /// <typeparam name="TViewModel">ViewModel Type to register</typeparam>
-        /// <typeparam name="TDialogView">Corresponding DialogView type to register</typeparam>
-        public void RegisterDialog<TViewModel, TDialogView>() where TViewModel : DialogViewModelBase
-                                                              where TDialogView : IDialogView
-        {
-            if (viewModelToDialogMappings.ContainsKey(typeof(TViewModel)))
-            {
-                throw new ArgumentException($"Type {typeof(TViewModel)} is already mapped");
-            }
-
-            viewModelToDialogMappings.Add(typeof(TViewModel), typeof(TDialogView));
-        }
 
 
         /// <summary>
@@ -67,54 +34,23 @@ namespace Dflat.ViewModels
         public void ShowWindow<TViewModel>(TViewModel viewModel) where TViewModel : ViewModelBase
         {
             IView view;
+            Type vmType = typeof(TViewModel);
 
-            if (currentWindows.TryGetValue(typeof(TViewModel), out view) == false)
+            if (currentWindows.TryGetValue(vmType, out view) == false)
             {
-                Type viewType = viewModelToWindowMappings[typeof(TViewModel)];
-
-                view = (IView)Activator.CreateInstance(viewType);
+                view = iocContainer.Resolve<IView>(vmType.Name);
 
                 view.DataContext = viewModel;
 
-                currentWindows.Add(typeof(TViewModel), view);
+                currentWindows.Add(vmType, view);
 
                 view.Closed += delegate (object o, EventArgs args) {
-                    currentWindows.Remove(typeof(TViewModel));
+                    currentWindows.Remove(vmType);
                 };
             }
             
             view.Show();
             view.Activate();
-        }
-
-        
-        public bool? ShowDialog<TViewModel>(TViewModel viewModel) where TViewModel : DialogViewModelBase
-        {
-            Type viewType = viewModelToDialogMappings[typeof(TViewModel)];
-
-            IDialogView dialog = (IDialogView)Activator.CreateInstance(viewType);
-
-            EventHandler<DialogCloseRequestedEventArgs> handler = null;
-
-            handler = (sender, e) =>
-            {
-                viewModel.CloseRequested -= handler;
-
-                if (e.DialogResult.HasValue)
-                {
-                    dialog.DialogResult = e.DialogResult;
-                }
-                else
-                {
-                    dialog.Close();
-                }
-            };
-
-            viewModel.CloseRequested += handler;
-
-            dialog.DataContext = viewModel;
-
-            return dialog.ShowDialog();
         }
     }
 }

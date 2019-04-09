@@ -6,32 +6,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity;
+using Unity.Resolution;
 
 namespace Dflat.ViewModels
 {
     public class ViewModelFactory : IViewModelFactory
     {
-        private readonly IUnitOfWorkFactory unitOfWorkFactory;
+        
+        private readonly IUnityContainer iocContainer;
 
-        public ViewModelFactory(IUnitOfWorkFactory unitOfWorkFactory)
+        public ViewModelFactory(IUnitOfWorkFactory unitOfWorkFactory, IUnityContainer iocContainer)
         {
-            this.unitOfWorkFactory = unitOfWorkFactory;
+            this.iocContainer = iocContainer;
         }
 
         public FileSourceManagerViewModel CreateFileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager)
         {
-            return new FileSourceManagerViewModel(uowLifetimeManager);
+            return iocContainer.Resolve<FileSourceManagerViewModel>(new ParameterOverride("uowManager", uowLifetimeManager));
         }
-
-        public T Create<T>() where T : ViewModelBase
-        {
-            //T viewModel;
-
-            throw new NotImplementedException($"Creating {typeof(T)} instances not yet implemented");
-            
-
-
-            //return viewModel;
-        }
+        
     }
 }

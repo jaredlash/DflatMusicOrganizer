@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
+using Dflat.ViewModels.Dialogs;
 
 namespace Dflat.ViewModels
 {
@@ -16,16 +17,22 @@ namespace Dflat.ViewModels
 
         private FileSourceFolder selectedFileSourceFolder;
         private IUnitOfWorkLifetimeManager uowManager;
+        private IViewService viewService;
+        private IDialogService dialogService;
+        private IViewModelFactory viewModelFactory;
 
         #endregion
 
 
         #region Constructor
 
-        public FileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowManager)
+        public FileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowManager, IViewService viewService, IDialogService dialogService, IViewModelFactory viewModelFactory)
         {
             this.FileSourceFolders = new ObservableCollection<FileSourceFolder>();
             this.uowManager = uowManager;
+            this.viewService = viewService;
+            this.dialogService = dialogService;
+            this.viewModelFactory = viewModelFactory;
 
             ((ObservableCollection<FileSourceFolder>)FileSourceFolders).CollectionChanged += FileSourceFolders_Changed;
         }
