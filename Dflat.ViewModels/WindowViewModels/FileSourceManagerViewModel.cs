@@ -111,7 +111,7 @@ namespace Dflat.ViewModels
 
         public ICommand SaveCommand {
             get {
-                return new RelayCommand(() => SaveChanges());
+                return new RelayCommand(() => SaveChanges(), () => uowManager.UnitOfWork.HasChanges());
             }
         }
 
@@ -186,11 +186,6 @@ namespace Dflat.ViewModels
         public bool CanEdit
         {
             get { return SelectedFileSourceFolder != null; }
-        }
-
-        public bool HasChanges
-        {
-            get { return uowManager.UnitOfWork.HasChanges(); }
         }
 
 
