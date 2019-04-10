@@ -108,7 +108,7 @@ namespace Dflat.ViewModels
 
         public ICommand SaveCommand {
             get {
-                return new RelayCommand(() => uowManager.UnitOfWork.SaveChanges(), () => uowManager.UnitOfWork.HasChanges());
+                return new RelayCommand(() => SaveChanges());
             }
         }
 
@@ -220,6 +220,11 @@ namespace Dflat.ViewModels
             view.Close();
         }
 
+        private void SaveChanges()
+        {
+            if (uowManager.UnitOfWork.HasChanges())
+                uowManager.UnitOfWork.SaveChanges();
+        }
         #endregion
     }
 }
