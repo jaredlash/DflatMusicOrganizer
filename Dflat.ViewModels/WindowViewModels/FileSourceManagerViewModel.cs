@@ -55,20 +55,6 @@ namespace Dflat.ViewModels
 
             foreach (var fileSourceFolder in uowManager.UnitOfWork.IFileSourceFolderRepository.GetAll())
                 FileSourceFolders.Add(fileSourceFolder);
-
-            // Add in some test file source folders
-            FileSourceFolders.Add(new FileSourceFolder {
-                Path = @"Z:\music\albums",
-                IncludeInScans = true,
-            });
-            FileSourceFolders.Add(new FileSourceFolder {
-                Path = @"C:\Users\Jared\Desktop",
-                IncludeInScans = false,
-            });
-            FileSourceFolders.Add(new FileSourceFolder {
-                Path = @"C:\Users\Jared\Some\Other\Really\Nested\Directory\With a possible long name\Somewhere",
-                IncludeInScans = false,
-            });
         }
 
         #endregion
