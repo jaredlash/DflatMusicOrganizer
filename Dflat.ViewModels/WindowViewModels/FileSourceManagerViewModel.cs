@@ -111,7 +111,7 @@ namespace Dflat.ViewModels
 
         public ICommand SaveCommand {
             get {
-                return new RelayCommand(() => SaveChanges(), () => uowManager.UnitOfWork.HasChanges());
+                return new RelayCommand(() => SaveChanges(), () => uowManager.UnitOfWork.HasChanges(), true);
             }
         }
 
@@ -203,11 +203,17 @@ namespace Dflat.ViewModels
                 // User cancelled the addition, so we remove it from our UnitOfWork
                 uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(newFileSourceFolder);
             }
+            else
+            {
+                // Added a new folder, so notify that we can save.
+                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            }
         }
 
         private void EditFileSourceFolder()
         {
             dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder, FileSourceFolderEditorMode.Edit);
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
         }
         
 
@@ -215,7 +221,10 @@ namespace Dflat.ViewModels
         {
             bool? result = dialogService.ConfirmDialog("Confirm", $"Are you sure you want to remove {SelectedFileSourceFolder.Path}?", "Yes", "Cancel");
             if (result == true)
+            {
                 uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(SelectedFileSourceFolder);
+                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            }
         }
 
         private void OnClosing(CancelEventArgs args)
