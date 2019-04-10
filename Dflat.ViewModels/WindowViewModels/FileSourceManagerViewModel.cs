@@ -188,6 +188,12 @@ namespace Dflat.ViewModels
             get { return SelectedFileSourceFolder != null; }
         }
 
+        public bool HasChanges
+        {
+            get { return uowManager.UnitOfWork.HasChanges(); }
+        }
+
+
         #endregion
 
 
