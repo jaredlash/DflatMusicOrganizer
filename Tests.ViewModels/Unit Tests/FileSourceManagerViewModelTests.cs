@@ -12,36 +12,63 @@ namespace Dflat.ViewModels.Tests
     [TestFixture]
     public class FileSourceManagerViewModelTests
     {
-        #region Set up mocked FileSourceManager
+        private Mock<IUnitOfWork> mockUnitOfWork;
+        private Mock<IUnitOfWorkLifetimeManager> mockUnitOfWorkLifetimeManager;
+        private Mock<IDialogService> mockDialogService;
 
-        private FileSourceManagerViewModel CreateFileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowManager, IViewService viewService, IDialogService dialogService, IViewModelFactory viewModelFactory)
+
+
+        private List<IFileSourceFolder> dummyRepo;
+        private IFileSourceFolderRepository fileSourceFolderRepository;
+        private IUnitOfWork uow;
+        private IUnitOfWorkLifetimeManager uowLifetimeManager;
+        private IViewService viewService;
+        private IDialogService dialogService;
+        private IViewModelFactory viewModelFactory;
+
+        private FileSourceManagerViewModel fileSourceManagerViewModel;
+
+        private bool hasChanges;
+        private bool userConfirmsClose;
+
+        #region Set up system under test
+
+        [SetUp]
+        public void TestInitialize()
         {
-            if (uowManager == null)
-            {
-                var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-                uowManager = mockUnitOfWorkLifetimeManager.Object;
-            }
+            dummyRepo = new List<IFileSourceFolder>();
 
-            if (viewService == null)
-            {
-                var mockViewService = new Mock<IViewService>();
-                viewService = mockViewService.Object;
-            }
-            
-            if (dialogService == null)
-            {
-                var mockDialogService = new Mock<IDialogService>();
-                dialogService = mockDialogService.Object;
-            }
-            
-            if (viewModelFactory == null)
-            {
-                var mockViewModelFactory = new Mock<IViewModelFactory>();
-                viewModelFactory = mockViewModelFactory.Object;
-            }
+            // Set up our mock file source folder repository
+            var mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
+            mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(new FileSourceFolder());
 
-            return new FileSourceManagerViewModel(uowManager, viewService, dialogService, viewModelFactory);
+            // Set up our mock unit of work
+            mockUnitOfWork = new Mock<IUnitOfWork>();
+
+
+            fileSourceFolderRepository = mockFileSourceFolderRepository.Object;
+            mockUnitOfWork.SetupGet(m => m.IFileSourceFolderRepository).Returns(fileSourceFolderRepository);
+            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(() => hasChanges);
+
+            uow = mockUnitOfWork.Object;
+
+            // Set up our UnitOfWorkLifetimeManager
+            mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
+            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
+
+            uowLifetimeManager = mockUnitOfWorkLifetimeManager.Object;
+
+
+            // Set up our DialogService
+            mockDialogService = new Mock<IDialogService>();
+            mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(() => userConfirmsClose);
+            dialogService = mockDialogService.Object;
+
+
+            fileSourceManagerViewModel = new FileSourceManagerViewModel(uowLifetimeManager, viewService, dialogService, viewModelFactory);
+
         }
+
 
         #endregion
 
@@ -50,11 +77,8 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void CloseCommand_DisposesUnitOfWorkLifetimeManager()
         {
-            
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, null, null);
 
-            fsmvm.CloseCommand.Execute(null);
+            fileSourceManagerViewModel.CloseCommand.Execute(null);
 
             mockUnitOfWorkLifetimeManager.Verify(m => m.Dispose(), Times.Once());
         }
@@ -66,20 +90,9 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void SaveCommand_WhenThereAreChanges_SavesChangesOnUnitOfWork()
         {
-            
-            
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(true);
+            hasChanges = true;
 
-            var uow = mockUnitOfWork.Object;
-
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
-            
-
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, null, null);
-
-            fsmvm.SaveCommand.Execute(null);
+            fileSourceManagerViewModel.SaveCommand.Execute(null);
 
             mockUnitOfWork.Verify(m => m.SaveChanges(), Times.Once());
         }
@@ -87,18 +100,9 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void SaveCommand_WhenThereAreNoChanges_DoesNotSaveChangesOnUnitOfWork()
         {
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(false);
+            hasChanges = false;
 
-            var uow = mockUnitOfWork.Object;
-
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
-
-
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, null, null);
-
-            fsmvm.SaveCommand.Execute(null);
+            fileSourceManagerViewModel.SaveCommand.Execute(null);
 
             mockUnitOfWork.Verify(m => m.SaveChanges(), Times.Never());
         }
@@ -106,31 +110,13 @@ namespace Dflat.ViewModels.Tests
         #endregion
 
         #region Test Add Command
-        
+
         [Test]
         public void AddCommand_OpensFileSourceFolderEditor()
         {
-            var dummyRepo = new List<FileSourceFolder>();
-
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
 
 
-            var mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
-            mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(new FileSourceFolder());
-
-            var fileSourceFolderRepository = mockFileSourceFolderRepository.Object;
-
-            mockUnitOfWork.SetupGet(m => m.IFileSourceFolderRepository).Returns(fileSourceFolderRepository);
-            var uow = mockUnitOfWork.Object;
-
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
-
-            var mockDialogService = new Mock<IDialogService>();
-
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, mockDialogService.Object, null);
-
-            fsmvm.AddCommand.Execute(null);
+            fileSourceManagerViewModel.AddCommand.Execute(null);
 
             mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>()), Times.Once());
         }
@@ -153,11 +139,7 @@ namespace Dflat.ViewModels.Tests
         {
             var mockIVew = new Mock<IView>();
 
-            var fsmvm = CreateFileSourceManagerViewModel(null, null, null, null);
-
-            fsmvm.RequestClose.Execute(mockIVew.Object);
-
-
+            fileSourceManagerViewModel.RequestClose.Execute(mockIVew.Object);
 
             mockIVew.Verify(m => m.Close(), Times.Once());
         }
@@ -169,23 +151,14 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void ClosingCommand_WhenThereAreUnsavedChanges_PromptsToConfirmClose()
         {
-            var mockDialogService = new Mock<IDialogService>();
-            mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
 
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(true);
-
-            var uow = mockUnitOfWork.Object;
-
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
-            
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, mockDialogService.Object, null);
+            hasChanges = true;
+            userConfirmsClose = true;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;
 
-            fsmvm.ClosingCommand.Execute(cancelEventArgs);
+            fileSourceManagerViewModel.ClosingCommand.Execute(cancelEventArgs);
 
 
             mockDialogService.Verify(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once());
@@ -195,23 +168,13 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void ClosingCommand_WhenThereAreUnsavedChangesAndUserCancelsAtPrompt_CancelsClosing()
         {
-            var mockDialogService = new Mock<IDialogService>();
-            mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(false);   // User cancels when prompted
-
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(true);
-
-            var uow = mockUnitOfWork.Object;
-
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
-
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, mockDialogService.Object, null);
+            hasChanges = true;
+            userConfirmsClose = false;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;
 
-            fsmvm.ClosingCommand.Execute(cancelEventArgs);
+            fileSourceManagerViewModel.ClosingCommand.Execute(cancelEventArgs);
 
 
             Assert.IsTrue(cancelEventArgs.Cancel);
@@ -221,23 +184,13 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void ClosingCommand_WhenThereAreUnsavedChangesAndUserConfirmsAtPrompt_ContinuesClosing()
         {
-            var mockDialogService = new Mock<IDialogService>();
-            mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);   // User confirms when prompted
-
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(true);
-
-            var uow = mockUnitOfWork.Object;
-
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
-
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, mockDialogService.Object, null);
+            hasChanges = true;
+            userConfirmsClose = true;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;
 
-            fsmvm.ClosingCommand.Execute(cancelEventArgs);
+            fileSourceManagerViewModel.ClosingCommand.Execute(cancelEventArgs);
 
 
             Assert.IsFalse(cancelEventArgs.Cancel);
@@ -247,24 +200,13 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void ClosingCommand_WhenThereAreNoChanges_DoesNotPromptToConfirmClose()
         {
-            var mockDialogService = new Mock<IDialogService>();
-            mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
-
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(m => m.HasChanges()).Returns(false);
-
-            var uow = mockUnitOfWork.Object;
-
-            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
-            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
-
-
-            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, mockDialogService.Object, null);
+            hasChanges = false;
+            userConfirmsClose = true;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;
 
-            fsmvm.ClosingCommand.Execute(cancelEventArgs);
+            fileSourceManagerViewModel.ClosingCommand.Execute(cancelEventArgs);
 
 
             mockDialogService.Verify(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
