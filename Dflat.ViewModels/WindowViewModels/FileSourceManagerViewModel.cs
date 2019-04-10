@@ -106,6 +106,14 @@ namespace Dflat.ViewModels
             }
         }
 
+        public ICommand EditCommand
+        {
+            get
+            {
+                return new RelayCommand(() => EditFileSourceFolder());
+            }
+        }
+
         public ICommand SaveCommand {
             get {
                 return new RelayCommand(() => SaveChanges());
@@ -196,6 +204,10 @@ namespace Dflat.ViewModels
             bool? result = dialogService.FileSourceFolderEditor(uowManager, newFileSourceFolder);
         }
 
+        private void EditFileSourceFolder()
+        {
+            bool? result = dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder);
+        }
         
         private void OnClosing(CancelEventArgs args)
         {
