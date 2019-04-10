@@ -24,9 +24,7 @@ namespace Dflat.ViewModels.Tests
         private IFileSourceFolderRepository fileSourceFolderRepository;
         private IUnitOfWork uow;
         private IUnitOfWorkLifetimeManager uowLifetimeManager;
-        private IViewService viewService;
         private IDialogService dialogService;
-        private IViewModelFactory viewModelFactory;
 
         private FileSourceManagerViewModel fileSourceManagerViewModel;
 
@@ -69,7 +67,7 @@ namespace Dflat.ViewModels.Tests
             dialogService = mockDialogService.Object;
 
 
-            fileSourceManagerViewModel = new FileSourceManagerViewModel(uowLifetimeManager, viewService, dialogService, viewModelFactory);
+            fileSourceManagerViewModel = new FileSourceManagerViewModel(uowLifetimeManager, null, dialogService, null);
 
         }
 
@@ -123,6 +121,23 @@ namespace Dflat.ViewModels.Tests
             mockUnitOfWork.Verify(m => m.SaveChanges(), Times.Never());
         }
 
+        [Test]
+        public void SaveCommand_WhenThereAreChanges_SaveCommandCanExecute()
+        {
+            hasChanges = true;
+
+            Assert.IsTrue(fileSourceManagerViewModel.SaveCommand.CanExecute(null));
+        }
+
+
+        [Test]
+        public void SaveCommand_WhenThereAreNoChanges_SaveCommandCanotExecute()
+        {
+            hasChanges = false;
+
+            Assert.IsFalse(fileSourceManagerViewModel.SaveCommand.CanExecute(null));
+        }
+
         #endregion
 
         #region Test Add Command
@@ -166,6 +181,19 @@ namespace Dflat.ViewModels.Tests
             Assert.AreEqual(0, dummyRepo.Count);
         }
 
+        [Test]
+        public void AddCommand_RaiseCanExecuteChangedForSaveCommand()
+        {
+            bool canExecuteChangeExecuted = false;
+
+            fileSourceManagerViewModel.SaveCommand.CanExecuteChanged += (e, a) => canExecuteChangeExecuted = true;
+
+            fileSourceManagerViewModel.AddCommand.Execute(null);
+
+            Assert.IsTrue(canExecuteChangeExecuted);
+
+        }
+
         #endregion
 
         #region Test Edit Command
@@ -190,6 +218,26 @@ namespace Dflat.ViewModels.Tests
             fileSourceManagerViewModel.EditCommand.Execute(null);
 
             mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Never());
+        }
+
+        [Test]
+        public void EditCommand_RaiseCanExecuteChangedForSaveCommand()
+        {
+            var fileSourceFolder = new FileSourceFolder();
+
+            dummyRepo.Add(fileSourceFolder);
+            fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
+            
+
+            bool canExecuteChangeExecuted = false;
+            fileSourceManagerViewModel.EditCommand.CanExecuteChanged += (e, a) => canExecuteChangeExecuted = true;
+
+
+            fileSourceManagerViewModel.EditCommand.Execute(null);
+
+
+            Assert.IsTrue(canExecuteChangeExecuted);
+
         }
 
         #endregion
@@ -243,6 +291,27 @@ namespace Dflat.ViewModels.Tests
 
             Assert.AreEqual(1, dummyRepo.Count);
         }
+
+        [Test]
+        public void RemoveCommand_RaiseCanExecuteChangedForSaveCommand()
+        {
+            // Make sure we have a folder in our repo
+            var fileSourceFolder = new FileSourceFolder();
+            dummyRepo.Add(fileSourceFolder);
+
+            fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
+
+            userConfirmsOperation = true;
+
+            bool canExecuteChangeExecuted = false;
+            fileSourceManagerViewModel.EditCommand.CanExecuteChanged += (e, a) => canExecuteChangeExecuted = true;
+
+
+            fileSourceManagerViewModel.RemoveCommand.Execute(null);
+
+            Assert.IsTrue(canExecuteChangeExecuted);
+        }
+
         #endregion
 
         #region Test Cancel Command (Request Close)
