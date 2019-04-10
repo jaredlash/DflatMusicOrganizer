@@ -33,6 +33,7 @@ namespace Dflat.ViewModels.Tests
         private bool hasChanges;
         private bool userConfirmsClose;
         private bool userAcceptsNewFolder;
+        private bool userConfirmsRemoval;
 
         #region Set up system under test
 
@@ -186,11 +187,58 @@ namespace Dflat.ViewModels.Tests
 
             mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Never());
         }
-        
+
         #endregion
 
         #region Test Remove Command
-        // Remove
+
+        [Test]
+        public void RemoveCommand_PromptsUserToConfirmRemoval()
+        {
+            // Make sure we have a folder in our repo
+            var fileSourceFolder = new FileSourceFolder();
+            dummyRepo.Add(fileSourceFolder);
+
+            fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
+            
+
+            fileSourceManagerViewModel.RemoveCommand.Execute(null);
+
+            mockDialogService.Verify(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once());
+        }
+
+
+        [Test]
+        public void RemoveCommand_WhenUserConfirmsRemoval_RemovesSelectedFileSourceFolder()
+        {
+            // Make sure we have a folder in our repo
+            var fileSourceFolder = new FileSourceFolder();
+            dummyRepo.Add(fileSourceFolder);
+
+            fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
+
+            userConfirmsRemoval = true;
+            
+            fileSourceManagerViewModel.RemoveCommand.Execute(null);
+
+            Assert.AreEqual(0, dummyRepo.Count);
+        }
+
+        [Test]
+        public void RemoveCommand_WhenUserDeniesRemoval_RetainsSelectedFileSourceFolder()
+        {
+            // Make sure we have a folder in our repo
+            var fileSourceFolder = new FileSourceFolder();
+            dummyRepo.Add(fileSourceFolder);
+
+            fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
+
+            userConfirmsRemoval = false;
+
+            fileSourceManagerViewModel.RemoveCommand.Execute(null);
+
+            Assert.AreEqual(0, dummyRepo.Count);
+        }
         #endregion
 
         #region Test Cancel Command (Request Close)
