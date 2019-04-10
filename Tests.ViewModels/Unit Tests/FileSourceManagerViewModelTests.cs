@@ -31,6 +31,7 @@ namespace Dflat.ViewModels.Tests
 
         private bool hasChanges;
         private bool userConfirmsClose;
+        private bool userFinishedEditor;
 
         #region Set up system under test
 
@@ -41,7 +42,7 @@ namespace Dflat.ViewModels.Tests
 
             // Set up our mock file source folder repository
             mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
-            mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(new FileSourceFolder());
+            mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(() => dummyRepoCreate());
 
             // Set up our mock unit of work
             mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -63,11 +64,19 @@ namespace Dflat.ViewModels.Tests
             // Set up our DialogService
             mockDialogService = new Mock<IDialogService>();
             mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(() => userConfirmsClose);
+            mockDialogService.Setup(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>())).Returns(() => userFinishedEditor);
             dialogService = mockDialogService.Object;
 
 
             fileSourceManagerViewModel = new FileSourceManagerViewModel(uowLifetimeManager, viewService, dialogService, viewModelFactory);
 
+        }
+
+        private FileSourceFolder dummyRepoCreate()
+        {
+            var f = new FileSourceFolder();
+            dummyRepo.Add(f);
+            return f;
         }
 
 
@@ -130,7 +139,25 @@ namespace Dflat.ViewModels.Tests
             mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Once());
         }
 
+        [Test]
+        public void AddCommand_WhenUserFinishesFolderEditor_AddsNewFileSourceFolder()
+        {
+            userFinishedEditor = true;
 
+            fileSourceManagerViewModel.AddCommand.Execute(null);
+
+            Assert.AreEqual(1, dummyRepo.Count);
+        }
+
+        [Test]
+        public void AddCommand_WhenUserCancelsFolderEditor_DoesNotAddNewFileSourceFolder()
+        {
+            userFinishedEditor = false;
+            fileSourceManagerViewModel.AddCommand.Execute(null);
+
+            Assert.AreEqual(0, dummyRepo.Count);
+        }
+        
         #endregion
 
         #region Test Edit Command
