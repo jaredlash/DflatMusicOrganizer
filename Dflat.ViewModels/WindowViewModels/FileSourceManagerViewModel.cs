@@ -192,7 +192,8 @@ namespace Dflat.ViewModels
 
         private void AddFileSourceFolder()
         {
-
+            FileSourceFolder newFileSourceFolder = uowManager.UnitOfWork.IFileSourceFolderRepository.Create();
+            bool? result = dialogService.FileSourceFolderEditor(uowManager, newFileSourceFolder);
         }
 
         
