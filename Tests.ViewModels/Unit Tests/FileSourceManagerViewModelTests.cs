@@ -182,15 +182,30 @@ namespace Dflat.ViewModels.Tests
         }
 
         [Test]
-        public void AddCommand_RaiseCanExecuteChangedForSaveCommand()
+        public void AddCommand_WhenUserConfirmsAdd_RaiseCanExecuteChangedForSaveCommand()
         {
             bool canExecuteChangeExecuted = false;
+            userAcceptsNewFolder = true;
 
             fileSourceManagerViewModel.SaveCommand.CanExecuteChanged += (e, a) => canExecuteChangeExecuted = true;
 
             fileSourceManagerViewModel.AddCommand.Execute(null);
 
             Assert.IsTrue(canExecuteChangeExecuted);
+
+        }
+
+        [Test]
+        public void AddCommand_WhenUserCancelsAdd_DoesNotRaiseCanExecuteChangedForSaveCommand()
+        {
+            bool canExecuteChangeExecuted = false;
+            userAcceptsNewFolder = false;
+
+            fileSourceManagerViewModel.SaveCommand.CanExecuteChanged += (e, a) => canExecuteChangeExecuted = true;
+
+            fileSourceManagerViewModel.AddCommand.Execute(null);
+
+            Assert.IsFalse(canExecuteChangeExecuted);
 
         }
 
