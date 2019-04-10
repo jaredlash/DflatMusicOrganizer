@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Dflat.Business.Models;
 using System.Collections.Generic;
 using Dflat.Business.Repositories;
+using System;
 
 namespace Dflat.ViewModels.Tests
 {
@@ -157,11 +158,47 @@ namespace Dflat.ViewModels.Tests
 
             Assert.AreEqual(0, dummyRepo.Count);
         }
-        
+
         #endregion
 
         #region Test Edit Command
-        // Edit
+
+        [Test]
+        public void EditCommand_OpensFileSourceFolderEditor()
+        {
+
+
+            fileSourceManagerViewModel.EditCommand.Execute(null);
+
+            mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>()), Times.Once());
+        }
+
+        [Test]
+        public void EditCommand_DoesNotCreateNewFileSourceFolder()
+        {
+            fileSourceManagerViewModel.EditCommand.Execute(null);
+
+            mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Never());
+        }
+        
+
+        [Test]
+        public void EditCommand_WhenUserCancelsFolderEditor_DoesNotModifyFileSourceFolder()
+        {
+            userFinishedEditor = false;
+            fileSourceManagerViewModel.EditCommand.Execute(null);
+
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public void EditCommand_WhenUserConfirmsFolderEditor_ModifiesFileSourceFolder()
+        {
+            userFinishedEditor = true;
+            fileSourceManagerViewModel.EditCommand.Execute(null);
+
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Test Remove Command
