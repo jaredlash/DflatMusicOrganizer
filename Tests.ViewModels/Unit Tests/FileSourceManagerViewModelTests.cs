@@ -3,6 +3,9 @@ using Dflat.Business;
 using NUnit.Framework;
 using Dflat.ViewModels.Dialogs;
 using System.ComponentModel;
+using Dflat.Business.Models;
+using System.Collections.Generic;
+using Dflat.Business.Repositories;
 
 namespace Dflat.ViewModels.Tests
 {
@@ -103,7 +106,36 @@ namespace Dflat.ViewModels.Tests
         #endregion
 
         #region Test Add Command
-        // Add
+        
+        [Test]
+        public void AddCommand_OpensFileSourceFolderEditor()
+        {
+            var dummyRepo = new List<FileSourceFolder>();
+
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+
+            var mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
+            mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(new FileSourceFolder());
+
+            var fileSourceFolderRepository = mockFileSourceFolderRepository.Object;
+
+            mockUnitOfWork.SetupGet(m => m.IFileSourceFolderRepository).Returns(fileSourceFolderRepository);
+            var uow = mockUnitOfWork.Object;
+
+            var mockUnitOfWorkLifetimeManager = new Mock<IUnitOfWorkLifetimeManager>();
+            mockUnitOfWorkLifetimeManager.SetupGet(m => m.UnitOfWork).Returns(uow);
+
+            var mockDialogService = new Mock<IDialogService>();
+
+            var fsmvm = CreateFileSourceManagerViewModel(mockUnitOfWorkLifetimeManager.Object, null, mockDialogService.Object, null);
+
+            fsmvm.AddCommand.Execute(null);
+
+            mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>()), Times.Once());
+        }
+
+
         #endregion
 
         #region Test Edit Command
