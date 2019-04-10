@@ -31,9 +31,8 @@ namespace Dflat.ViewModels.Tests
         private FileSourceManagerViewModel fileSourceManagerViewModel;
 
         private bool hasChanges;
-        private bool userConfirmsClose;
+        private bool userConfirmsOperation;
         private bool userAcceptsNewFolder;
-        private bool userConfirmsRemoval;
 
         #region Set up system under test
 
@@ -45,7 +44,7 @@ namespace Dflat.ViewModels.Tests
             // Set up our mock FileSourceFolderRepository
             mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
             mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(() => dummyRepoCreate());
-            mockFileSourceFolderRepository.Setup(m => m.Remove(It.IsNotNull<FileSourceFolder>())).Callback<FileSourceFolder>((f) => dummyRepo.Remove(f));
+            mockFileSourceFolderRepository.Setup(m => m.Remove(It.IsNotNull<FileSourceFolder>())).Callback<FileSourceFolder>((f) => dummyRepoRemove(f));
 
             // Set up our mock unit of work
             mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -65,7 +64,7 @@ namespace Dflat.ViewModels.Tests
 
             // Set up our DialogService
             mockDialogService = new Mock<IDialogService>();
-            mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(() => userConfirmsClose);
+            mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(() => userConfirmsOperation);
             mockDialogService.Setup(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>(), It.IsAny<FileSourceFolderEditorMode>())).Returns(() => userAcceptsNewFolder);
             dialogService = mockDialogService.Object;
 
@@ -79,6 +78,11 @@ namespace Dflat.ViewModels.Tests
             var f = new FileSourceFolder();
             dummyRepo.Add(f);
             return f;
+        }
+
+        private void dummyRepoRemove(FileSourceFolder folder)
+        {
+            dummyRepo.Remove(folder);
         }
 
 
@@ -217,7 +221,7 @@ namespace Dflat.ViewModels.Tests
 
             fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
 
-            userConfirmsRemoval = true;
+            userConfirmsOperation = true;
             
             fileSourceManagerViewModel.RemoveCommand.Execute(null);
 
@@ -233,11 +237,11 @@ namespace Dflat.ViewModels.Tests
 
             fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
 
-            userConfirmsRemoval = false;
+            userConfirmsOperation = false;
 
             fileSourceManagerViewModel.RemoveCommand.Execute(null);
 
-            Assert.AreEqual(0, dummyRepo.Count);
+            Assert.AreEqual(1, dummyRepo.Count);
         }
         #endregion
 
@@ -262,7 +266,7 @@ namespace Dflat.ViewModels.Tests
         {
 
             hasChanges = true;
-            userConfirmsClose = true;
+            userConfirmsOperation = true;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;
@@ -278,7 +282,7 @@ namespace Dflat.ViewModels.Tests
         public void ClosingCommand_WhenThereAreUnsavedChangesAndUserCancelsAtPrompt_CancelsClosing()
         {
             hasChanges = true;
-            userConfirmsClose = false;
+            userConfirmsOperation = false;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;
@@ -294,7 +298,7 @@ namespace Dflat.ViewModels.Tests
         public void ClosingCommand_WhenThereAreUnsavedChangesAndUserConfirmsAtPrompt_ContinuesClosing()
         {
             hasChanges = true;
-            userConfirmsClose = true;
+            userConfirmsOperation = true;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;
@@ -310,7 +314,7 @@ namespace Dflat.ViewModels.Tests
         public void ClosingCommand_WhenThereAreNoChanges_DoesNotPromptToConfirmClose()
         {
             hasChanges = false;
-            userConfirmsClose = true;
+            userConfirmsOperation = true;
 
             var cancelEventArgs = new CancelEventArgs();
             cancelEventArgs.Cancel = false;

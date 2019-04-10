@@ -115,6 +115,14 @@ namespace Dflat.ViewModels
             }
         }
 
+        public ICommand RemoveCommand
+        {
+            get
+            {
+                return new RelayCommand(() => RemoveFileSourceFolder());
+            }
+        }
+
         public ICommand SaveCommand {
             get {
                 return new RelayCommand(() => SaveChanges());
@@ -212,9 +220,17 @@ namespace Dflat.ViewModels
 
         private void EditFileSourceFolder()
         {
-            bool? result = dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder, FileSourceFolderEditorMode.Edit);
+            dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder, FileSourceFolderEditorMode.Edit);
         }
         
+
+        private void RemoveFileSourceFolder()
+        {
+            bool? result = dialogService.ConfirmDialog("Confirm", $"Are you sure you want to remove {SelectedFileSourceFolder.Path}?", "Yes", "Cancel");
+            if (result == true)
+                uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(SelectedFileSourceFolder);
+        }
+
         private void OnClosing(CancelEventArgs args)
         {
             if (!uowManager.UnitOfWork.HasChanges())
