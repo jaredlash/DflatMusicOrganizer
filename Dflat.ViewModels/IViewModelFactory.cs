@@ -1,5 +1,6 @@
 ﻿using Dflat.Business;
-using GalaSoft.MvvmLight;
+using Dflat.Business.Models;
+using Dflat.ViewModels.DialogViewModels;
 
 namespace Dflat.ViewModels
 {
@@ -7,7 +8,9 @@ namespace Dflat.ViewModels
     {
 
         FileSourceManagerViewModel CreateFileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager);
+        FileSourceFolderEditorViewModel CreateFileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder);
 
         ConfirmDialogViewModel CreateConfirmDialogViewModel(string title, string message, string confirmButtonText, string denyButtonText);
+        
     }
 }

@@ -98,6 +98,14 @@ namespace Dflat.ViewModels
 
         #region Commands
 
+        public ICommand AddCommand
+        {
+            get
+            {
+                return new RelayCommand(() => AddFileSourceFolder());
+            }
+        }
+
         public ICommand SaveCommand {
             get {
                 return new RelayCommand(() => uowManager.UnitOfWork.SaveChanges(), () => uowManager.UnitOfWork.HasChanges());
@@ -112,7 +120,7 @@ namespace Dflat.ViewModels
                 return new RelayCommand(() => ViewModelInitialize());
             }
         }
-
+        
         public ICommand ClosingCommand
         {
             get
@@ -182,6 +190,12 @@ namespace Dflat.ViewModels
 
         #region Private methods
 
+        private void AddFileSourceFolder()
+        {
+
+        }
+
+        
         private void OnClosing(CancelEventArgs args)
         {
             if (!uowManager.UnitOfWork.HasChanges())

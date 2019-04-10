@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Dflat.Business;
+using Dflat.Business.Models;
+using System;
 using System.Collections.Generic;
 using Unity;
 
@@ -49,6 +51,13 @@ namespace Dflat.ViewModels.Dialogs
         public bool? ConfirmDialog(string title, string message, string confirmButtonText, string denyButtonText)
         {
             var viewModel = viewModelFactory.CreateConfirmDialogViewModel(title, message, confirmButtonText, denyButtonText);
+
+            return ShowDialog(viewModel);
+        }
+
+        public bool? FileSourceFolderEditor(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder)
+        {
+            var viewModel = viewModelFactory.CreateFileSourceFolderEditorViewModel(uowLifetimeManager, fileSourceFolder);
 
             return ShowDialog(viewModel);
         }

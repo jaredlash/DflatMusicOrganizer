@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity;
 using Unity.Resolution;
+using Dflat.Business.Models;
+using Dflat.ViewModels.DialogViewModels;
 
 namespace Dflat.ViewModels
 {
@@ -34,6 +36,12 @@ namespace Dflat.ViewModels
                 new ParameterOverride("confirmButtonText", confirmButtonText),
                 new ParameterOverride("denyButtonText", denyButtonText) });
         }
-        
+
+        public FileSourceFolderEditorViewModel CreateFileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder)
+        {
+            return iocContainer.Resolve<FileSourceFolderEditorViewModel>(new ResolverOverride[] {
+                new ParameterOverride("uowLifetimeManager", uowLifetimeManager),
+                new ParameterOverride("fileSourceFolder", fileSourceFolder) });
+        }
     }
 }

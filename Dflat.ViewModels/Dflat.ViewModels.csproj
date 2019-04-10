@@ -80,6 +80,7 @@
     <Compile Include="Dialogs\IDialogRequestClose.cs" />
     <Compile Include="Dialogs\IDialogService.cs" />
     <Compile Include="Dialogs\IDialogView.cs" />
+    <Compile Include="DialogViewModels\FileSourceFolderEditorViewModel.cs" />
     <Compile Include="IViewModel.cs" />
     <Compile Include="IViewModelFactory.cs" />
     <Compile Include="ViewModelFactory.cs" />
