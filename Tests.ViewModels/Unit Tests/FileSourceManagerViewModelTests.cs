@@ -12,6 +12,7 @@ namespace Dflat.ViewModels.Tests
     [TestFixture]
     public class FileSourceManagerViewModelTests
     {
+        private Mock<IFileSourceFolderRepository> mockFileSourceFolderRepository;
         private Mock<IUnitOfWork> mockUnitOfWork;
         private Mock<IUnitOfWorkLifetimeManager> mockUnitOfWorkLifetimeManager;
         private Mock<IDialogService> mockDialogService;
@@ -39,7 +40,7 @@ namespace Dflat.ViewModels.Tests
             dummyRepo = new List<IFileSourceFolder>();
 
             // Set up our mock file source folder repository
-            var mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
+            mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
             mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(new FileSourceFolder());
 
             // Set up our mock unit of work
@@ -119,6 +120,14 @@ namespace Dflat.ViewModels.Tests
             fileSourceManagerViewModel.AddCommand.Execute(null);
 
             mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>()), Times.Once());
+        }
+
+        [Test]
+        public void AddCommand_CreatesNewFileSourceFolder()
+        {
+            fileSourceManagerViewModel.AddCommand.Execute(null);
+
+            mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Once());
         }
 
 
