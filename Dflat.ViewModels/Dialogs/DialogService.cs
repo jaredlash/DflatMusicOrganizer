@@ -1,7 +1,7 @@
 ﻿using Dflat.Business;
 using Dflat.Business.Models;
+using Dflat.ViewModels.DialogViewModels;
 using System;
-using System.Collections.Generic;
 using Unity;
 
 namespace Dflat.ViewModels.Dialogs
@@ -55,9 +55,9 @@ namespace Dflat.ViewModels.Dialogs
             return ShowDialog(viewModel);
         }
 
-        public bool? FileSourceFolderEditor(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder)
+        public bool? FileSourceFolderEditor(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, FileSourceFolderEditorMode mode)
         {
-            var viewModel = viewModelFactory.CreateFileSourceFolderEditorViewModel(uowLifetimeManager, fileSourceFolder);
+            var viewModel = viewModelFactory.CreateFileSourceFolderEditorViewModel(uowLifetimeManager, fileSourceFolder, mode);
 
             return ShowDialog(viewModel);
         }

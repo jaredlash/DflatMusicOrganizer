@@ -1,10 +1,5 @@
 ﻿using Dflat.Business;
 using Dflat.Business.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dflat.ViewModels.DialogViewModels
 {
@@ -12,11 +7,12 @@ namespace Dflat.ViewModels.DialogViewModels
     {
         private IUnitOfWorkLifetimeManager uowLifetimeManager;
         private FileSourceFolder fileSourceFolder;
-
-        public FileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder) : base("", "")
+        
+        public FileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, FileSourceFolderEditorMode mode) : base("", "")
         {
             this.uowLifetimeManager = uowLifetimeManager;
             this.fileSourceFolder = fileSourceFolder;
+            this.EditorMode = mode;
         }
         
         public string Path
@@ -31,6 +27,8 @@ namespace Dflat.ViewModels.DialogViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public FileSourceFolderEditorMode EditorMode { get; private set; }
 
 
     }

@@ -6,7 +6,7 @@ using System.ComponentModel;
 using Dflat.Business.Models;
 using System.Collections.Generic;
 using Dflat.Business.Repositories;
-using System;
+using Dflat.ViewModels.DialogViewModels;
 
 namespace Dflat.ViewModels.Tests
 {
@@ -32,7 +32,7 @@ namespace Dflat.ViewModels.Tests
 
         private bool hasChanges;
         private bool userConfirmsClose;
-        private bool userFinishedEditor;
+        private bool userAcceptsNewFolder;
 
         #region Set up system under test
 
@@ -41,14 +41,14 @@ namespace Dflat.ViewModels.Tests
         {
             dummyRepo = new List<IFileSourceFolder>();
 
-            // Set up our mock file source folder repository
+            // Set up our mock FileSourceFolderRepository
             mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
             mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(() => dummyRepoCreate());
+            mockFileSourceFolderRepository.Setup(m => m.Remove(It.IsNotNull<FileSourceFolder>())).Callback<FileSourceFolder>((f) => dummyRepo.Remove(f));
 
             // Set up our mock unit of work
             mockUnitOfWork = new Mock<IUnitOfWork>();
-
-
+            
             fileSourceFolderRepository = mockFileSourceFolderRepository.Object;
             mockUnitOfWork.SetupGet(m => m.IFileSourceFolderRepository).Returns(fileSourceFolderRepository);
             mockUnitOfWork.Setup(m => m.HasChanges()).Returns(() => hasChanges);
@@ -65,7 +65,7 @@ namespace Dflat.ViewModels.Tests
             // Set up our DialogService
             mockDialogService = new Mock<IDialogService>();
             mockDialogService.Setup(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(() => userConfirmsClose);
-            mockDialogService.Setup(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>())).Returns(() => userFinishedEditor);
+            mockDialogService.Setup(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>(), It.IsAny<FileSourceFolderEditorMode>())).Returns(() => userAcceptsNewFolder);
             dialogService = mockDialogService.Object;
 
 
@@ -129,7 +129,7 @@ namespace Dflat.ViewModels.Tests
 
             fileSourceManagerViewModel.AddCommand.Execute(null);
 
-            mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>()), Times.Once());
+            mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>(), It.Is<FileSourceFolderEditorMode>((p) => p == FileSourceFolderEditorMode.New)), Times.Once());
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void AddCommand_WhenUserFinishesFolderEditor_AddsNewFileSourceFolder()
         {
-            userFinishedEditor = true;
+            userAcceptsNewFolder = true;
 
             fileSourceManagerViewModel.AddCommand.Execute(null);
 
@@ -153,7 +153,9 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void AddCommand_WhenUserCancelsFolderEditor_DoesNotAddNewFileSourceFolder()
         {
-            userFinishedEditor = false;
+            userAcceptsNewFolder = false;
+
+
             fileSourceManagerViewModel.AddCommand.Execute(null);
 
             Assert.AreEqual(0, dummyRepo.Count);
@@ -166,11 +168,15 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void EditCommand_OpensFileSourceFolderEditor()
         {
+            var fileSourceFolder = new FileSourceFolder();
 
+            dummyRepo.Add(fileSourceFolder);
+
+            fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
 
             fileSourceManagerViewModel.EditCommand.Execute(null);
 
-            mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>()), Times.Once());
+            mockDialogService.Verify(m => m.FileSourceFolderEditor(It.IsNotNull<IUnitOfWorkLifetimeManager>(), It.IsNotNull<FileSourceFolder>(), It.Is<FileSourceFolderEditorMode>((p) => p == FileSourceFolderEditorMode.Edit)), Times.Once());
         }
 
         [Test]

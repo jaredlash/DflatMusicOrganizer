@@ -8,6 +8,7 @@ using System.ComponentModel;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
 using Dflat.ViewModels.Dialogs;
+using Dflat.ViewModels.DialogViewModels;
 
 namespace Dflat.ViewModels
 {
@@ -201,12 +202,17 @@ namespace Dflat.ViewModels
         private void AddFileSourceFolder()
         {
             FileSourceFolder newFileSourceFolder = uowManager.UnitOfWork.IFileSourceFolderRepository.Create();
-            bool? result = dialogService.FileSourceFolderEditor(uowManager, newFileSourceFolder);
+            bool? result = dialogService.FileSourceFolderEditor(uowManager, newFileSourceFolder, FileSourceFolderEditorMode.New);
+            if (result != true)
+            {
+                // User cancelled the addition, so we remove it from our UnitOfWork
+                uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(newFileSourceFolder);
+            }
         }
 
         private void EditFileSourceFolder()
         {
-            bool? result = dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder);
+            bool? result = dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder, FileSourceFolderEditorMode.Edit);
         }
         
         private void OnClosing(CancelEventArgs args)

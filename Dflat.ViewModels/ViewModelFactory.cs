@@ -1,11 +1,5 @@
 ﻿using Dflat.Business;
 using Dflat.Business.Factories;
-using GalaSoft.MvvmLight;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unity;
 using Unity.Resolution;
 using Dflat.Business.Models;
@@ -37,11 +31,12 @@ namespace Dflat.ViewModels
                 new ParameterOverride("denyButtonText", denyButtonText) });
         }
 
-        public FileSourceFolderEditorViewModel CreateFileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder)
+        public FileSourceFolderEditorViewModel CreateFileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, FileSourceFolderEditorMode mode)
         {
             return iocContainer.Resolve<FileSourceFolderEditorViewModel>(new ResolverOverride[] {
                 new ParameterOverride("uowLifetimeManager", uowLifetimeManager),
-                new ParameterOverride("fileSourceFolder", fileSourceFolder) });
+                new ParameterOverride("fileSourceFolder", fileSourceFolder),
+                new ParameterOverride("mode", mode) });
         }
     }
 }
