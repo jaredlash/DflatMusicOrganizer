@@ -181,24 +181,6 @@ namespace Dflat.ViewModels.Tests
             mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Never());
         }
         
-
-        [Test]
-        public void EditCommand_WhenUserCancelsFolderEditor_DoesNotModifyFileSourceFolder()
-        {
-            userFinishedEditor = false;
-            fileSourceManagerViewModel.EditCommand.Execute(null);
-
-            throw new NotImplementedException();
-        }
-
-        [Test]
-        public void EditCommand_WhenUserConfirmsFolderEditor_ModifiesFileSourceFolder()
-        {
-            userFinishedEditor = true;
-            fileSourceManagerViewModel.EditCommand.Execute(null);
-
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Test Remove Command
