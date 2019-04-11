@@ -144,7 +144,7 @@ namespace Tests.ViewModels.Unit_Tests
         [Test]
         public void RemoveExcludePath_WhenNoExcludePathIsSelected_CannotExecute()
         {
-            editor.SelectedExcludePathIndex = -1;
+            editor.SelectedExcludePath = null;
 
             Assert.IsFalse(editor.RemoveExcludePathCommand.CanExecute(null));
         }
@@ -152,7 +152,7 @@ namespace Tests.ViewModels.Unit_Tests
         [Test]
         public void RemoveExcludePath_WhenExcludePathIsSelected_CanExecute()
         {
-            editor.SelectedExcludePathIndex = 0;
+            editor.SelectedExcludePath = "Something";
 
             Assert.IsTrue(editor.RemoveExcludePathCommand.CanExecute(null));
         }
@@ -160,13 +160,12 @@ namespace Tests.ViewModels.Unit_Tests
         [Test]
         public void RemoveExcludePath_WhenExcludePathIsSelected_RemovesSelectedPath()
         {
+            var pathToRemove = "Path Two";
             editor.ExcludePaths.Add("Path One");
-            editor.ExcludePaths.Add("Path Two");
+            editor.ExcludePaths.Add(pathToRemove);
             editor.ExcludePaths.Add("Path Three");
 
-            editor.SelectedExcludePathIndex = 1;
-            // Not sure if this will work to get the correct path since ICollection is not indexable.  Second Assert might fail.
-            var pathToRemove = editor.ExcludePaths.ToList()[editor.SelectedExcludePathIndex];
+            editor.SelectedExcludePath = pathToRemove;
 
             editor.RemoveExcludePathCommand.Execute(null);
 
