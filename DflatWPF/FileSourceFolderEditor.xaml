@@ -1,0 +1,65 @@
+﻿<Window x:Class="DflatWPF.FileSourceFolderEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DflatWPF"
+        xmlns:dialog="clr-namespace:Dflat.ViewModels.DialogViewModels;assembly=Dflat.ViewModels"
+        d:DataContext="dialog:FileSourceFolderEditorViewModel"
+        mc:Ignorable="d"
+        Title="File Source Folder Editor" Height="350" Width="500" WindowStyle="ToolWindow">
+    <Border Padding="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Padding="0 0 10 0">Folder Path:</TextBlock>
+                <TextBox Grid.Column="1" Text="{Binding Path}" />
+
+                <Button Margin="10 0 0 0" Grid.Column="2" Content="Select" />
+            </Grid>
+            <CheckBox Margin="0 10 0 10" Grid.Row="1" Content="Include in automatic scans" />
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="0 10 0 0" Text="Excluded Folders" />
+                <ListBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="3">
+
+                </ListBox>
+
+                <Button Margin="10 0 0 0" Grid.Row="1" Grid.Column="1" Content="Add"/>
+                <Button Margin="10 10 0 0" Grid.Row="2" Grid.Column="1" Content="Remove" />
+
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="60" />
+                </Grid.ColumnDefinitions>
+                <Button Margin="0 10 5 0" Grid.Column="1" Content="Cancel" Command="{Binding CancelCommand}"/>
+                <Button Margin="5 10 0 0" Grid.Column="2" Content="OK" Command="{Binding OkCommand}"/>
+
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

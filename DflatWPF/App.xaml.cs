@@ -3,6 +3,7 @@ using Dflat.Business.Factories;
 using Dflat.EF6.DataAccess;
 using Dflat.ViewModels;
 using Dflat.ViewModels.Dialogs;
+using Dflat.ViewModels.DialogViewModels;
 using System.Windows;
 using Unity;
 using Unity.Injection;
@@ -32,6 +33,7 @@ namespace DflatWPF
             container.RegisterType<IView, FileSourceManager>(nameof(FileSourceManagerViewModel));
 
             container.RegisterType<IDialogView, ConfirmDialog>(nameof(ConfirmDialogViewModel));
+            container.RegisterType<IDialogView, FileSourceFolderEditor>(nameof(FileSourceFolderEditorViewModel));
             
             var viewService = container.Resolve<IViewService>();
             
