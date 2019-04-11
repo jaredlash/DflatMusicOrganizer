@@ -55,6 +55,21 @@ namespace Dflat.ViewModels.Dialogs
             return ShowDialog(viewModel);
         }
 
+        public string FolderChooserDialog(string title, string initialFolder)
+        {
+            IFolderChooserDialog dialog = iocContainer.Resolve<IFolderChooserDialog>();
+
+            dialog.Title = title;
+            dialog.InitialFolder = initialFolder;
+
+            if (dialog.ShowDialog() == true)
+            {
+                return dialog.ResultFolder;
+            }
+
+            return null;
+        }
+
         public bool? FileSourceFolderEditor(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, FileSourceFolderEditorMode mode)
         {
             var viewModel = viewModelFactory.CreateFileSourceFolderEditorViewModel(uowLifetimeManager, fileSourceFolder, mode);

@@ -74,6 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\IFolderChooserDialog.cs" />
     <Compile Include="DialogViewModels\FileSourceFolderEditorMode.cs" />
     <Compile Include="DialogViewModels\ConfirmDialogViewModel.cs" />
     <Compile Include="Dialogs\DialogCloseRequestedEventArgs.cs" />

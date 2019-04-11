@@ -1,4 +1,7 @@
-﻿using Dflat.ViewModels.DialogViewModels;
+﻿using Dflat.Business.Models;
+using Dflat.ViewModels.Dialogs;
+using Dflat.ViewModels.DialogViewModels;
+using Moq;
 using NUnit.Framework;
 using System;
 
@@ -7,19 +10,58 @@ namespace Tests.ViewModels.Unit_Tests
     [TestFixture]
     public class FileSourceFolderEditorViewModelTests
     {
-        FileSourceFolderEditorViewModel editor;
+        private Mock<IDialogService> mockDialogService;
+
+        private IDialogService dialogService;
+
+        private FileSourceFolderEditorViewModel editor;
+        private FileSourceFolder folderToEdit;
+
+        private string folderChoice;
 
         [SetUp]
         public void TestInitialize()
         {
-            editor = new FileSourceFolderEditorViewModel(null, null, null, FileSourceFolderEditorMode.Edit);
+            mockDialogService = new Mock<IDialogService>();
+            mockDialogService.Setup(m => m.FolderChooserDialog(It.IsAny<string>(), It.IsAny<string>())).Returns(() => folderChoice);
+
+            dialogService = mockDialogService.Object;
+
+            folderToEdit = new FileSourceFolder();
+
+            editor = new FileSourceFolderEditorViewModel(null, folderToEdit, dialogService, FileSourceFolderEditorMode.Edit);
         }
 
         #region Setting path
+
         [Test]
         public void ChoosePathCommand_OpensFolderChooserDialog()
         {
-            throw new NotImplementedException();
+            editor.ChoosePathCommand.Execute(null);
+
+            mockDialogService.Verify(m => m.FolderChooserDialog(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void ChoosePathCommand_WhenUserChoosesFolder_SetsPathToNewFolder()
+        {
+            editor.Path = string.Empty;
+
+            folderChoice = "Folder Choice";
+
+            editor.ChoosePathCommand.Execute(null);
+
+            Assert.AreEqual(folderChoice, editor.Path);
+        }
+
+        [Test]
+        public void ChoosePathCommand_WhenUserCancels_DoesNotChangePath()
+        {
+            editor.Path = string.Empty;
+
+            folderChoice = null;
+
+            Assert.AreNotEqual(folderChoice, editor.Path);
         }
 
         #endregion
