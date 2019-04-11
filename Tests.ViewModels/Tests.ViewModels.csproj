@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Unit Tests\FileSourceFolderEditorViewModelTests.cs" />
     <Compile Include="Unit Tests\FileSourceManagerViewModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
