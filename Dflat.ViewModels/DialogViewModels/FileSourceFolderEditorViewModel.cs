@@ -27,11 +27,17 @@ namespace Dflat.ViewModels.DialogViewModels
             this.dialogService = dialogService;
             this.EditorMode = mode;
 
+            path = fileSourceFolder.Path;
+
             // Default new FileSourceFolders to be included in scans
             if (fileSourceFolder.FileSourceFolderID == 0)
                 includeInScans = true;
+            else
+                includeInScans = fileSourceFolder.IncludeInScans;
 
             ExcludePaths = new ObservableCollection<string>();
+            foreach (var excludePath in fileSourceFolder.ExcludePaths)
+                ExcludePaths.Add(excludePath.Path);
 
             selectedExcludePathIndex = -1;
 
