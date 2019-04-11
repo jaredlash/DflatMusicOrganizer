@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace Dflat.ViewModels.DialogViewModels
@@ -58,6 +59,7 @@ namespace Dflat.ViewModels.DialogViewModels
                 {
                     path = value;
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(CanConfirmDialog));
                 }
             }
         }
@@ -91,9 +93,17 @@ namespace Dflat.ViewModels.DialogViewModels
 
         public ICollection<string> ExcludePaths { get; private set; }
 
+        public bool CanConfirmDialog
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(Path);
+            }
+        }
+
         #endregion
 
-        #region
+        #region Commands
 
         public ICommand ChoosePathCommand
         {
@@ -160,11 +170,29 @@ namespace Dflat.ViewModels.DialogViewModels
 
         private void CloseRequestedHandler(object o, DialogCloseRequestedEventArgs a)
         {
-            if (a.DialogResult == true)
+            if (a.DialogResult != true)
+                return;
+
+            fileSourceFolder.Path = path;
+            fileSourceFolder.IncludeInScans = IncludeInScans;
+
+            // Determine which ExcludePaths need to be removed from the fileSourceFolder
+            var pathsToRemove = new List<ExcludePath>();
+            foreach (var excludePath in fileSourceFolder.ExcludePaths)
             {
-                // Update our FileSourceFolder
-                throw new NotImplementedException("CloseRequestedHandler");
+                if (!ExcludePaths.Contains(excludePath.Path))
+                    pathsToRemove.Add(excludePath);
             }
+
+            // Remove the paths
+            foreach (var excludePath in pathsToRemove)
+                fileSourceFolder.ExcludePaths.Remove(excludePath);
+
+            // Add the new paths
+            foreach (var newExcludePath in ExcludePaths)
+                if (fileSourceFolder.ExcludePaths.Where(e => e.Path == newExcludePath).Count() == 0)
+                    fileSourceFolder.ExcludePaths.Add(new ExcludePath { Path = newExcludePath });
+            
         }
 
         #endregion

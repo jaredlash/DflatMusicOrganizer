@@ -181,7 +181,7 @@ namespace Tests.ViewModels.Unit_Tests
         {
             editor.Path = "";
 
-            Assert.IsFalse(editor.OkCommand.CanExecute(null));
+            Assert.IsFalse(editor.CanConfirmDialog);
         }
 
         [Test]
