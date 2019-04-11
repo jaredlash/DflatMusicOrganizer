@@ -34,6 +34,7 @@ namespace DflatWPF
 
             container.RegisterType<IDialogView, ConfirmDialog>(nameof(ConfirmDialogViewModel));
             container.RegisterType<IDialogView, FileSourceFolderEditor>(nameof(FileSourceFolderEditorViewModel));
+            container.RegisterType<IFolderChooserDialog, FolderChooserDialog>();
             
             var viewService = container.Resolve<IViewService>();
             
