@@ -18,7 +18,7 @@ namespace Dflat.ViewModels.DialogViewModels
         private bool includeInScans;
 
         private string path;
-        private int selectedExcludePathIndex;
+        private string selectedExcludePath;
         
         public FileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, IDialogService dialogService, FileSourceFolderEditorMode mode) : base("", "")
         {
@@ -39,7 +39,7 @@ namespace Dflat.ViewModels.DialogViewModels
             foreach (var excludePath in fileSourceFolder.ExcludePaths)
                 ExcludePaths.Add(excludePath.Path);
 
-            selectedExcludePathIndex = -1;
+            selectedExcludePath = null;
 
             CloseRequested += CloseRequestedHandler;
         }
@@ -75,15 +75,15 @@ namespace Dflat.ViewModels.DialogViewModels
             }
         }
 
-        public int SelectedExcludePathIndex
+        public string SelectedExcludePath
         {
             get
             {
-                return selectedExcludePathIndex;
+                return selectedExcludePath;
             }
             set
             {
-                selectedExcludePathIndex = value;
+                selectedExcludePath = value;
                 RaisePropertyChanged();
                 ((RelayCommand)RemoveExcludePathCommand).RaiseCanExecuteChanged();
             }
@@ -115,7 +115,7 @@ namespace Dflat.ViewModels.DialogViewModels
         {
             get
             {
-                return new RelayCommand(() => RemoveExcludePath(), () => selectedExcludePathIndex >= 0);
+                return new RelayCommand(() => RemoveExcludePath(), () => selectedExcludePath != null);
             }
         }
         
@@ -128,16 +128,31 @@ namespace Dflat.ViewModels.DialogViewModels
 
         private void ChoosePath()
         {
+            string newPath = dialogService.FolderChooserDialog("Choose File Source Folder", path);
 
+            if (!string.IsNullOrEmpty(newPath))
+            {
+                Path = newPath;
+            }
         }
 
         private void AddExcludePath()
         {
+            string newPath = dialogService.FolderChooserDialog("Choose Folder to exclude", path);
+
+            if (string.IsNullOrEmpty(newPath))
+                return;
+
+            // Only add exclude folder if we don't already have it
+            if (!ExcludePaths.Contains(newPath))
+                ExcludePaths.Add(newPath);
 
         }
 
         private void RemoveExcludePath()
         {
+            if (selectedExcludePath == null)
+                return;
 
         }
 
