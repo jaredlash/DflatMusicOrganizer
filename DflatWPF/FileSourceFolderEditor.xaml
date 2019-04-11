@@ -5,52 +5,56 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DflatWPF"
         xmlns:dialog="clr-namespace:Dflat.ViewModels.DialogViewModels;assembly=Dflat.ViewModels"
-        d:DataContext="dialog:FileSourceFolderEditorViewModel"
+        d:DataContext="{d:DesignInstance dialog:FileSourceFolderEditorViewModel}"
         mc:Ignorable="d"
         Title="File Source Folder Editor" Height="350" Width="500" WindowStyle="ToolWindow">
     <Border Padding="10">
         <Grid>
             <Grid.RowDefinitions>
+                <!-- Path -->
                 <RowDefinition Height="Auto" />
+                <!-- Include in Scans -->
                 <RowDefinition Height="Auto" />
+                <!-- Exclude path label -->
+                <RowDefinition Height="Auto" />
+                <!-- Exclude path listbox and exclude path buttons -->
                 <RowDefinition Height="*" />
+                <!-- Dialog buttons -->
                 <RowDefinition Height="Auto" />
+                
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Padding="0 0 10 0">Folder Path:</TextBlock>
                 <TextBox Grid.Column="1" Text="{Binding Path}" />
-
-                <Button Margin="10 0 0 0" Grid.Column="2" Content="Select" />
             </Grid>
-            <CheckBox Margin="0 10 0 10" Grid.Row="1" Content="Include in automatic scans" />
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <Button Margin="10 0 0 0" Grid.Column="1" Content="Select" Command="{Binding ChoosePathCommand}"/>
+            <CheckBox Margin="0 10 0 10" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsChecked="{Binding IncludeInScans}" Content="Include in automatic scans" />
+            <TextBlock Grid.Row="2" Margin="0 10 0 0" Text="Excluded Folders" />
+            <ListBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding ExcludePaths}" SelectedIndex="{Binding SelectedExcludePathIndex}">
+
+            </ListBox>
+
+            <Grid Grid.Row="3" Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Margin="0 10 0 0" Text="Excluded Folders" />
-                <ListBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="3">
-
-                </ListBox>
-
-                <Button Margin="10 0 0 0" Grid.Row="1" Grid.Column="1" Content="Add"/>
-                <Button Margin="10 10 0 0" Grid.Row="2" Grid.Column="1" Content="Remove" />
+                <Button Margin="10 0 0 0" Grid.Row="0" Content="Add" Command="{Binding AddExcludePathCommand}"/>
+                <Button Margin="10 10 0 0" Grid.Row="1" Content="Remove" Command="{Binding RemoveExcludePathCommand}"/>
 
             </Grid>
 
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="60" />
