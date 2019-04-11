@@ -154,6 +154,7 @@ namespace Dflat.ViewModels.DialogViewModels
             if (selectedExcludePath == null)
                 return;
 
+            ExcludePaths.Remove(SelectedExcludePath);
         }
 
 
