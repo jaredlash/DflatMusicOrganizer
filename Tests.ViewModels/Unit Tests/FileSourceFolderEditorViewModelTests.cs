@@ -33,6 +33,44 @@ namespace Tests.ViewModels.Unit_Tests
             editor = new FileSourceFolderEditorViewModel(null, folderToEdit, dialogService, FileSourceFolderEditorMode.Edit);
         }
 
+
+        #region Loading the editor
+
+        [Test]
+        public void LoadingTheEditor_WithANewFileSourceFolder_InitializesIncludeInScansToTrue()
+        {
+            Assert.IsTrue(editor.IncludeInScans);
+        }
+        
+        [Test]
+        public void LoadingTheEditor_WithAnExistingFileSourceFolder_InitializesToThatFolder()
+        {
+            // Set up the folder
+            string oldFolderPath = "Old path";
+            bool oldFolderIncludeInScans = false;
+
+            string existingExcludePath = "Existing path";
+
+            folderToEdit.FileSourceFolderID = 1;
+            folderToEdit.Path = oldFolderPath;
+            folderToEdit.IncludeInScans = oldFolderIncludeInScans;
+
+            folderToEdit.ExcludePaths.Add(new ExcludePath { Path = existingExcludePath });
+
+            // Create the editor with this folder now (yes, it is recreating an already set up editor, but that was from before the folder was set up)
+            editor = new FileSourceFolderEditorViewModel(null, folderToEdit, dialogService, FileSourceFolderEditorMode.Edit);
+
+
+            // Verify we have set up the new editor according to the existing folder
+            Assert.AreEqual(folderToEdit.Path, editor.Path);
+            Assert.AreEqual(folderToEdit.IncludeInScans, editor.IncludeInScans);
+            Assert.AreEqual(folderToEdit.ExcludePaths.Count, editor.ExcludePaths.Count);
+            Assert.IsTrue(editor.ExcludePaths.Contains(existingExcludePath));
+        }
+
+
+        #endregion
+
         #region Setting path
 
         [Test]
