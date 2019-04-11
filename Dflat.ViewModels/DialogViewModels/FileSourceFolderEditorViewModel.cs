@@ -1,9 +1,9 @@
 ﻿using Dflat.Business;
 using Dflat.Business.Models;
+using Dflat.ViewModels.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Web.Mvc;
 
 namespace Dflat.ViewModels.DialogViewModels
 {
@@ -11,14 +11,17 @@ namespace Dflat.ViewModels.DialogViewModels
     {
         private IUnitOfWorkLifetimeManager uowLifetimeManager;
         private FileSourceFolder fileSourceFolder;
+        private IDialogService dialogService;
+
         private bool includeInScans;
 
         private string path;
         
-        public FileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, FileSourceFolderEditorMode mode) : base("", "")
+        public FileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, IDialogService dialogService, FileSourceFolderEditorMode mode) : base("", "")
         {
             this.uowLifetimeManager = uowLifetimeManager;
             this.fileSourceFolder = fileSourceFolder;
+            this.dialogService = dialogService;
             this.EditorMode = mode;
 
             // Default new FileSourceFolders to be included in scans
