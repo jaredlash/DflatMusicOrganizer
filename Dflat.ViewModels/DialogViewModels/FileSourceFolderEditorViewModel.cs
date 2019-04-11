@@ -1,9 +1,11 @@
 ﻿using Dflat.Business;
 using Dflat.Business.Models;
 using Dflat.ViewModels.Dialogs;
+using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace Dflat.ViewModels.DialogViewModels
 {
@@ -16,6 +18,7 @@ namespace Dflat.ViewModels.DialogViewModels
         private bool includeInScans;
 
         private string path;
+        private int selectedExcludePathIndex;
         
         public FileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, IDialogService dialogService, FileSourceFolderEditorMode mode) : base("", "")
         {
@@ -29,6 +32,8 @@ namespace Dflat.ViewModels.DialogViewModels
                 includeInScans = true;
 
             ExcludePaths = new ObservableCollection<string>();
+
+            selectedExcludePathIndex = -1;
 
             CloseRequested += CloseRequestedHandler;
         }
@@ -64,14 +69,72 @@ namespace Dflat.ViewModels.DialogViewModels
             }
         }
 
+        public int SelectedExcludePathIndex
+        {
+            get
+            {
+                return selectedExcludePathIndex;
+            }
+            set
+            {
+                selectedExcludePathIndex = value;
+                RaisePropertyChanged();
+                ((RelayCommand)RemoveExcludePathCommand).RaiseCanExecuteChanged();
+            }
+        }
+
         public ICollection<string> ExcludePaths { get; private set; }
 
+        #endregion
+
+        #region
+
+        public ICommand ChoosePathCommand
+        {
+            get
+            {
+                return new RelayCommand(() => ChoosePath());
+            }
+        }
+
+        public ICommand AddExcludePathCommand
+        {
+            get
+            {
+                return new RelayCommand(() => AddExcludePath());
+            }
+        }
+
+        public ICommand RemoveExcludePathCommand
+        {
+            get
+            {
+                return new RelayCommand(() => RemoveExcludePath(), () => selectedExcludePathIndex >= 0);
+            }
+        }
+        
         #endregion
 
 
         public FileSourceFolderEditorMode EditorMode { get; private set; }
 
-        #region Close event handler
+        #region Private methods and event handlers
+
+        private void ChoosePath()
+        {
+
+        }
+
+        private void AddExcludePath()
+        {
+
+        }
+
+        private void RemoveExcludePath()
+        {
+
+        }
+
 
         private void CloseRequestedHandler(object o, DialogCloseRequestedEventArgs a)
         {
