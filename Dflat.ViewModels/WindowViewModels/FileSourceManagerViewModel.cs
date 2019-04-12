@@ -212,6 +212,7 @@ namespace Dflat.ViewModels
                 // Added a new folder, so notify that we can save.
                 ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
                 FileSourceFolders.Add(newFileSourceFolder);
+                RaiseNotificationEventsAfterFolderEdit();
             }
         }
 
@@ -219,8 +220,8 @@ namespace Dflat.ViewModels
         {
             dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder, FileSourceFolderEditorMode.Edit);
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            RaiseNotificationEventsAfterFolderEdit();
         }
-        
 
         private void RemoveFileSourceFolder()
         {
@@ -229,7 +230,20 @@ namespace Dflat.ViewModels
             {
                 uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(SelectedFileSourceFolder);
                 ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+                RaiseNotificationEventsAfterFolderEdit();
             }
+        }
+
+        private void RaiseNotificationEventsAfterFolderEdit()
+        {
+            RaisePropertyChanged(nameof(Count));
+
+            if (SelectedFileSourceFolder == null)
+                return;
+
+
+            RaisePropertyChanged(nameof(SelectedFileSourceFolder));
+            RaisePropertyChanged(nameof(SelectedFileSourceFolderExcludeCount));
         }
 
         private void OnClosing(CancelEventArgs args)
