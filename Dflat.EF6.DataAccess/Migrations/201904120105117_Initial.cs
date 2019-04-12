@@ -14,8 +14,7 @@ namespace Dflat.EF6.DataAccess.Migrations
                         FileSourceFolderID = c.Int(nullable: false, identity: true),
                         Path = c.String(),
                         IncludeInScans = c.Boolean(nullable: false),
-                        LastScanStart = c.DateTime(nullable: false),
-                        LastScanEnd = c.DateTime(nullable: false),
+                        LastScanStart = c.DateTime(),
                     })
                 .PrimaryKey(t => t.FileSourceFolderID);
             
@@ -27,7 +26,7 @@ namespace Dflat.EF6.DataAccess.Migrations
                         FileSourceFolderID = c.Int(nullable: false),
                         Path = c.String(),
                     })
-                .PrimaryKey(t => t.ExcludePathID)
+                .PrimaryKey(t => new { t.ExcludePathID, t.FileSourceFolderID })
                 .ForeignKey("dbo.FileSourceFolders", t => t.FileSourceFolderID, cascadeDelete: true)
                 .Index(t => t.FileSourceFolderID);
             

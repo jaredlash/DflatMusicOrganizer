@@ -13,7 +13,7 @@ namespace Dflat.EF6.DataAccess.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201903291951445_Initial"; }
+            get { return "201904120105117_Initial"; }
         }
         
         string IMigrationMetadata.Source

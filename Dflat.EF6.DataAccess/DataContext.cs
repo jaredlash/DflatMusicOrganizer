@@ -17,6 +17,12 @@ namespace Dflat.EF6.DataAccess
 
         public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
 
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ExcludePath>().HasKey(table => new { table.ExcludePathID, table.FileSourceFolderID });
+            modelBuilder.Entity<ExcludePath>().Property(table => table.ExcludePathID).HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
+        }
+
     }
 
 

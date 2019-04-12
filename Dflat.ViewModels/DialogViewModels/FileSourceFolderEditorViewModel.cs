@@ -1,8 +1,7 @@
 ﻿using Dflat.Business;
 using Dflat.Business.Models;
 using Dflat.ViewModels.Dialogs;
-using GalaSoft.MvvmLight.Command;
-using System;
+using GalaSoft.MvvmLight.CommandWpf;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

@@ -221,6 +221,66 @@ namespace Tests.EF6.DataAccess.Integration_Tests
 
 
         [Test]
+        public void UpdateAndSaveFileSourceFolderWithThreeExcludePathsToTwoExcludePathsSavesToDB()
+        {
+            IUnitOfWork unitOfWork;
+            int saved_id;
+            string test_path = @"\Update\And\Save\FileSourceFolder\With\Two\ExcludePaths\To\Three\ExcludePaths\Saves\To\DB";
+            string test_exclude_path1 = @"\Update\And\Save\FileSourceFolder\With\Two\ExcludePaths\To\Three\ExcludePaths\Saves\To\DB\Exclude1";
+            string test_exclude_path2 = @"\Update\And\Save\FileSourceFolder\With\Two\ExcludePaths\To\Three\ExcludePaths\Saves\To\DB\Exclude2";
+            string test_exclude_path3 = @"\Update\And\Save\FileSourceFolder\With\Two\ExcludePaths\To\Three\ExcludePaths\Saves\To\DB\Exclude3";
+
+            // Add the new source folder to the DB and save.
+            using (unitOfWork = new UnitOfWork())
+            {
+                IFileSourceFolder fileSourceFolder = unitOfWork.IFileSourceFolderRepository.Create();
+                fileSourceFolder.Path = test_path;
+
+                var excludePath1 = new ExcludePath();
+                excludePath1.Path = test_exclude_path1;
+
+                var excludePath2 = new ExcludePath();
+                excludePath2.Path = test_exclude_path2;
+
+                var excludePath3 = new ExcludePath();
+                excludePath3.Path = test_exclude_path3;
+
+                fileSourceFolder.ExcludePaths.Add(excludePath1);
+                fileSourceFolder.ExcludePaths.Add(excludePath2);
+                fileSourceFolder.ExcludePaths.Add(excludePath3);
+
+                unitOfWork.SaveChanges();
+                saved_id = fileSourceFolder.FileSourceFolderID;
+            }
+
+            // Update the source folder just added to have only two exclude paths
+            using (unitOfWork = new UnitOfWork())
+            {
+                IFileSourceFolder fileSourceFolder = unitOfWork.IFileSourceFolderRepository.Get(saved_id);
+
+                var excludePathToRemove = fileSourceFolder.ExcludePaths.First();
+
+                fileSourceFolder.ExcludePaths.Remove(excludePathToRemove);
+
+                unitOfWork.SaveChanges();
+            }
+
+            using (unitOfWork = new UnitOfWork())
+            {
+                IFileSourceFolder fileSourceFolder = unitOfWork.IFileSourceFolderRepository.Get(saved_id);
+
+
+                // Found
+                Assert.NotNull(fileSourceFolder);
+                // Same path
+                Assert.AreEqual(test_path, fileSourceFolder.Path);
+                // Two exclude paths
+                Assert.AreEqual(2, fileSourceFolder.ExcludePaths.Count);
+            }
+        }
+
+
+        [Test]
         public void FileSourceFolderWithTwoExcludePathsDeletesFromDB()
         {
             IUnitOfWork unitOfWork;

@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight;
 using Dflat.ViewModels.Dialogs;
 using Dflat.ViewModels.DialogViewModels;

@@ -61,17 +61,9 @@
   <ItemGroup>
     <Compile Include="DataContext.cs" />
     <Compile Include="FileSourceFolderRepository.cs" />
-    <Compile Include="Migrations\201903291951445_Initial.cs" />
-    <Compile Include="Migrations\201903291951445_Initial.Designer.cs">
-      <DependentUpon>201903291951445_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903292153407_NullableDatesInSourceFolders.cs" />
-    <Compile Include="Migrations\201903292153407_NullableDatesInSourceFolders.Designer.cs">
-      <DependentUpon>201903292153407_NullableDatesInSourceFolders.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904042112180_RemoveLastScanEndDateInSourceFolders.cs" />
-    <Compile Include="Migrations\201904042112180_RemoveLastScanEndDateInSourceFolders.Designer.cs">
-      <DependentUpon>201904042112180_RemoveLastScanEndDateInSourceFolders.cs</DependentUpon>
+    <Compile Include="Migrations\201904120105117_Initial.cs" />
+    <Compile Include="Migrations\201904120105117_Initial.Designer.cs">
+      <DependentUpon>201904120105117_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="UnitOfWork.cs" />
@@ -89,14 +81,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903291951445_Initial.resx">
-      <DependentUpon>201903291951445_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903292153407_NullableDatesInSourceFolders.resx">
-      <DependentUpon>201903292153407_NullableDatesInSourceFolders.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904042112180_RemoveLastScanEndDateInSourceFolders.resx">
-      <DependentUpon>201904042112180_RemoveLastScanEndDateInSourceFolders.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201904120105117_Initial.resx">
+      <DependentUpon>201904120105117_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
