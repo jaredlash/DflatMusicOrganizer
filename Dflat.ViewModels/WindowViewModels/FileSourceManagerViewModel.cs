@@ -211,6 +211,7 @@ namespace Dflat.ViewModels
             {
                 // Added a new folder, so notify that we can save.
                 ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+                FileSourceFolders.Add(newFileSourceFolder);
             }
         }
 

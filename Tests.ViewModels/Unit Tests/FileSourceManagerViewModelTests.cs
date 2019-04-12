@@ -173,6 +173,18 @@ namespace Dflat.ViewModels.Tests
             Assert.AreEqual(1, dummyRepo.Count);
         }
 
+
+        [Test]
+        public void AddCommand_WhenUserFinishesFolderEditor_AddsNewFileSourceFolderToListFolderList()
+        {
+            userAcceptsNewFolder = true;
+
+            fileSourceManagerViewModel.AddCommand.Execute(null);
+
+            Assert.AreEqual(1, fileSourceManagerViewModel.FileSourceFolders.Count);
+        }
+
+
         [Test]
         public void AddCommand_WhenUserCancelsFolderEditor_DoesNotAddNewFileSourceFolder()
         {
