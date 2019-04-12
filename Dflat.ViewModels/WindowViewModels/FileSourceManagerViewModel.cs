@@ -229,6 +229,7 @@ namespace Dflat.ViewModels
             if (result == true)
             {
                 uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(SelectedFileSourceFolder);
+                FileSourceFolders.Remove(SelectedFileSourceFolder);
                 ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
                 RaiseNotificationEventsAfterFolderEdit();
             }

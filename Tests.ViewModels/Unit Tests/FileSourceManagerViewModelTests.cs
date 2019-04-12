@@ -260,6 +260,24 @@ namespace Dflat.ViewModels.Tests
             Assert.AreEqual(0, dummyRepo.Count);
         }
 
+
+        [Test]
+        public void RemoveCommand_WhenUserConfirmsRemoval_RemovesSelectedFileSourceFolderFromFolderList()
+        {
+            // Make sure we have a folder in our repo
+            var fileSourceFolder = new FileSourceFolder();
+            dummyRepo.Add(fileSourceFolder);
+            fileSourceManagerViewModel.FileSourceFolders.Add(fileSourceFolder);
+
+            fileSourceManagerViewModel.SelectedFileSourceFolder = fileSourceFolder;
+
+            userConfirmsOperation = true;
+
+            fileSourceManagerViewModel.RemoveCommand.Execute(null);
+
+            Assert.AreEqual(0, fileSourceManagerViewModel.FileSourceFolders.Count);
+        }
+
         [Test]
         public void RemoveCommand_WhenUserDeniesRemoval_RetainsSelectedFileSourceFolder()
         {
