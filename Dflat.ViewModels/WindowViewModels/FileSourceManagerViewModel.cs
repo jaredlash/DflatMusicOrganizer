@@ -22,6 +22,8 @@ namespace Dflat.ViewModels
         private IDialogService dialogService;
         private IViewModelFactory viewModelFactory;
 
+        private bool isDisposed;
+
         #endregion
 
 
@@ -34,6 +36,8 @@ namespace Dflat.ViewModels
             this.viewService = viewService;
             this.dialogService = dialogService;
             this.viewModelFactory = viewModelFactory;
+
+            this.isDisposed = false;
 
             ((ObservableCollection<FileSourceFolder>)FileSourceFolders).CollectionChanged += FileSourceFolders_Changed;
         }
@@ -111,7 +115,7 @@ namespace Dflat.ViewModels
 
         public ICommand SaveCommand {
             get {
-                return new RelayCommand(() => SaveChanges(), () => uowManager.UnitOfWork.HasChanges(), true);
+                return new RelayCommand(() => SaveChanges(), () => !isDisposed && uowManager.UnitOfWork.HasChanges());
             }
         }
 
@@ -243,6 +247,7 @@ namespace Dflat.ViewModels
 
         private void OnClose()
         {
+            isDisposed = true;
             Cleanup();
         }
 
