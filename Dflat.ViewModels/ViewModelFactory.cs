@@ -17,9 +17,9 @@ namespace Dflat.ViewModels
             this.iocContainer = iocContainer;
         }
 
-        public FileSourceManagerViewModel CreateFileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager)
+        public FileSourceManagerViewModel CreateFileSourceManagerViewModel()
         {
-            return iocContainer.Resolve<FileSourceManagerViewModel>(new ParameterOverride("uowManager", uowLifetimeManager));
+            return iocContainer.Resolve<FileSourceManagerViewModel>();
         }
 
         public ConfirmDialogViewModel CreateConfirmDialogViewModel(string title, string message, string confirmButtonText, string denyButtonText)

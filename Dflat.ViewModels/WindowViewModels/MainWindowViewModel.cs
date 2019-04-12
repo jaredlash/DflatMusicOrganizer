@@ -55,8 +55,7 @@ namespace Dflat.ViewModels
 
         private void OpenFileSourceManager()
         {
-            var uowManager = uowLifetimeManagerFactory.Create();
-            var fsmvm = viewModelFactory.CreateFileSourceManagerViewModel(uowManager);
+            var fsmvm = viewModelFactory.CreateFileSourceManagerViewModel();
 
             viewService.ShowWindow<FileSourceManagerViewModel>(fsmvm);
         }

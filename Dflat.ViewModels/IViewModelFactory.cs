@@ -7,7 +7,7 @@ namespace Dflat.ViewModels
     public interface IViewModelFactory
     {
 
-        FileSourceManagerViewModel CreateFileSourceManagerViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager);
+        FileSourceManagerViewModel CreateFileSourceManagerViewModel();
         FileSourceFolderEditorViewModel CreateFileSourceFolderEditorViewModel(IUnitOfWorkLifetimeManager uowLifetimeManager, FileSourceFolder fileSourceFolder, FileSourceFolderEditorMode mode);
 
         ConfirmDialogViewModel CreateConfirmDialogViewModel(string title, string message, string confirmButtonText, string denyButtonText);

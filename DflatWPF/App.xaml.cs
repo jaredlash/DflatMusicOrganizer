@@ -25,6 +25,7 @@ namespace DflatWPF
             container.RegisterType<IUnitOfWorkFactory, UnitOfWorkFactory>();
             container.RegisterType<IViewModelFactory, ViewModelFactory>();
             container.RegisterType<IUowLifetimeManagerFactory, UowLifetimeManagerFactory>();
+            container.RegisterType<IUnitOfWorkLifetimeManager, UnitOfWorkLifetimeManager>();
 
             container.RegisterType<IViewService, ViewService>(new ContainerControlledLifetimeManager());
             container.RegisterType<IDialogService, DialogService>();
