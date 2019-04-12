@@ -10,6 +10,7 @@ namespace Dflat.ViewModels
     {
         object DataContext { get; set; }
         bool? DialogResult { get; set; }
+        bool Activate();
         void Close();
         bool? ShowDialog();
     }

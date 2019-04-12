@@ -7,6 +7,7 @@
         xmlns:dialog="clr-namespace:Dflat.ViewModels.DialogViewModels;assembly=Dflat.ViewModels"
         d:DataContext="{d:DesignInstance dialog:FileSourceFolderEditorViewModel}"
         mc:Ignorable="d"
+        x:Name="FileSourceFolderEditorWindow"
         Title="File Source Folder Editor" Height="350" Width="500" WindowStyle="ToolWindow">
     <Border Padding="10">
         <Grid>
@@ -35,7 +36,7 @@
                 <TextBlock Grid.Column="0" Padding="0 0 10 0">Folder Path:</TextBlock>
                 <TextBox Grid.Column="1" Text="{Binding Path}" />
             </Grid>
-            <Button Margin="10 0 0 0" Grid.Column="1" Content="Select" Command="{Binding ChoosePathCommand}"/>
+            <Button Margin="10 0 0 0" Grid.Column="1" Content="Select" Command="{Binding ChoosePathCommand}" CommandParameter="{Binding ElementName=FileSourceFolderEditorWindow}"/>
             <CheckBox Margin="0 10 0 10" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsChecked="{Binding IncludeInScans}" Content="Include in automatic scans" />
             <TextBlock Grid.Row="2" Margin="0 10 0 0" Text="Excluded Folders" />
             <ListBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding ExcludePaths}" SelectedItem="{Binding SelectedExcludePath}">
@@ -49,7 +50,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Button Margin="10 0 0 0" Grid.Row="0" Content="Add" Command="{Binding AddExcludePathCommand}"/>
+                <Button Margin="10 0 0 0" Grid.Row="0" Content="Add" Command="{Binding AddExcludePathCommand}" CommandParameter="{Binding ElementName=FileSourceFolderEditorWindow}"/>
                 <Button Margin="10 10 0 0" Grid.Row="1" Content="Remove" Command="{Binding RemoveExcludePathCommand}"/>
 
             </Grid>

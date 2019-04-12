@@ -108,7 +108,7 @@ namespace Dflat.ViewModels.DialogViewModels
         {
             get
             {
-                return new RelayCommand(() => ChoosePath());
+                return new RelayCommand<IDialogView>((v) => ChoosePath(v));
             }
         }
 
@@ -116,7 +116,7 @@ namespace Dflat.ViewModels.DialogViewModels
         {
             get
             {
-                return new RelayCommand(() => AddExcludePath());
+                return new RelayCommand<IDialogView>((v) => AddExcludePath(v));
             }
         }
 
@@ -135,9 +135,10 @@ namespace Dflat.ViewModels.DialogViewModels
 
         #region Private methods and event handlers
 
-        private void ChoosePath()
+        private void ChoosePath(IDialogView view)
         {
             string newPath = dialogService.FolderChooserDialog("Choose File Source Folder", path);
+            if (view != null) view.Activate(); // Bring to the front since the folder chooser seems to mess up the window ordering
 
             if (!string.IsNullOrEmpty(newPath))
             {
@@ -145,9 +146,10 @@ namespace Dflat.ViewModels.DialogViewModels
             }
         }
 
-        private void AddExcludePath()
+        private void AddExcludePath(IDialogView view)
         {
             string newPath = dialogService.FolderChooserDialog("Choose Folder to exclude", path);
+            if (view != null) view.Activate(); // Bring to the front since the folder chooser seems to mess up the window ordering
 
             if (string.IsNullOrEmpty(newPath))
                 return;

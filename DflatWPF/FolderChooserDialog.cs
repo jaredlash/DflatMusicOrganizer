@@ -13,6 +13,8 @@ namespace DflatWPF
 
         public bool? DialogResult { get; set; }
 
+        public bool Activate() { return true; }
+
         #endregion
 
 
@@ -21,6 +23,8 @@ namespace DflatWPF
         public string ResultFolder { get; set; }
 
         public string Title { get; set; }
+
+        
 
         public void Close()
         {
