@@ -347,6 +347,20 @@ namespace Dflat.ViewModels.Tests
             mockDialogService.Verify(m => m.ConfirmDialog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
         }
 
+        /// <summary>
+        /// The following test checks for a bug where WPF wanted to check the CanExecute method of the SaveCommand after the Close event had run.  Cleanup() disposes the UnitOfWork,
+        /// and the SaveCommand.CanExecute method was attempting to access the UnitOfWork to see if there were any changes.
+        /// </summary>
+        [Test]
+        public void CloseCommand_AfterCleanupHasBeenRun_SaveCommandCanExecuteReturnsFalse()
+        {
+            hasChanges = false;
+            userConfirmsOperation = true;
+
+            fileSourceManagerViewModel.CloseCommand.Execute(null);
+
+            Assert.IsFalse(fileSourceManagerViewModel.SaveCommand.CanExecute(null));
+        }
 
         #endregion
     }
