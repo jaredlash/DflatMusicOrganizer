@@ -27,8 +27,8 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Ok and Cancel buttons -->
-                <Button Grid.Column="1" Margin="0 10 5 0" Command="{Binding OkCommand}" Content="Close" />
-                <Button Grid.Column="2" Margin="5 10 0 0" Command="{Binding CancelCommand}" Content="Cancel"/>
+                <Button Grid.Column="1" Margin="0 10 5 0" Command="{Binding CancelCommand}" Content="Cancel"/>
+                <Button Grid.Column="2" Margin="5 10 0 0" Command="{Binding OkCommand}" Content="OK" />
             </Grid>
 
         </Grid>
