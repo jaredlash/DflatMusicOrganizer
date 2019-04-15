@@ -47,6 +47,9 @@
     <Compile Include="Factories\UowLifetimeManagerFactory.cs" />
     <Compile Include="FolderSearchServiceRequest.cs" />
     <Compile Include="IUnitOfWorkLifetimeManager.cs" />
+    <Compile Include="Models\FileSourceFolderScanJob.cs" />
+    <Compile Include="Models\Job.cs" />
+    <Compile Include="Models\JobStatus.cs" />
     <Compile Include="Repositories\IFileSourceFolderRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="IUnitOfWork.cs" />

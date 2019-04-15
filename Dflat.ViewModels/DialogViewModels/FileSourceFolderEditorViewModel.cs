@@ -17,6 +17,7 @@ namespace Dflat.ViewModels.DialogViewModels
 
         private bool includeInScans;
 
+        private string name;
         private string path;
         private string selectedExcludePath;
         
@@ -27,6 +28,7 @@ namespace Dflat.ViewModels.DialogViewModels
             this.dialogService = dialogService;
             this.EditorMode = mode;
 
+            this.name = fileSourceFolder.Name;
             path = fileSourceFolder.Path;
 
             // Default new FileSourceFolders to be included in scans
@@ -45,6 +47,24 @@ namespace Dflat.ViewModels.DialogViewModels
         }
 
         #region Public bindable properties
+
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(CanConfirmDialog));
+                }
+            }
+        }
+
 
         public string Path
         {
@@ -96,7 +116,7 @@ namespace Dflat.ViewModels.DialogViewModels
         {
             get
             {
-                return !string.IsNullOrWhiteSpace(Path);
+                return !string.IsNullOrWhiteSpace(Path) && !string.IsNullOrWhiteSpace(Name);
             }
         }
 
@@ -174,6 +194,7 @@ namespace Dflat.ViewModels.DialogViewModels
             if (a.DialogResult != true)
                 return;
 
+            fileSourceFolder.Name = name;
             fileSourceFolder.Path = path;
             fileSourceFolder.IncludeInScans = IncludeInScans;
 

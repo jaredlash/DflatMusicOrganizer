@@ -205,8 +205,40 @@ namespace Tests.ViewModels.Unit_Tests
         }
 
         [Test]
+        public void OkCommand_WhenThereIsNoName_UserCannotClickOK()
+        {
+            editor.Name = "";
+            editor.Path = "NonEmpty";
+
+            Assert.IsFalse(editor.CanConfirmDialog);
+        }
+
+        [Test]
+        public void OkCommand_WhenThereIsAName_UserCanClickOK()
+        {
+            editor.Name = "NonEmpty";
+            editor.Path = "NonEmpty";
+
+            Assert.IsTrue(editor.OkCommand.CanExecute(null));
+        }
+
+
+        [Test]
+        public void OkCommand_WhenNameIsChanged_FolderHasNewName()
+        {
+            folderToEdit.Name = "Original Name";
+
+            editor.Name = "New Name";
+
+            editor.OkCommand.Execute(null);
+
+            Assert.AreEqual(editor.Name, folderToEdit.Name);
+        }
+
+        [Test]
         public void OkCommand_WhenUserRemovesExcludePath_FolderNoLongerHasRemovedExcludePath()
         {
+            editor.Name = "NonEmpty";
             editor.Path = "NonEmpty";
 
             string pathToRemove = "Path to remove";
@@ -227,6 +259,7 @@ namespace Tests.ViewModels.Unit_Tests
         [Test]
         public void OkCommand_WhenUserAddsExcludePath_FolderHasNewExcludePath()
         {
+            editor.Name = "NonEmpty";
             editor.Path = "NonEmpty";
 
             string existingPath = "Existing path";
@@ -249,6 +282,7 @@ namespace Tests.ViewModels.Unit_Tests
         [Test]
         public void OkCommand_WhenUserChangesIncludeInScanSetting_FolderHasNewIncludeInScanSetting()
         {
+            editor.Name = "NonEmpty";
             editor.Path = "NonEmpty";
 
             editor.IncludeInScans = false;
@@ -262,6 +296,7 @@ namespace Tests.ViewModels.Unit_Tests
         [Test]
         public void OkCommand_WhenUserAddsAndRemovesExcludePaths_FoldeerHasDifferentExcludePaths()
         {
+            editor.Name = "NonEmpty";
             editor.Path = "NonEmpty";
 
             string existingPath = "Existing path";
@@ -286,17 +321,20 @@ namespace Tests.ViewModels.Unit_Tests
         public void CancelCommand_WhenUserHasMadeChanges_FolderDoesNotGetChanged()
         {
             // Set up the folder
+            string oldFolderName = "Old name";
             string oldFolderPath = "Old path";
             bool oldFolderIncludeInScans = true;
 
             string existingExcludePath = "Existing path";
             string newExcludePath = "Added path";
 
+            folderToEdit.Name = oldFolderName;
             folderToEdit.Path = oldFolderPath;
             folderToEdit.IncludeInScans = oldFolderIncludeInScans;
 
             folderToEdit.ExcludePaths.Add(new ExcludePath { Path = existingExcludePath });
 
+            editor.Name = "New name";
             editor.Path = "New path";
             editor.IncludeInScans = false;
 
@@ -308,6 +346,7 @@ namespace Tests.ViewModels.Unit_Tests
             var foundOldExcludePath = folderToEdit.ExcludePaths.Where(p => p.Path == existingExcludePath).ToList();
             var foundNewExcludePath = folderToEdit.ExcludePaths.Where(p => p.Path == newExcludePath).ToList();
 
+            Assert.AreEqual(oldFolderName, folderToEdit.Name);
             Assert.AreEqual(oldFolderPath, folderToEdit.Path);
             Assert.AreEqual(oldFolderIncludeInScans, folderToEdit.IncludeInScans);
             Assert.AreEqual(1, folderToEdit.ExcludePaths.Count);

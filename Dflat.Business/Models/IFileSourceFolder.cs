@@ -7,6 +7,7 @@ namespace Dflat.Business.Models
     {
         int FileSourceFolderID { get; set; }
 
+        string Name { get; set; }
         bool IncludeInScans { get; set; }
         ICollection<ExcludePath> ExcludePaths { get; set; }
         DateTime? LastScanStart { get; set; }

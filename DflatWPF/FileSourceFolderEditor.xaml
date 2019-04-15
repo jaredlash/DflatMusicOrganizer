@@ -12,6 +12,8 @@
     <Border Padding="10">
         <Grid>
             <Grid.RowDefinitions>
+                <!-- Name -->
+                <RowDefinition Height="Auto" />
                 <!-- Path -->
                 <RowDefinition Height="Auto" />
                 <!-- Include in Scans -->
@@ -28,7 +30,17 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" >
+            <Border Grid.Row="0" Grid.Column="0" Margin="0 0 0 10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Padding="0 0 10 0">Source Name:</TextBlock>
+                <TextBox Grid.Column="1" Text="{Binding Name}" />
+            </Grid>
+            </Border>
+            <Grid Grid.Row="1" Grid.Column="0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -36,14 +48,14 @@
                 <TextBlock Grid.Column="0" Padding="0 0 10 0">Folder Path:</TextBlock>
                 <TextBox Grid.Column="1" Text="{Binding Path}" />
             </Grid>
-            <Button Margin="10 0 0 0" Grid.Column="1" Content="Select" Command="{Binding ChoosePathCommand}" CommandParameter="{Binding ElementName=FileSourceFolderEditorWindow}"/>
-            <CheckBox Margin="0 10 0 10" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsChecked="{Binding IncludeInScans}" Content="Include in automatic scans" />
-            <TextBlock Grid.Row="2" Margin="0 10 0 0" Text="Excluded Folders" />
-            <ListBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding ExcludePaths}" SelectedItem="{Binding SelectedExcludePath}">
+            <Button Grid.Row="1" Grid.Column="1" Margin="10 0 0 0" Content="Select" Command="{Binding ChoosePathCommand}" CommandParameter="{Binding ElementName=FileSourceFolderEditorWindow}"/>
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 10 0 10" IsChecked="{Binding IncludeInScans}" Content="Include in automatic scans" />
+            <TextBlock Grid.Row="3" Margin="0 10 0 0" Text="Excluded Folders" />
+            <ListBox Grid.Column="0" Grid.Row="4" ItemsSource="{Binding ExcludePaths}" SelectedItem="{Binding SelectedExcludePath}">
 
             </ListBox>
 
-            <Grid Grid.Row="3" Grid.Column="1">
+            <Grid Grid.Row="4" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -55,7 +67,7 @@
 
             </Grid>
 
-            <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="60" />
