@@ -15,7 +15,7 @@ namespace Dflat.ViewModels.DialogViewModels
         private FileSourceFolder fileSourceFolder;
         private IDialogService dialogService;
 
-        private bool includeInScans;
+        private bool isTemporaryMedia;
 
         private string name;
         private string path;
@@ -31,11 +31,11 @@ namespace Dflat.ViewModels.DialogViewModels
             this.name = fileSourceFolder.Name;
             path = fileSourceFolder.Path;
 
-            // Default new FileSourceFolders to be included in scans
+            // Default new FileSourceFolders to be permanent media
             if (fileSourceFolder.FileSourceFolderID == 0)
-                includeInScans = true;
+                isTemporaryMedia = false;
             else
-                includeInScans = fileSourceFolder.IncludeInScans;
+                isTemporaryMedia = fileSourceFolder.IsTemporaryMedia;
 
             ExcludePaths = new ObservableCollection<string>();
             foreach (var excludePath in fileSourceFolder.ExcludePaths)
@@ -83,14 +83,14 @@ namespace Dflat.ViewModels.DialogViewModels
             }
         }
         
-        public bool IncludeInScans
+        public bool IsTemporaryMedia
         {
-            get { return includeInScans; }
+            get { return isTemporaryMedia; }
             set
             {
-                if (includeInScans != value)
+                if (isTemporaryMedia != value)
                 {
-                    includeInScans = value;
+                    isTemporaryMedia = value;
                     RaisePropertyChanged();
                 }
             }
@@ -196,7 +196,7 @@ namespace Dflat.ViewModels.DialogViewModels
 
             fileSourceFolder.Name = name;
             fileSourceFolder.Path = path;
-            fileSourceFolder.IncludeInScans = IncludeInScans;
+            fileSourceFolder.IsTemporaryMedia = IsTemporaryMedia;
 
             // Determine which ExcludePaths need to be removed from the fileSourceFolder
             var pathsToRemove = new List<ExcludePath>();

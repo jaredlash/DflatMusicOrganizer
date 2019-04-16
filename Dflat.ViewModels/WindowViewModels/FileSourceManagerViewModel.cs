@@ -221,6 +221,7 @@ namespace Dflat.ViewModels
             dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder, FileSourceFolderEditorMode.Edit);
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
             RaiseNotificationEventsAfterFolderEdit();
+            RaisePropertyChanged(nameof(SelectedFileSourceFolder));
         }
 
         private void RemoveFileSourceFolder()
@@ -238,6 +239,7 @@ namespace Dflat.ViewModels
         private void RaiseNotificationEventsAfterFolderEdit()
         {
             RaisePropertyChanged(nameof(Count));
+
 
             if (SelectedFileSourceFolder == null)
                 return;

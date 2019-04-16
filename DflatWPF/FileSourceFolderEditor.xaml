@@ -49,7 +49,7 @@
                 <TextBox Grid.Column="1" Text="{Binding Path}" />
             </Grid>
             <Button Grid.Row="1" Grid.Column="1" Margin="10 0 0 0" Content="Select" Command="{Binding ChoosePathCommand}" CommandParameter="{Binding ElementName=FileSourceFolderEditorWindow}"/>
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 10 0 10" IsChecked="{Binding IncludeInScans}" Content="Include in automatic scans" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 10 0 10" IsChecked="{Binding IsTemporaryMedia}" Content="Temporary media (e.g. removable drives)" />
             <TextBlock Grid.Row="3" Margin="0 10 0 0" Text="Excluded Folders" />
             <ListBox Grid.Column="0" Grid.Row="4" ItemsSource="{Binding ExcludePaths}" SelectedItem="{Binding SelectedExcludePath}">
 

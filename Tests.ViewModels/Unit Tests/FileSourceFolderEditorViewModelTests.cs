@@ -37,9 +37,9 @@ namespace Tests.ViewModels.Unit_Tests
         #region Loading the editor
 
         [Test]
-        public void LoadingTheEditor_WithANewFileSourceFolder_InitializesIncludeInScansToTrue()
+        public void LoadingTheEditor_WithANewFileSourceFolder_InitializesIsTemporaryMediaToFalse()
         {
-            Assert.IsTrue(editor.IncludeInScans);
+            Assert.IsFalse(editor.IsTemporaryMedia);
         }
         
         [Test]
@@ -47,13 +47,13 @@ namespace Tests.ViewModels.Unit_Tests
         {
             // Set up the folder
             string oldFolderPath = "Old path";
-            bool oldFolderIncludeInScans = false;
+            bool oldFolderIsTemporaryMedia = false;
 
             string existingExcludePath = "Existing path";
 
             folderToEdit.FileSourceFolderID = 1;
             folderToEdit.Path = oldFolderPath;
-            folderToEdit.IncludeInScans = oldFolderIncludeInScans;
+            folderToEdit.IsTemporaryMedia = oldFolderIsTemporaryMedia;
 
             folderToEdit.ExcludePaths.Add(new ExcludePath { Path = existingExcludePath });
 
@@ -63,7 +63,7 @@ namespace Tests.ViewModels.Unit_Tests
 
             // Verify we have set up the new editor according to the existing folder
             Assert.AreEqual(folderToEdit.Path, editor.Path);
-            Assert.AreEqual(folderToEdit.IncludeInScans, editor.IncludeInScans);
+            Assert.AreEqual(folderToEdit.IsTemporaryMedia, editor.IsTemporaryMedia);
             Assert.AreEqual(folderToEdit.ExcludePaths.Count, editor.ExcludePaths.Count);
             Assert.IsTrue(editor.ExcludePaths.Contains(existingExcludePath));
         }
@@ -280,17 +280,17 @@ namespace Tests.ViewModels.Unit_Tests
         }
 
         [Test]
-        public void OkCommand_WhenUserChangesIncludeInScanSetting_FolderHasNewIncludeInScanSetting()
+        public void OkCommand_WhenUserChangesIsTemporaryMediaSetting_FolderHasNewIsTemporaryMediaSetting()
         {
             editor.Name = "NonEmpty";
             editor.Path = "NonEmpty";
 
-            editor.IncludeInScans = false;
-            folderToEdit.IncludeInScans = true;
+            editor.IsTemporaryMedia = false;
+            folderToEdit.IsTemporaryMedia = true;
 
             editor.OkCommand.Execute(null);
 
-            Assert.AreEqual(editor.IncludeInScans, folderToEdit.IncludeInScans);
+            Assert.AreEqual(editor.IsTemporaryMedia, folderToEdit.IsTemporaryMedia);
         }
 
         [Test]
@@ -323,20 +323,20 @@ namespace Tests.ViewModels.Unit_Tests
             // Set up the folder
             string oldFolderName = "Old name";
             string oldFolderPath = "Old path";
-            bool oldFolderIncludeInScans = true;
+            bool oldFolderIsTemporaryMedia = true;
 
             string existingExcludePath = "Existing path";
             string newExcludePath = "Added path";
 
             folderToEdit.Name = oldFolderName;
             folderToEdit.Path = oldFolderPath;
-            folderToEdit.IncludeInScans = oldFolderIncludeInScans;
+            folderToEdit.IsTemporaryMedia = oldFolderIsTemporaryMedia;
 
             folderToEdit.ExcludePaths.Add(new ExcludePath { Path = existingExcludePath });
 
             editor.Name = "New name";
             editor.Path = "New path";
-            editor.IncludeInScans = false;
+            editor.IsTemporaryMedia = false;
 
             // Set up our editor with only the path to add, and leaving out the existing path
             editor.ExcludePaths.Add(newExcludePath);
@@ -348,7 +348,7 @@ namespace Tests.ViewModels.Unit_Tests
 
             Assert.AreEqual(oldFolderName, folderToEdit.Name);
             Assert.AreEqual(oldFolderPath, folderToEdit.Path);
-            Assert.AreEqual(oldFolderIncludeInScans, folderToEdit.IncludeInScans);
+            Assert.AreEqual(oldFolderIsTemporaryMedia, folderToEdit.IsTemporaryMedia);
             Assert.AreEqual(1, folderToEdit.ExcludePaths.Count);
             Assert.AreEqual(1, foundOldExcludePath.Count);
             Assert.AreEqual(0, foundNewExcludePath.Count);

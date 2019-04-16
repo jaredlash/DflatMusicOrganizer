@@ -56,7 +56,12 @@
                         <ListBox ItemsSource="{Binding FileSourceFolders}" SelectedItem="{Binding SelectedFileSourceFolder}">
                             <ListBox.Resources>
                                 <DataTemplate DataType="{x:Type models:FileSourceFolder}">
-                                    <TextBlock Text="{Binding Path}" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Margin="0 0 10 0" Text="{Binding Name}" />
+                                        <TextBlock Text="(" />
+                                        <TextBlock Text="{Binding Path}" />
+                                        <TextBlock Text=")" />
+                                    </StackPanel>
                                 </DataTemplate>
                             </ListBox.Resources>
                         </ListBox>
@@ -81,7 +86,7 @@
                             </Grid>
 
                             <StackPanel Visibility="{Binding CanEdit, Converter={StaticResource VisibilityConverter}}">
-                                <TextBlock>Include In Scans: <Run Text="{Binding SelectedFileSourceFolder.IncludeInScans}" /></TextBlock>
+                                <TextBlock>Temporary Media: <Run Text="{Binding SelectedFileSourceFolder.IsTemporaryMedia}" /></TextBlock>
                                 <TextBlock>Last Scanned:  <Run Text="{Binding SelectedFileSourceFolder.LastScanStart}" /></TextBlock>
                                 <TextBlock>Subfolders Excluded: <Run Text="{Binding SelectedFileSourceFolderExcludeCount, Mode=OneWay}" /></TextBlock>
                             </StackPanel>
@@ -105,9 +110,10 @@
                 <TextBlock Text="{Binding Count}" VerticalAlignment="Center" />
                 
                 <!-- Save and Cancel buttons -->
-
-                <Button Grid.Column="2" Margin="0 0 5 0" Command="{Binding SaveCommand}" Content="Save"/>
-                <Button Grid.Column="1" Margin="5 0 0 0" Command="{Binding RequestClose}" CommandParameter="{Binding ElementName=FileSourceManagerWindow}"  Content="Cancel" />
+                <Button Grid.Column="1" Margin="0 0 5 0" Command="{Binding RequestClose}" CommandParameter="{Binding ElementName=FileSourceManagerWindow}"  Content="Cancel" />
+                
+                <Button Grid.Column="2" Margin="5 0 0 0" Command="{Binding SaveCommand}" Content="Save"/>
+                
             </Grid>
 
 
