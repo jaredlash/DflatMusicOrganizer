@@ -82,6 +82,10 @@
     <Compile Include="Migrations\201904190209345_Remove explicit FileSourceFolderScanJob DbSet.Designer.cs">
       <DependentUpon>201904190209345_Remove explicit FileSourceFolderScanJob DbSet.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904190306047_Add One-to-many job dependencies.cs" />
+    <Compile Include="Migrations\201904190306047_Add One-to-many job dependencies.Designer.cs">
+      <DependentUpon>201904190306047_Add One-to-many job dependencies.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="UnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -112,6 +116,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904190209345_Remove explicit FileSourceFolderScanJob DbSet.resx">
       <DependentUpon>201904190209345_Remove explicit FileSourceFolderScanJob DbSet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904190306047_Add One-to-many job dependencies.resx">
+      <DependentUpon>201904190306047_Add One-to-many job dependencies.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

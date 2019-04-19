@@ -50,7 +50,18 @@ namespace Dflat.Business.Services
 
         public override void DoWork(FileSourceFolderScanJob job)
         {
-            var result = ScanFolder(job);
+            IFolderSearchServiceResult result;
+            try
+            { 
+                result = ScanFolder(job);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                job.Errors = e.Message;
+                job.Status = JobStatus.Error;
+
+                return;
+            }
 
             job.Errors = string.Join("\n", result.ErrorLog);
 
@@ -92,7 +103,8 @@ namespace Dflat.Business.Services
 
         public override void FinishJob(FileSourceFolderScanJob job)
         {
-            
+
+            base.FinishJob(job);
         }
 
     }
