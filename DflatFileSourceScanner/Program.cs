@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dflat.Infrastructure.IO.Filesystem;
 using Dflat.Infrastructure.IO.Interfaces.Filesystem;
 using System.IO;
@@ -11,7 +12,7 @@ namespace DflatFileSourceScanner
         static bool MusicFilter(string filename)
         {
             string extension;
-            HashSet<string> validExtensions = new HashSet<string>(){ ".aiff", ".flac", ".m4a", ".mp2", ".mp3", ".ogg", ".wav", ".wma"};
+            HashSet<string> validExtensions = new HashSet<string>() { ".aiff", ".flac", ".m4a", ".mp2", ".mp3", ".ogg", ".wav", ".wma" };
             try
             {
                 extension = Path.GetExtension(filename).ToLowerInvariant();
@@ -32,21 +33,20 @@ namespace DflatFileSourceScanner
         {
             IFolderSearchService folderSearch = new FolderSearchService(MusicFilter);
 
-            foreach (var arg in args)
+            var excludeDirectories = args.Skip(1);
+
+            IFolderSearchServiceResult result = folderSearch.FindFiles(args[0], new HashSet<string>(excludeDirectories), MusicFilter);
+
+            if (result.ErrorLog.Count > 0)
             {
-                IFolderSearchServiceResult result = folderSearch.FindFiles(args[0]);
+                foreach (var error in result.ErrorLog)
+                    Console.WriteLine("Error: {0}", error);
 
-                if (result.ErrorLog.Count > 0)
-                {
-                    foreach (var error in result.ErrorLog)
-                        Console.WriteLine("Error: {0}", error);
-
-                    return 1;
-                }
-
-                foreach (var foundFile in result.FoundFiles)
-                    Console.WriteLine(foundFile);
+                return 1;
             }
+
+            foreach (var foundFile in result.FoundFiles)
+                Console.WriteLine(foundFile);
 
             return 0;
         }

@@ -73,6 +73,10 @@
     <Compile Include="Migrations\201904152354289_Change IncludeInScans setting to IsTemporaryMedia in FileSourceFolder.Designer.cs">
       <DependentUpon>201904152354289_Change IncludeInScans setting to IsTemporaryMedia in FileSourceFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.cs" />
+    <Compile Include="Migrations\201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.Designer.cs">
+      <DependentUpon>201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="UnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,6 +101,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904152354289_Change IncludeInScans setting to IsTemporaryMedia in FileSourceFolder.resx">
       <DependentUpon>201904152354289_Change IncludeInScans setting to IsTemporaryMedia in FileSourceFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.resx">
+      <DependentUpon>201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

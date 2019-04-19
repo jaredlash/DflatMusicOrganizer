@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Dflat.Infrastructure.IO.Interfaces.Filesystem
 {
-	public interface IFolderSearchService
+    public interface IFolderSearchService
 	{
-		IFolderSearchServiceResult FindFiles (string sourceDirectory, Predicate<string> condition);
+        IFolderSearchServiceResult FindFiles(string sourceDirectory, HashSet<string> excludeDirectories, Predicate<string> condition);
 
-		IFolderSearchServiceResult FindFiles (string sourceDirectory);
+        IFolderSearchServiceResult FindFiles(string sourceDirectory, Predicate<string> condition);
+
+		IFolderSearchServiceResult FindFiles(string sourceDirectory);
 	}
 }
 

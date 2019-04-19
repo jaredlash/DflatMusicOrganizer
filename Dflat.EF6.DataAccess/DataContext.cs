@@ -17,10 +17,16 @@ namespace Dflat.EF6.DataAccess
 
         public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
 
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<FileSourceFolderScanJob> FileSourceFolderScanJobs { get; set; }
+
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ExcludePath>().HasKey(table => new { table.ExcludePathID, table.FileSourceFolderID });
             modelBuilder.Entity<ExcludePath>().Property(table => table.ExcludePathID).HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
+            modelBuilder.Entity<Job>().ToTable("Jobs");
+            modelBuilder.Entity<FileSourceFolderScanJob>().ToTable("FileSourceFolderScanJobs");
         }
 
     }

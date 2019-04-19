@@ -19,17 +19,19 @@ namespace Dflat.Infrastructure.IO.Filesystem
             _searchFilter = condition;
         }
 
-		public IFolderSearchServiceResult FindFiles (string sourceDirectory, Predicate<string> condition)
+		public IFolderSearchServiceResult FindFiles (string sourceDirectory, HashSet<string> excludeDirectories, Predicate<string> condition)
 		{
 			Stack<string> dirs = new Stack<string> (20);
 			FolderSearchServiceResult result = new FolderSearchServiceResult ();
 
-			if (Directory.Exists (sourceDirectory))
-				dirs.Push (sourceDirectory);
-			else
-				result.ErrorLog.Add(string.Format("{0}: Directory does not exist: {1}", this.GetType().ToString(), sourceDirectory));
+			if (!Directory.Exists (sourceDirectory))
+                new DirectoryNotFoundException(string.Format("Directory does not exist: {1}", sourceDirectory));
+            else
+            { 
+                if (!excludeDirectories.Contains(sourceDirectory)) dirs.Push(sourceDirectory);
+            }
 
-			while (dirs.Count > 0)
+            while (dirs.Count > 0)
 			{
                 string currentDirectory = dirs.Pop ();
                 string[] subDirectories;
@@ -98,17 +100,21 @@ namespace Dflat.Infrastructure.IO.Filesystem
 				// Push the subdirectories onto the stack for traversal. 
 				// This could also be done before handing the files. 
 				foreach (string str in subDirectories)
-					dirs.Push(str);
+					if (!excludeDirectories.Contains(str)) dirs.Push(str);
 
 			}
 
 			return result;
 		}
 
+        public IFolderSearchServiceResult FindFiles(string sourceDirectory, Predicate<string> condition)
+        {
+            return FindFiles(sourceDirectory, new HashSet<string>(), condition);
+        }
 
-		public IFolderSearchServiceResult FindFiles (string sourceDirectory)
+        public IFolderSearchServiceResult FindFiles (string sourceDirectory)
 		{
-			return FindFiles(sourceDirectory, _searchFilter);
+			return FindFiles(sourceDirectory, new HashSet<string>(), _searchFilter);
 		}
 	}
 }
