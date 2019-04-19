@@ -50,7 +50,7 @@ namespace Dflat.ViewModels.Tests
             mockUnitOfWork = new Mock<IUnitOfWork>();
             
             fileSourceFolderRepository = mockFileSourceFolderRepository.Object;
-            mockUnitOfWork.SetupGet(m => m.IFileSourceFolderRepository).Returns(fileSourceFolderRepository);
+            mockUnitOfWork.SetupGet(m => m.FileSourceFolderRepository).Returns(fileSourceFolderRepository);
             mockUnitOfWork.Setup(m => m.HasChanges()).Returns(() => hasChanges);
 
             uow = mockUnitOfWork.Object;

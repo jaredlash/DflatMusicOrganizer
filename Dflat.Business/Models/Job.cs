@@ -15,5 +15,10 @@ namespace Dflat.Business.Models
         public bool IgnoreCache { get; set; }
         public string Output { get; set; }
         public string Errors { get; set; }
+
+        public int? DependentJobID { get; set; }
+        public Job DependentJob { get; set; }
+
+        public ICollection<Job> PrerequisiteJobs { get; set; }
     }
 }

@@ -57,7 +57,7 @@ namespace Dflat.ViewModels
             FileSourceFolders.Clear();
             SelectedFileSourceFolder = null;
 
-            foreach (var fileSourceFolder in uowManager.UnitOfWork.IFileSourceFolderRepository.GetAll())
+            foreach (var fileSourceFolder in uowManager.UnitOfWork.FileSourceFolderRepository.GetAll())
                 FileSourceFolders.Add(fileSourceFolder);
         }
 
@@ -200,12 +200,12 @@ namespace Dflat.ViewModels
 
         private void AddFileSourceFolder()
         {
-            FileSourceFolder newFileSourceFolder = uowManager.UnitOfWork.IFileSourceFolderRepository.Create();
+            FileSourceFolder newFileSourceFolder = uowManager.UnitOfWork.FileSourceFolderRepository.Create();
             bool? result = dialogService.FileSourceFolderEditor(uowManager, newFileSourceFolder, FileSourceFolderEditorMode.New);
             if (result != true)
             {
                 // User cancelled the addition, so we remove it from our UnitOfWork
-                uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(newFileSourceFolder);
+                uowManager.UnitOfWork.FileSourceFolderRepository.Remove(newFileSourceFolder);
             }
             else
             {
@@ -229,7 +229,7 @@ namespace Dflat.ViewModels
             bool? result = dialogService.ConfirmDialog("Confirm", $"Are you sure you want to remove {SelectedFileSourceFolder.Path}?", "Yes", "Cancel");
             if (result == true)
             {
-                uowManager.UnitOfWork.IFileSourceFolderRepository.Remove(SelectedFileSourceFolder);
+                uowManager.UnitOfWork.FileSourceFolderRepository.Remove(SelectedFileSourceFolder);
                 FileSourceFolders.Remove(SelectedFileSourceFolder);
                 ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
                 RaiseNotificationEventsAfterFolderEdit();

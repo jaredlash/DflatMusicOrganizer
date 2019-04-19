@@ -71,6 +71,7 @@
     <Compile Include="Models\Job.cs" />
     <Compile Include="Models\JobStatus.cs" />
     <Compile Include="Repositories\IFileSourceFolderRepository.cs" />
+    <Compile Include="Repositories\IJobRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Models\ExcludePath.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="JobScheduler.cs" />
     <Compile Include="Models\FileSourceFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\JobQueue.cs" />
     <Compile Include="Services\FileSourceFolderScanService.cs" />
     <Compile Include="Services\IJobQueue.cs" />
     <Compile Include="Services\JobService.cs" />

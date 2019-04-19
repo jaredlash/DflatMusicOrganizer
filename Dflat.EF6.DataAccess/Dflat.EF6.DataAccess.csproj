@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="DataContext.cs" />
     <Compile Include="FileSourceFolderRepository.cs" />
+    <Compile Include="JobRepository.cs" />
     <Compile Include="Migrations\201904120105117_Initial.cs" />
     <Compile Include="Migrations\201904120105117_Initial.Designer.cs">
       <DependentUpon>201904120105117_Initial.cs</DependentUpon>
@@ -76,6 +77,10 @@
     <Compile Include="Migrations\201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.cs" />
     <Compile Include="Migrations\201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.Designer.cs">
       <DependentUpon>201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904190209345_Remove explicit FileSourceFolderScanJob DbSet.cs" />
+    <Compile Include="Migrations\201904190209345_Remove explicit FileSourceFolderScanJob DbSet.Designer.cs">
+      <DependentUpon>201904190209345_Remove explicit FileSourceFolderScanJob DbSet.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="UnitOfWork.cs" />
@@ -104,6 +109,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.resx">
       <DependentUpon>201904160057239_Create Job, JobStatus, FileSourceFolderScanJob.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904190209345_Remove explicit FileSourceFolderScanJob DbSet.resx">
+      <DependentUpon>201904190209345_Remove explicit FileSourceFolderScanJob DbSet.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

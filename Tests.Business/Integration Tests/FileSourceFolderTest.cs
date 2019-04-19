@@ -27,7 +27,7 @@ namespace Tests.Business.Integration_Tests
             
             fileSourceFolderRepository = mockFileSourceFolderRepository.Object;
 
-            mockUnitOfWork.SetupGet(m => m.IFileSourceFolderRepository).Returns(fileSourceFolderRepository);
+            mockUnitOfWork.SetupGet(m => m.FileSourceFolderRepository).Returns(fileSourceFolderRepository);
 
             unitOfWork = mockUnitOfWork.Object;
 
@@ -41,7 +41,7 @@ namespace Tests.Business.Integration_Tests
 		[Test]
 		public void TestCreateFromRepository()
 		{
-            IFileSourceFolder fileSourceFolder = unitOfWork.IFileSourceFolderRepository.Create();
+            IFileSourceFolder fileSourceFolder = unitOfWork.FileSourceFolderRepository.Create();
             
 
 			Assert.IsNotNull(fileSourceFolder);

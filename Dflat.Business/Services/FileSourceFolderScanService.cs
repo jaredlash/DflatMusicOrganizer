@@ -14,7 +14,7 @@ namespace Dflat.Business.Services
     {
         
         
-        private readonly IJobQueue<FileSourceFolderScanJob> jobQueue;
+        private readonly IJobQueue jobQueue;
         private readonly IFolderSearchService folderScanner;
 
 
@@ -22,7 +22,7 @@ namespace Dflat.Business.Services
 
         public FileSourceFolderScanService(
             IUnitOfWorkFactory unitOfWorkFactory,
-            IJobQueue<FileSourceFolderScanJob> jobQueue,
+            IJobQueue jobQueue,
             IFolderSearchService folderScanner
             ) 
             : base(unitOfWorkFactory, jobQueue)

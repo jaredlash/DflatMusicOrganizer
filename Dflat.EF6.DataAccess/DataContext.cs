@@ -18,7 +18,6 @@ namespace Dflat.EF6.DataAccess
         public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
 
         public DbSet<Job> Jobs { get; set; }
-        public DbSet<FileSourceFolderScanJob> FileSourceFolderScanJobs { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -5,7 +5,8 @@ namespace Dflat.Business
 {
     public interface IUnitOfWork : IDisposable
     {
-        IFileSourceFolderRepository IFileSourceFolderRepository { get;  }
+        IFileSourceFolderRepository FileSourceFolderRepository { get;  }
+        IJobRepository JobRepository { get; }
 
         bool HasChanges();
 

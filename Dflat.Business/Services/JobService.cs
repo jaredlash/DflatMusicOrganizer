@@ -14,11 +14,11 @@ namespace Dflat.Business.Services
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
 
-        private IJobQueue<JobType> jobQueue;
+        private IJobQueue jobQueue;
 
         protected readonly IUnitOfWorkFactory unitOfWorkFactory;
 
-        public JobService(IUnitOfWorkFactory unitOfWorkFactory, IJobQueue<JobType> jobQueue)
+        public JobService(IUnitOfWorkFactory unitOfWorkFactory, IJobQueue jobQueue)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.jobQueue = jobQueue;
@@ -34,12 +34,12 @@ namespace Dflat.Business.Services
                 if (RunningJobCount == MaxConcurrentJobs)
                     return;
 
-                var job = jobQueue.GetNextAvailableJob();
+                var job = jobQueue.GetNextAvailableJob<JobType>();
                 if (job == null)
                     return;
 
                 // Do Async timer here for throttling jobs (such as with the AcoustID and MusicBrainz cases)
-                
+
                 SetupJob(job);
 
                 DoWork(job);
@@ -54,6 +54,11 @@ namespace Dflat.Business.Services
         {
             QueuePrerequisites(job);
 
+            if (job.PrerequisiteJobs.Count == 0)
+                job.Status = JobStatus.Ready;
+            else
+                job.Status = JobStatus.Queued;
+
             jobQueue.Add(job);
         }
 
@@ -62,15 +67,37 @@ namespace Dflat.Business.Services
         public abstract void SetupJob(JobType job);
 
         public abstract void DoWork(JobType job);
-        
+
         public virtual void FinishJob(JobType job)
         {
+            if (job.Status == JobStatus.Success)
+                UpdateDependentJobStatus(job);
 
             // Let things know we're done.
             if (JobFinished != null)
                 JobFinished(job, null);
+
         }
-        
+
+
+        private void UpdateDependentJobStatus(JobType job)
+        {
+            if (job.DependentJobID == null)
+                return;
+
+            int parentID = (int)job.DependentJobID;
+
+            using (var unitOfWork = unitOfWorkFactory.Create())
+            {
+                // See if our parent job has any other jobs that are not finished successfully
+                if (unitOfWork.JobRepository.PrerequisitesFinished(parentID))
+                {
+                    var parentJob = unitOfWork.JobRepository.Get(parentID);
+                    parentJob.Status = JobStatus.Ready;
+                    unitOfWork.SaveChanges();
+                }
+            }
+        }
 
         public event EventHandler JobFinished;
     }

@@ -13,6 +13,7 @@ namespace Dflat.EF6.DataAccess
         private bool disposed;
 
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
+        private readonly IJobRepository jobRepository;
 
         public UnitOfWork() : this(new DataContext())
         {
@@ -26,9 +27,11 @@ namespace Dflat.EF6.DataAccess
             this.disposed = false;
 
             fileSourceFolderRepository = new FileSourceFolderRepository(context);
+            jobRepository = new JobRepository(context);
+            
         }
 
-        public IFileSourceFolderRepository IFileSourceFolderRepository
+        public IFileSourceFolderRepository FileSourceFolderRepository
         {
             get
             {
@@ -36,6 +39,13 @@ namespace Dflat.EF6.DataAccess
             }
         }
 
+        public IJobRepository JobRepository
+        {
+            get
+            {
+                return jobRepository;
+            }
+        }
 
         public bool HasChanges()
         {
