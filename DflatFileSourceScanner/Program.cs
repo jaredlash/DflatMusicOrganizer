@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dflat.Infrastructure.IO.Filesystem;
-using Dflat.Infrastructure.IO.Interfaces.Filesystem;
 using System.IO;
 
 namespace DflatFileSourceScanner
@@ -35,7 +34,7 @@ namespace DflatFileSourceScanner
 
             var excludeDirectories = args.Skip(1);
 
-            IFolderSearchServiceResult result = folderSearch.FindFiles(args[0], new HashSet<string>(excludeDirectories), MusicFilter);
+            var result = folderSearch.FindFiles(args[0], new HashSet<string>(excludeDirectories), MusicFilter);
 
             if (result.ErrorLog.Count > 0)
             {
@@ -46,7 +45,7 @@ namespace DflatFileSourceScanner
             }
 
             foreach (var foundFile in result.FoundFiles)
-                Console.WriteLine(foundFile);
+                Console.WriteLine("{0}: {1}", foundFile.Extension.ToUpperInvariant(), Path.Combine(foundFile.Directory, foundFile.Filename));
 
             return 0;
         }

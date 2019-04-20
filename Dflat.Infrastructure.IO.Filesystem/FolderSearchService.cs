@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Dflat.Infrastructure.IO.Interfaces.Filesystem;
 
 namespace Dflat.Infrastructure.IO.Filesystem
 {
-	public class FolderSearchService : IFolderSearchService
+    public class FolderSearchService : IFolderSearchService
 	{
         private readonly Predicate<string> _searchFilter;
 
@@ -19,7 +18,7 @@ namespace Dflat.Infrastructure.IO.Filesystem
             _searchFilter = condition;
         }
 
-		public IFolderSearchServiceResult FindFiles (string sourceDirectory, HashSet<string> excludeDirectories, Predicate<string> condition)
+		public FolderSearchServiceResult FindFiles (string sourceDirectory, HashSet<string> excludeDirectories, Predicate<string> condition)
 		{
 			Stack<string> dirs = new Stack<string> (20);
 			FolderSearchServiceResult result = new FolderSearchServiceResult ();
@@ -71,7 +70,6 @@ namespace Dflat.Infrastructure.IO.Filesystem
 					result.ErrorLog.Add (e.Message);
 					continue;
 				}
-
 				catch (System.IO.DirectoryNotFoundException e)
 				{
 					result.ErrorLog.Add (e.Message);
@@ -85,16 +83,25 @@ namespace Dflat.Infrastructure.IO.Filesystem
 					{
 						// Perform whatever action is required in your scenario.
 						if (condition.Invoke(file))
-							result.FoundFiles.Add(file);
-					}
+                        {
+                            FileInfo fileInfo = new FileInfo(file);
+                            var fileResult = new FileResult { Filename = fileInfo.Name, Extension = fileInfo.Extension, Directory = fileInfo.Directory.FullName, LastModifiedTime = fileInfo.LastWriteTime, Size = fileInfo.Length }; 
+							result.FoundFiles.Add(fileResult);
+                        }
+                    }
 					catch (System.IO.FileNotFoundException e)
 					{
-						// If file was deleted by a separate application 
-						// or thread since the call to TraverseTree() 
-						// then just continue.
+						// If file was deleted by a separate application then just continue.
 						result.ErrorLog.Add (e.Message);
 						continue;
 					}
+                    catch (Exception e)
+                    {
+                        // Report all other errors in the error log.  Logs will be examined to see if any errors occur in testing
+                        // which warrant special casing.
+                        result.ErrorLog.Add(e.Message);
+                        continue;
+                    }
 				}
 
 				// Push the subdirectories onto the stack for traversal. 
@@ -107,12 +114,12 @@ namespace Dflat.Infrastructure.IO.Filesystem
 			return result;
 		}
 
-        public IFolderSearchServiceResult FindFiles(string sourceDirectory, Predicate<string> condition)
+        public FolderSearchServiceResult FindFiles(string sourceDirectory, Predicate<string> condition)
         {
             return FindFiles(sourceDirectory, new HashSet<string>(), condition);
         }
 
-        public IFolderSearchServiceResult FindFiles (string sourceDirectory)
+        public FolderSearchServiceResult FindFiles (string sourceDirectory)
 		{
 			return FindFiles(sourceDirectory, new HashSet<string>(), _searchFilter);
 		}

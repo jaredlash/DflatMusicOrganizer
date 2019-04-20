@@ -50,15 +50,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileResult.cs" />
+    <Compile Include="IFolderSearchService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FolderSearchService.cs" />
     <Compile Include="FolderSearchServiceResult.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Dflat.Infrastructure.IO.Interfaces.Filesystem\Dflat.Infrastructure.IO.Interfaces.Filesystem.csproj">
-      <Project>{1beb91b3-392c-4ddc-8db7-2594763afd53}</Project>
-      <Name>Dflat.Infrastructure.IO.Interfaces.Filesystem</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

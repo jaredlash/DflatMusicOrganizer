@@ -1,21 +1,19 @@
-using System;
-using Dflat.Infrastructure.IO.Interfaces.Filesystem;
 using System.Collections.Generic;
 
 namespace Dflat.Infrastructure.IO.Filesystem
 {
-	public class FolderSearchServiceResult : IFolderSearchServiceResult
+    public class FolderSearchServiceResult
 	{
-		private readonly List<string> foundFiles;
+		private readonly List<FileResult> foundFiles;
 		private readonly List<string> errorLog;
 
 		public FolderSearchServiceResult ()
 		{
-			foundFiles = new List<string> ();
+			foundFiles = new List<FileResult> ();
 			errorLog = new List<string> ();
 		}
 
-		public IList<string> FoundFiles
+		public IList<FileResult> FoundFiles
 		{
 			get
 			{
