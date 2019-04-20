@@ -85,9 +85,7 @@ namespace Dflat.Infrastructure.IO.Filesystem
 						if (condition.Invoke(file))
                         {
                             FileInfo fileInfo = new FileInfo(file);
-                            var dirList = fileInfo.Directory.FullName.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                            var fileResult = new FileResult(fileInfo.Name, dirList, new string(Path.DirectorySeparatorChar, 1), fileInfo.Extension, fileInfo.Length, fileInfo.LastWriteTime);
-							result.FoundFiles.Add(fileResult);
+                            result.FoundFiles.Add(new FileResult(fileInfo.Name, fileInfo.DirectoryName, fileInfo.Extension, fileInfo.Length, fileInfo.LastWriteTime));
                         }
                     }
 					catch (System.IO.FileNotFoundException e)

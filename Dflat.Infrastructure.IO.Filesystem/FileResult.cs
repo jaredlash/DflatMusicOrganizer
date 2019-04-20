@@ -9,11 +9,10 @@ namespace Dflat.Infrastructure.IO.Filesystem
 {
     public class FileResult
     {
-        public FileResult(string filename, string[] directoryList, string directorySeparator, string extension, long size, DateTime lastModifiedTime)
+        public FileResult(string filename, string directory, string extension, long size, DateTime lastModifiedTime)
         {
             Filename = filename;
-            DirectoryList = directoryList;
-            DirectorySeparator = directorySeparator;
+            Directory = directory;
             Extension = extension;
             Size = size;
             LastModifiedTime = lastModifiedTime;
@@ -28,18 +27,7 @@ namespace Dflat.Infrastructure.IO.Filesystem
         /// <summary>
         /// Containing directory's full path (excluding the filename)
         /// </summary>
-        public string Directory
-        {
-            get
-            {
-                return string.Join(DirectorySeparator, DirectoryList);
-            }
-        }
-        
-
-        public string[] DirectoryList { get; private set; }
-
-        public string DirectorySeparator { get; private set; }
+        public string Directory { get; private set; }
 
         /// <summary>
         /// File extension
