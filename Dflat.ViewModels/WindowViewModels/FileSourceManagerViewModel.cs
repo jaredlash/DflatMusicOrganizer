@@ -200,15 +200,12 @@ namespace Dflat.ViewModels
 
         private void AddFileSourceFolder()
         {
-            FileSourceFolder newFileSourceFolder = uowManager.UnitOfWork.FileSourceFolderRepository.Create();
+            FileSourceFolder newFileSourceFolder = new FileSourceFolder();
             bool? result = dialogService.FileSourceFolderEditor(uowManager, newFileSourceFolder, FileSourceFolderEditorMode.New);
-            if (result != true)
+            if (result == true)
             {
-                // User cancelled the addition, so we remove it from our UnitOfWork
-                uowManager.UnitOfWork.FileSourceFolderRepository.Remove(newFileSourceFolder);
-            }
-            else
-            {
+                uowManager.UnitOfWork.FileSourceFolderRepository.Add(newFileSourceFolder);
+
                 // Added a new folder, so notify that we can save.
                 ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
                 FileSourceFolders.Add(newFileSourceFolder);

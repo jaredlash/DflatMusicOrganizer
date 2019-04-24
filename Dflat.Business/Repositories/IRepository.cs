@@ -7,9 +7,11 @@ namespace Dflat.Business.Repositories
         T Get(int id);
         List<T> GetAll();
 
-        T Create();
+        void Add(T item);
 
         void Remove(T item);
         void Remove(int id);
+
+        void Save();
     }
 }

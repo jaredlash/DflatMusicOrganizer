@@ -18,15 +18,12 @@ namespace Dflat.EF6.DataAccess
             this.context = context;
         }
 
-        public FileSourceFolder Create()
+        public void Add(FileSourceFolder folder)
         {
-            var folder = new FileSourceFolder();
-
             context.FileSourceFolders.Add(folder);
-
-            return folder;
         }
 
+        
         public FileSourceFolder Get(int id)
         {
             var folder = context.FileSourceFolders.Find(id);
@@ -61,6 +58,11 @@ namespace Dflat.EF6.DataAccess
                 context.FileSourceFolders.Attach(folderToRemove);
                 context.FileSourceFolders.Remove(folderToRemove);
             }
+        }
+
+        public void Save()
+        {
+            context.SaveChanges();
         }
     }
 }

@@ -43,8 +43,8 @@ namespace Dflat.ViewModels.Tests
 
             // Set up our mock FileSourceFolderRepository
             mockFileSourceFolderRepository = new Mock<IFileSourceFolderRepository>();
-            mockFileSourceFolderRepository.Setup(m => m.Create()).Returns(() => dummyRepoCreate());
             mockFileSourceFolderRepository.Setup(m => m.Remove(It.IsNotNull<FileSourceFolder>())).Callback<FileSourceFolder>((f) => dummyRepoRemove(f));
+            mockFileSourceFolderRepository.Setup(m => m.Add(It.IsNotNull<FileSourceFolder>())).Callback<FileSourceFolder>((f) => dummyRepoAdd(f));
 
             // Set up our mock unit of work
             mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -73,11 +73,9 @@ namespace Dflat.ViewModels.Tests
 
         }
 
-        private FileSourceFolder dummyRepoCreate()
+        private void dummyRepoAdd(FileSourceFolder folder)
         {
-            var f = new FileSourceFolder();
-            dummyRepo.Add(f);
-            return f;
+            dummyRepo.Add(folder);
         }
 
         private void dummyRepoRemove(FileSourceFolder folder)
@@ -158,9 +156,11 @@ namespace Dflat.ViewModels.Tests
         [Test]
         public void AddCommand_CreatesNewFileSourceFolder()
         {
+            userAcceptsNewFolder = true;
+
             fileSourceManagerViewModel.AddCommand.Execute(null);
 
-            mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Once());
+            mockFileSourceFolderRepository.Verify(m => m.Add(It.IsNotNull<FileSourceFolder>()), Times.Once());
         }
 
         [Test]
@@ -220,7 +220,7 @@ namespace Dflat.ViewModels.Tests
         {
             fileSourceManagerViewModel.EditCommand.Execute(null);
 
-            mockFileSourceFolderRepository.Verify(m => m.Create(), Times.Never());
+            mockFileSourceFolderRepository.Verify(m => m.Add(It.IsAny<FileSourceFolder>()), Times.Never());
         }
 
 
