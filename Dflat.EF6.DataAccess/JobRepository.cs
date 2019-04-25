@@ -16,12 +16,7 @@ namespace Dflat.EF6.DataAccess
         {
             this.context = context;
         }
-
-        public Job Create()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void Add(Job job)
         {
             context.Jobs.Add(job);
@@ -48,26 +43,53 @@ namespace Dflat.EF6.DataAccess
             throw new NotImplementedException();
         }
 
-        
-        public JobType FindNextAvailable<JobType>() where JobType : Job
+        public List<JobType> GetCurrentlyRunning<JobType>() where JobType : Job
         {
-            // Try to get a job with all of its prerequisites met (ready state)
-            JobType job = context.Jobs.AsNoTracking().OfType<JobType>().Where((j) => j.Status == JobStatus.Ready).FirstOrDefault();
+            return context.Jobs.AsNoTracking().OfType<JobType>().Where((j) => j.Status == JobStatus.Running).ToList();
+        }
 
 
-            return job;
+        public List<JobType> GetReadyJobs<JobType>() where JobType : Job
+        {
+            return context.Jobs.AsNoTracking().OfType<JobType>().Where((j) => j.Status == JobStatus.Ready).ToList();
+        }
+
+        public JobType GetNextAvailable<JobType>() where JobType : Job
+        {
+            // First get the jobs that are currently running so that we can check that the job we pick which is queued is not equivalent
+            // to one that is currently running.
+            var runningJobs = GetCurrentlyRunning<JobType>();
+
+            // Now get the jobs that are ready to be run
+            var readyJobs = GetReadyJobs<JobType>();
+
+            JobType nextJob = readyJobs.Where((j) => runningJobs.Any((r) => r.SameRequestAs(j)) == false).FirstOrDefault();
+
+            if (nextJob == null)
+                return null;
+
+
+            // Update both a tracked and untracked version of the job so that we can save the new state.
+            var tempJob = Get(nextJob.JobID).Status = nextJob.Status = JobStatus.Running;
+
+            // Return the detached version
+            return nextJob;
         }
 
         public bool PrerequisitesFinished(int jobID)
         {
-            // See if there are still jobs that this job is waiting on
-            int count = context.Jobs.Where((p) => p.DependentJobID == jobID && p.Status != JobStatus.Success).Count();
-
-            // If we have any, then the Prerequisites have not finished.
-            if (count > 0)
-                return false;
-            else
+            // Return True if we don't have any prerequisites
+            if (!context.Jobs.Any((p) => p.DependentJobID == jobID))
                 return true;
+
+            // Make sure that all jobs that JobID is dependent on have finished
+            return context.Jobs.Where((p) => p.DependentJobID == jobID).All((p) => p.Status == JobStatus.Success);
+            
+        }
+
+        public void Save()
+        {
+            context.SaveChanges();
         }
     }
 }

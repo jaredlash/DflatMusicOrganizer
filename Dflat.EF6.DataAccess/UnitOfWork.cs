@@ -12,6 +12,8 @@ namespace Dflat.EF6.DataAccess
         private readonly DataContext context;
         private bool disposed;
 
+        private readonly IFileRepository fileRepository;
+
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
         private readonly IJobRepository jobRepository;
 
@@ -26,9 +28,19 @@ namespace Dflat.EF6.DataAccess
 
             this.disposed = false;
 
+            fileRepository = new FileRepository(context);
+
             fileSourceFolderRepository = new FileSourceFolderRepository(context);
             jobRepository = new JobRepository(context);
             
+        }
+
+        public IFileRepository FileRepository
+        {
+            get
+            {
+                return fileRepository;
+            }
         }
 
         public IFileSourceFolderRepository FileSourceFolderRepository

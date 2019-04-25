@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="EFDataTest.cs" />
     <Compile Include="Integration Tests\FileSourceFolderRepositoryTests.cs" />
+    <Compile Include="Integration Tests\JobRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

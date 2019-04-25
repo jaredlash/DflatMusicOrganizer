@@ -35,6 +35,8 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
     <Prefer32Bit>false</Prefer32Bit>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows Release|AnyCPU'">
     <OutputPath>bin\Windows Release\</OutputPath>
@@ -60,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
+    <Compile Include="FileRepository.cs" />
     <Compile Include="FileSourceFolderRepository.cs" />
     <Compile Include="JobRepository.cs" />
     <Compile Include="Migrations\201904120105117_Initial.cs" />
@@ -85,6 +88,22 @@
     <Compile Include="Migrations\201904190306047_Add One-to-many job dependencies.cs" />
     <Compile Include="Migrations\201904190306047_Add One-to-many job dependencies.Designer.cs">
       <DependentUpon>201904190306047_Add One-to-many job dependencies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904200205137_Add File, FileChromaprintJob, and FileMD5Job entities.cs" />
+    <Compile Include="Migrations\201904200205137_Add File, FileChromaprintJob, and FileMD5Job entities.Designer.cs">
+      <DependentUpon>201904200205137_Add File, FileChromaprintJob, and FileMD5Job entities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904200256388_FileChromaprintJob and FileMD5Job file field changed to FileID.cs" />
+    <Compile Include="Migrations\201904200256388_FileChromaprintJob and FileMD5Job file field changed to FileID.Designer.cs">
+      <DependentUpon>201904200256388_FileChromaprintJob and FileMD5Job file field changed to FileID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904250157314_Update Job Structure.cs" />
+    <Compile Include="Migrations\201904250157314_Update Job Structure.Designer.cs">
+      <DependentUpon>201904250157314_Update Job Structure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904250243383_Fix job dependency relation.cs" />
+    <Compile Include="Migrations\201904250243383_Fix job dependency relation.Designer.cs">
+      <DependentUpon>201904250243383_Fix job dependency relation.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="UnitOfWork.cs" />
@@ -119,6 +138,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904190306047_Add One-to-many job dependencies.resx">
       <DependentUpon>201904190306047_Add One-to-many job dependencies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904200205137_Add File, FileChromaprintJob, and FileMD5Job entities.resx">
+      <DependentUpon>201904200205137_Add File, FileChromaprintJob, and FileMD5Job entities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904200256388_FileChromaprintJob and FileMD5Job file field changed to FileID.resx">
+      <DependentUpon>201904200256388_FileChromaprintJob and FileMD5Job file field changed to FileID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904250157314_Update Job Structure.resx">
+      <DependentUpon>201904250157314_Update Job Structure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904250243383_Fix job dependency relation.resx">
+      <DependentUpon>201904250243383_Fix job dependency relation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

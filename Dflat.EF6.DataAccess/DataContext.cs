@@ -14,6 +14,9 @@ namespace Dflat.EF6.DataAccess
             var ensureDllIsCopied = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
         }
 
+        public DbSet<File> Files { get; set; }
+
+
 
         public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
 
@@ -25,7 +28,11 @@ namespace Dflat.EF6.DataAccess
             modelBuilder.Entity<ExcludePath>().HasKey(table => new { table.ExcludePathID, table.FileSourceFolderID });
             modelBuilder.Entity<ExcludePath>().Property(table => table.ExcludePathID).HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
             modelBuilder.Entity<Job>().ToTable("Jobs");
+            modelBuilder.Entity<Job>().HasOptional(d => d.DependentJob).WithMany(d => d.PrerequisiteJobs).HasForeignKey(d => d.DependentJobID);
+
             modelBuilder.Entity<FileSourceFolderScanJob>().ToTable("FileSourceFolderScanJobs");
+            modelBuilder.Entity<FileChromaprintJob>().ToTable("FileChromaprintJobs");
+            modelBuilder.Entity<FileMD5Job>().ToTable("FileMD5Jobs");
         }
 
     }
