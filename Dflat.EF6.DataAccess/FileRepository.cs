@@ -22,7 +22,7 @@ namespace Dflat.EF6.DataAccess
             object _lock = new object();
             lock (_lock)
             {
-                if (context.Files.Any(f => f.Filename == file.Filename && f.Directory == file.Directory))
+                if (Contains(file))
                     throw new DuplicateFileException(file, "File already exists");
 
                 context.Files.Add(file);
@@ -32,11 +32,6 @@ namespace Dflat.EF6.DataAccess
         public bool Contains(File file)
         {
             return context.Files.Any(f => f.Filename == file.Filename && f.Directory == file.Directory);
-        }
-
-        public File Create()
-        {
-            throw new NotImplementedException();
         }
 
         public File Get(int id)
