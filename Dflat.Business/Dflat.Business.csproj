@@ -65,11 +65,17 @@
     <Compile Include="Factories\IUnitOfWorkFactory.cs" />
     <Compile Include="Factories\IUowLifetimeManagerFactory.cs" />
     <Compile Include="Factories\UowLifetimeManagerFactory.cs" />
+    <Compile Include="FileResultExtension.cs" />
     <Compile Include="FolderSearchServiceRequest.cs" />
     <Compile Include="IUnitOfWorkLifetimeManager.cs" />
+    <Compile Include="Models\File.cs" />
+    <Compile Include="Models\FileChromaprintJob.cs" />
+    <Compile Include="Models\FileMD5Job.cs" />
     <Compile Include="Models\FileSourceFolderScanJob.cs" />
     <Compile Include="Models\Job.cs" />
     <Compile Include="Models\JobStatus.cs" />
+    <Compile Include="Repositories\DuplicateFileException.cs" />
+    <Compile Include="Repositories\IFileRepository.cs" />
     <Compile Include="Repositories\IFileSourceFolderRepository.cs" />
     <Compile Include="Repositories\IJobRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
@@ -81,6 +87,11 @@
     <Compile Include="JobScheduler.cs" />
     <Compile Include="Models\FileSourceFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BackgroundJobRunner.cs" />
+    <Compile Include="Services\FileChromaprintService.cs" />
+    <Compile Include="Services\FileMD5Service.cs" />
+    <Compile Include="Services\IBackgroundJobRunner.cs" />
+    <Compile Include="Services\IJobService.cs" />
     <Compile Include="Services\JobQueue.cs" />
     <Compile Include="Services\FileSourceFolderScanService.cs" />
     <Compile Include="Services\IJobQueue.cs" />
@@ -91,9 +102,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dflat.Infrastructure.IO.Interfaces.Filesystem\Dflat.Infrastructure.IO.Interfaces.Filesystem.csproj">
-      <Project>{1beb91b3-392c-4ddc-8db7-2594763afd53}</Project>
-      <Name>Dflat.Infrastructure.IO.Interfaces.Filesystem</Name>
+    <ProjectReference Include="..\Dflat.Infrastructure.IO.Filesystem\Dflat.Infrastructure.IO.Filesystem.csproj">
+      <Project>{7ae7d872-2f65-4b94-8731-08343ff77a95}</Project>
+      <Name>Dflat.Infrastructure.IO.Filesystem</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

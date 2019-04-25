@@ -9,19 +9,25 @@ using System.Threading.Tasks;
 
 namespace Dflat.Business.Services
 {
-    public abstract class JobService<JobType> : ViewModelBase where JobType : Job
+    public abstract class JobService<JobType> : ViewModelBase, IJobService<JobType> where JobType : Job
     {
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
 
+        // This is private to make inheritors use the SubmitJobRequest method
         private IJobQueue jobQueue;
+
+        private IBackgroundJobRunner<JobType> jobRunner;
 
         protected readonly IUnitOfWorkFactory unitOfWorkFactory;
 
-        public JobService(IUnitOfWorkFactory unitOfWorkFactory, IJobQueue jobQueue)
+        public JobService(IUnitOfWorkFactory unitOfWorkFactory, IJobQueue jobQueue, IBackgroundJobRunner<JobType> jobRunner)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.jobQueue = jobQueue;
+            this.jobRunner = jobRunner;
+
+            this.jobRunner.BackgroundWork = new Action<JobType>(DoWork);
 
             RunningJobCount = 0;
         }
@@ -31,20 +37,19 @@ namespace Dflat.Business.Services
         {
             while (true)
             {
+                // Do Async timer here for throttling jobs (suc as with the AcoustID and MusicBrainz cases)
+
+
                 if (RunningJobCount == MaxConcurrentJobs)
                     return;
 
                 var job = jobQueue.GetNextAvailableJob<JobType>();
                 if (job == null)
                     return;
-
-                // Do Async timer here for throttling jobs (such as with the AcoustID and MusicBrainz cases)
-
+                
                 SetupJob(job);
 
-                DoWork(job);
-                // ContinueWithSynchronizationContext...
-                FinishJob(job);
+                jobRunner.Run(job);
 
             }
         }
@@ -70,6 +75,14 @@ namespace Dflat.Business.Services
 
         public virtual void FinishJob(JobType job)
         {
+            // Save the job's sttaus
+            using (var unitOfWork = unitOfWorkFactory.Create())
+            {
+                var changeJob = unitOfWork.JobRepository.Get(job.JobID);
+                changeJob.SetFromExisting(job);
+                unitOfWork.SaveChanges();
+            }
+
             if (job.Status == JobStatus.Success)
                 UpdateDependentJobStatus(job);
 
@@ -89,7 +102,7 @@ namespace Dflat.Business.Services
 
             using (var unitOfWork = unitOfWorkFactory.Create())
             {
-                // See if our parent job has any other jobs that are not finished successfully
+                // See if our parent job is ready to be run
                 if (unitOfWork.JobRepository.PrerequisitesFinished(parentID))
                 {
                     var parentJob = unitOfWork.JobRepository.Get(parentID);

@@ -5,6 +5,8 @@ namespace Dflat.Business
 {
     public interface IUnitOfWork : IDisposable
     {
+        IFileRepository FileRepository { get; }
+
         IFileSourceFolderRepository FileSourceFolderRepository { get;  }
         IJobRepository JobRepository { get; }
 

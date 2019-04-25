@@ -1,36 +1,39 @@
 ﻿using Dflat.Business.Factories;
 using Dflat.Business.Models;
-using Dflat.Infrastructure.IO.Interfaces.Filesystem;
+using Dflat.Business.Repositories;
+using Dflat.Infrastructure.IO.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dflat.Business.Services
 {
-    public class FileSourceFolderScanService : JobService<FileSourceFolderScanJob>
+    public class FileSourceFolderScanService : JobService<FileSourceFolderScanJob>, IJobService<FileSourceFolderScanJob>
     {
-        
-        
-        private readonly IJobQueue jobQueue;
-        private readonly IFolderSearchService folderScanner;
 
+
+        private readonly IFolderSearchService folderScanner;
+        private readonly IJobService<FileMD5Job> fileMD5Service;
+        private readonly IJobService<FileChromaprintJob> fileChromaprintService;
 
         private HashSet<string> validExtensions;
 
         public FileSourceFolderScanService(
             IUnitOfWorkFactory unitOfWorkFactory,
             IJobQueue jobQueue,
+            IBackgroundJobRunner<FileSourceFolderScanJob> jobRunner,
+            IJobService<FileMD5Job> fileMD5Service,
+            IJobService<FileChromaprintJob> fileChromaprintService,
             IFolderSearchService folderScanner
-            ) 
-            : base(unitOfWorkFactory, jobQueue)
+            )
+            : base(unitOfWorkFactory, jobQueue, jobRunner)
         {
-            this.jobQueue = jobQueue;
+            this.fileMD5Service = fileMD5Service;
+            this.fileChromaprintService = fileChromaprintService;
             this.folderScanner = folderScanner;
 
-            validExtensions =  new HashSet<string>() { ".aiff", ".flac", ".m4a", ".mp2", ".mp3", ".ogg", ".wav", ".wma" };
+            validExtensions = new HashSet<string>() { ".aiff", ".flac", ".m4a", ".mp2", ".mp3", ".ogg", ".wav", ".wma" };
 
 
             MaxConcurrentJobs = 5;
@@ -41,7 +44,7 @@ namespace Dflat.Business.Services
         {
             // This job type has no prerequisites
         }
-        
+
 
         public override void SetupJob(FileSourceFolderScanJob job)
         {
@@ -50,9 +53,9 @@ namespace Dflat.Business.Services
 
         public override void DoWork(FileSourceFolderScanJob job)
         {
-            IFolderSearchServiceResult result;
+            FolderSearchServiceResult result;
             try
-            { 
+            {
                 result = ScanFolder(job);
             }
             catch (DirectoryNotFoundException e)
@@ -65,16 +68,41 @@ namespace Dflat.Business.Services
 
             job.Errors = string.Join("\n", result.ErrorLog);
 
-            foreach(var filename in result.FoundFiles)
+            var separator = new string(Path.DirectorySeparatorChar, 1);
+            foreach (var fileResult in result.FoundFiles)
             {
-                // Create the File object if it doesn't already exist
+                int newFileID;
+                string fullFilePath;
 
-                // Queue a FileInfo request
+                using (var unitOfWork = unitOfWorkFactory.Create())
+                {
+                    // Create the File object if it doesn't already exist
+                    var newFile = fileResult.CreateFile();
+
+                    try
+                    {
+                        unitOfWork.FileRepository.Add(newFile);
+                    }
+                    catch (DuplicateFileException)
+                    {
+                        // If this file already exists, just proceed to the next file
+                        continue;
+                    }
+                    unitOfWork.SaveChanges();
+
+                    newFileID = newFile.FileID;
+                    fullFilePath = string.Join(separator, newFile.Directory, newFile.Filename);
+                }
+
+
+                // Queue a MD5 and Chromaprint requests
+                fileChromaprintService.SubmitJobRequest(new FileChromaprintJob { FileID = newFileID, Description = "Chromaprint: " + fullFilePath });
+                fileMD5Service.SubmitJobRequest(new FileMD5Job { FileID = newFileID, Description = "MD5: " + fullFilePath });
 
             }
         }
 
-        private IFolderSearchServiceResult ScanFolder(FileSourceFolderScanJob job)
+        private FolderSearchServiceResult ScanFolder(FileSourceFolderScanJob job)
         {
             var fileSourceFolder = job.FileSourceFolder;
             var excludeFolders = new HashSet<string>(fileSourceFolder.ExcludePaths.Select((p) => p.Path));
@@ -103,7 +131,6 @@ namespace Dflat.Business.Services
 
         public override void FinishJob(FileSourceFolderScanJob job)
         {
-
             base.FinishJob(job);
         }
 

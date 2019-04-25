@@ -32,7 +32,8 @@ namespace Dflat.Business.Services
 
             using (var unitOfWork = unitOfWorkFactory.Create())
             {
-                job = unitOfWork.JobRepository.FindNextAvailable<JobType>();
+                job = unitOfWork.JobRepository.GetNextAvailable<JobType>();
+                unitOfWork.SaveChanges();
             }
 
             return job;

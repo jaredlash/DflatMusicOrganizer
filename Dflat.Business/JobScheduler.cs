@@ -7,15 +7,21 @@ namespace Dflat.Jobs
 {
 	public class JobScheduler
 	{
-        private FileSourceFolderScanService fileSourceFolderScanService;
+        private IJobService<FileSourceFolderScanJob> fileSourceFolderScanService;
+        private IJobService<FileMD5Job> fileMD5Service;
+
 
         private IUnitOfWorkFactory unitOfWorkFactory;
 
-		public JobScheduler(FileSourceFolderScanService fileSourceFolderScanService, IUnitOfWorkFactory unitOfWorkFactory)
+		public JobScheduler(IJobService<FileSourceFolderScanJob> fileSourceFolderScanService, IJobService<FileMD5Job> fileMD5Service, IUnitOfWorkFactory unitOfWorkFactory)
 		{
             this.fileSourceFolderScanService = fileSourceFolderScanService;
+            this.fileMD5Service = fileMD5Service;
 
             this.unitOfWorkFactory = unitOfWorkFactory;
+
+            this.fileSourceFolderScanService.JobFinished += JobFinished;
+            this.fileMD5Service.JobFinished += JobFinished;
 		}
 
         public void Start()
