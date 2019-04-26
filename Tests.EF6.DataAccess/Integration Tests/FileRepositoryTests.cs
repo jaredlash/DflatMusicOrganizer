@@ -24,7 +24,7 @@ namespace Tests.EF6.DataAccess.Integration_Tests
             fileRepository = new FileRepository(context);
         }
 
-        #region Adding file
+        #region Adding files
 
         [Test]
         public void Add_WhenNoFilesInRepository_AddsFile()
@@ -74,6 +74,7 @@ namespace Tests.EF6.DataAccess.Integration_Tests
         }
 
         #endregion
+
 
         #region Querying about files
 
@@ -143,6 +144,7 @@ namespace Tests.EF6.DataAccess.Integration_Tests
 
         #endregion
 
+
         #region Getting files
 
         [Test]
@@ -209,6 +211,58 @@ namespace Tests.EF6.DataAccess.Integration_Tests
         }
 
         #endregion
+
+
+        #region Updating files
+
+        [Test]
+        public void Save_WhenFileHasChromaprintAdded_Saves()
+        {
+            int id;
+            File file = new File("test.mp3", ".mp3", "C:\\Test", 1000, DateTime.Now);
+
+            fileRepository.Add(file);
+            fileRepository.Save();
+            id = file.FileID;
+
+
+            // Get the file, add a Chromaprint, and Save
+            // We'll get the file using the saved FileID
+            var updateFile = fileRepository.Get(id);
+            updateFile.Chromaprint = "abcdefghijklmnopqrstuvwxyz";
+            fileRepository.Save();
+
+            // Verify by getting the file and checking that the Chromaprint is there.
+            var verifyFile = fileRepository.Get(id);
+
+            Assert.AreEqual("abcdefghijklmnopqrstuvwxyz", verifyFile.Chromaprint);
+        }
+
+        [Test]
+        public void Save_WhenFileHasMD5Added_Saves()
+        {
+            int id;
+            File file = new File("test.mp3", ".mp3", "C:\\Test", 1000, DateTime.Now);
+
+            fileRepository.Add(file);
+            fileRepository.Save();
+            id = file.FileID;
+
+
+            // Get the file, add a Chromaprint, and Save
+            // We'll get the file using the saved FileID
+            var updateFile = fileRepository.Get(id);
+            updateFile.MD5Sum = "d41d8cd98f00b204e9800998ecf8427e";
+            fileRepository.Save();
+
+            // Verify by getting the file and checking that the "MD5" is there.
+            var verifyFile = fileRepository.Get(id);
+
+            Assert.AreEqual("d41d8cd98f00b204e9800998ecf8427e", verifyFile.MD5Sum);
+        }
+
+        #endregion
+
 
         #region Removing files
 
