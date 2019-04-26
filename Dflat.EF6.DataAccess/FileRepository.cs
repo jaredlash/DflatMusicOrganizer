@@ -10,6 +10,8 @@ namespace Dflat.EF6.DataAccess
 {
     public class FileRepository : IFileRepository
     {
+        private static object _lock = new object();
+
         private readonly DataContext context;
 
         public FileRepository(DataContext context)
@@ -19,7 +21,9 @@ namespace Dflat.EF6.DataAccess
 
         public void Add(File file)
         {
-            object _lock = new object();
+            // Prevent multiple instances of the FileRepository from adding a file at the same time.
+            // This is not intended to make individual FileRepository instances able to be shared across threads.
+            // That is not thread-safe because of Entity Framework's DbContext not being thread-safe.
             lock (_lock)
             {
                 if (Contains(file))
