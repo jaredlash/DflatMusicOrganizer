@@ -10,11 +10,9 @@ namespace Dflat.Business.Services
 {
     public class FileChromaprintService : JobService<FileChromaprintJob>, IJobService<FileChromaprintJob>
     {
-        public FileChromaprintService(
-            IUnitOfWorkFactory unitOfWorkFactory,
-            IJobQueue jobQueue,
-            IBackgroundJobRunner<FileChromaprintJob> jobRunner
-            )
+        public FileChromaprintService(IUnitOfWorkFactory unitOfWorkFactory,
+                                      IJobQueue jobQueue,
+                                      IBackgroundJobRunner<FileChromaprintJob> jobRunner)
             : base(unitOfWorkFactory, jobQueue, jobRunner)
         {
             MaxConcurrentJobs = 5;
@@ -22,6 +20,11 @@ namespace Dflat.Business.Services
 
         public override void DoWork(FileChromaprintJob job)
         {
+            if (job is null)
+            {
+                throw new ArgumentNullException(nameof(job));
+            }
+
             throw new NotImplementedException();
         }
 
@@ -32,6 +35,11 @@ namespace Dflat.Business.Services
 
         public override void SetupJob(FileChromaprintJob job)
         {
+            if (job is null)
+            {
+                throw new ArgumentNullException(nameof(job));
+            }
+
             throw new NotImplementedException();
         }
     }

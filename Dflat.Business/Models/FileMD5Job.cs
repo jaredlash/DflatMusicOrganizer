@@ -13,8 +13,7 @@ namespace Dflat.Business.Models
 
         public override bool SameRequestAs(Job otherJob)
         {
-            var compareJob = otherJob as FileMD5Job;
-            if (compareJob == null)
+            if (!(otherJob is FileMD5Job compareJob))
                 return false;
 
             return FileID == compareJob.FileID;

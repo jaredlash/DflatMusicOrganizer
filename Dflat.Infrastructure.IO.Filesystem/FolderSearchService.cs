@@ -59,7 +59,7 @@ namespace Dflat.Infrastructure.IO.Filesystem
 					continue;
 				}
 
-				string[] files = null;
+				string[] files;
 				try
 				{
 					files = Directory.GetFiles(currentDirectory);
@@ -67,12 +67,12 @@ namespace Dflat.Infrastructure.IO.Filesystem
 				catch (UnauthorizedAccessException e)
 				{
 
-					result.ErrorLog.Add (e.Message);
+					result.ErrorLog.Add(e.Message);
 					continue;
 				}
 				catch (System.IO.DirectoryNotFoundException e)
 				{
-					result.ErrorLog.Add (e.Message);
+					result.ErrorLog.Add(e.Message);
 					continue;
 				}
 				// Perform the required action on each file here. 
@@ -91,7 +91,7 @@ namespace Dflat.Infrastructure.IO.Filesystem
 					catch (System.IO.FileNotFoundException e)
 					{
 						// If file was deleted by a separate application then just continue.
-						result.ErrorLog.Add (e.Message);
+						result.ErrorLog.Add(e.Message);
 						continue;
 					}
                     catch (Exception e)

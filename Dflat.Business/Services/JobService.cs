@@ -28,6 +28,7 @@ namespace Dflat.Business.Services
             this.jobRunner = jobRunner;
 
             this.jobRunner.BackgroundWork = new Action<JobType>(DoWork);
+            this.jobRunner.FinishWork = new Action<JobType>(FinishJob);
 
             RunningJobCount = 0;
         }
@@ -37,7 +38,8 @@ namespace Dflat.Business.Services
         {
             while (true)
             {
-                // Do Async timer here for throttling jobs (suc as with the AcoustID and MusicBrainz cases)
+                // Use a custom HttpClient which automatically throttles its connections to ensure APIs that are rate-limited
+                // don't get over-used (such as AcoustID and MusicBrainz)
 
 
                 if (RunningJobCount == MaxConcurrentJobs)
@@ -46,11 +48,12 @@ namespace Dflat.Business.Services
                 var job = jobQueue.GetNextAvailableJob<JobType>();
                 if (job == null)
                     return;
-                
+
+                RunningJobCount++;
+
                 SetupJob(job);
 
                 jobRunner.Run(job);
-
             }
         }
 
@@ -87,8 +90,7 @@ namespace Dflat.Business.Services
                 UpdateDependentJobStatus(job);
 
             // Let things know we're done.
-            if (JobFinished != null)
-                JobFinished(job, null);
+            JobFinished?.Invoke(job, null);
 
         }
 

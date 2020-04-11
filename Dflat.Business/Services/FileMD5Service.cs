@@ -11,11 +11,9 @@ namespace Dflat.Business.Services
     public class FileMD5Service : JobService<FileMD5Job>, IJobService<FileMD5Job>
     {
         
-        public FileMD5Service(
-            IUnitOfWorkFactory unitOfWorkFactory,
-            IJobQueue jobQueue,
-            IBackgroundJobRunner<FileMD5Job> jobRunner
-            )
+        public FileMD5Service(IUnitOfWorkFactory unitOfWorkFactory,
+                              IJobQueue jobQueue,
+                              IBackgroundJobRunner<FileMD5Job> jobRunner)
             : base(unitOfWorkFactory, jobQueue, jobRunner)
         {
             MaxConcurrentJobs = 5;

@@ -23,8 +23,7 @@ namespace Dflat.Business.Models
 
         public override bool SameRequestAs(Job otherJob)
         {
-            var compareJob = otherJob as FileSourceFolderScanJob;
-            if (compareJob == null)
+            if (!(otherJob is FileSourceFolderScanJob compareJob))
                 return false;
 
             return compareJob.FileSourceFolderID == FileSourceFolderID;

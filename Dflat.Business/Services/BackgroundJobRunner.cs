@@ -10,8 +10,6 @@ namespace Dflat.Business.Services
 {
     public class BackgroundJobRunner<JobType> : IBackgroundJobRunner<JobType> where JobType : Job
     {
-        SynchronizationContext current = SynchronizationContext.Current;
-        ExecutionContext currentExecutionContext = ExecutionContext.Capture();
 
         public void Run(JobType job)
         {
@@ -24,14 +22,6 @@ namespace Dflat.Business.Services
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
         }
-
-        public void Test(JobType job)
-        {
-            current.Post(o => MainThreadCallback(job), null);
-        }
-
-        public void MainThreadCallback(JobType job)
-        { }
 
         public Action<JobType> BackgroundWork { get; set; }
 

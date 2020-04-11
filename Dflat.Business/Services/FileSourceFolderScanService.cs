@@ -19,14 +19,12 @@ namespace Dflat.Business.Services
 
         private HashSet<string> validExtensions;
 
-        public FileSourceFolderScanService(
-            IUnitOfWorkFactory unitOfWorkFactory,
-            IJobQueue jobQueue,
-            IBackgroundJobRunner<FileSourceFolderScanJob> jobRunner,
-            IJobService<FileMD5Job> fileMD5Service,
-            IJobService<FileChromaprintJob> fileChromaprintService,
-            IFolderSearchService folderScanner
-            )
+        public FileSourceFolderScanService(IUnitOfWorkFactory unitOfWorkFactory,
+                                           IJobQueue jobQueue,
+                                           IBackgroundJobRunner<FileSourceFolderScanJob> jobRunner,
+                                           IJobService<FileMD5Job> fileMD5Service,
+                                           IJobService<FileChromaprintJob> fileChromaprintService,
+                                           IFolderSearchService folderScanner)
             : base(unitOfWorkFactory, jobQueue, jobRunner)
         {
             this.fileMD5Service = fileMD5Service;

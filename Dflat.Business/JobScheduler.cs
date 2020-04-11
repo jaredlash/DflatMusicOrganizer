@@ -13,7 +13,9 @@ namespace Dflat.Jobs
 
         private IUnitOfWorkFactory unitOfWorkFactory;
 
-		public JobScheduler(IJobService<FileSourceFolderScanJob> fileSourceFolderScanService, IJobService<FileMD5Job> fileMD5Service, IUnitOfWorkFactory unitOfWorkFactory)
+		public JobScheduler(IJobService<FileSourceFolderScanJob> fileSourceFolderScanService,
+                      IJobService<FileMD5Job> fileMD5Service,
+                      IUnitOfWorkFactory unitOfWorkFactory)
 		{
             this.fileSourceFolderScanService = fileSourceFolderScanService;
             this.fileMD5Service = fileMD5Service;

@@ -26,7 +26,9 @@ namespace Dflat.EF6.DataAccess
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ExcludePath>().HasKey(table => new { table.ExcludePathID, table.FileSourceFolderID });
-            modelBuilder.Entity<ExcludePath>().Property(table => table.ExcludePathID).HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
+            modelBuilder.Entity<ExcludePath>()
+                .Property(table => table.ExcludePathID)
+                .HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
             modelBuilder.Entity<Job>().ToTable("Jobs");
             modelBuilder.Entity<Job>().HasOptional(d => d.DependentJob).WithMany(d => d.PrerequisiteJobs).HasForeignKey(d => d.DependentJobID);
 
