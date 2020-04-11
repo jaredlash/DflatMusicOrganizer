@@ -24,7 +24,7 @@ namespace Dflat.Infrastructure.IO.Filesystem
 			FolderSearchServiceResult result = new FolderSearchServiceResult ();
 
 			if (!Directory.Exists (sourceDirectory))
-                new DirectoryNotFoundException(string.Format("Directory does not exist: {1}", sourceDirectory));
+                new DirectoryNotFoundException($"Directory does not exist: {sourceDirectory}");
             else
             { 
                 if (!excludeDirectories.Contains(sourceDirectory)) dirs.Push(sourceDirectory);
