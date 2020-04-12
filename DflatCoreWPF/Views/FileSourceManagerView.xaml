@@ -17,17 +17,6 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
     </Window.Resources>
-    <!--<i:Interaction.Triggers>
-        <i:EventTrigger EventName="Closing">
-            <cmd:EventToCommand  Command="{Binding ClosingCommand}" PassEventArgsToCommand="True" />
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Closed">
-            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding InitializeCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>-->
     <Border Margin="10">
         <Grid>
             <Grid.RowDefinitions>
@@ -51,7 +40,7 @@
                     <!-- List of Folders -->
                     <Border Grid.Row="1" Grid.Column="0">
                         <ListBox x:Name="FileSourceFolders" SelectedItem="{Binding SelectedFileSourceFolder}">
-                            <ListBox.Resources>
+                            <ListBox.ItemTemplate>
                                 <DataTemplate DataType="{x:Type models:FileSourceFolder}">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Margin="0 0 10 0" Text="{Binding Name}" />
@@ -60,7 +49,7 @@
                                         <TextBlock Text=")" />
                                     </StackPanel>
                                 </DataTemplate>
-                            </ListBox.Resources>
+                            </ListBox.ItemTemplate>
                         </ListBox>
                     </Border>
 
@@ -107,7 +96,7 @@
                 <TextBlock Text="{Binding Count}" VerticalAlignment="Center" />
 
                 <!-- Save and Cancel buttons -->
-                <Button Grid.Column="1" Margin="0 0 5 0" x:Name="Cancel" Content="Cancel" />
+                <Button Grid.Column="1" Margin="0 0 5 0" x:Name="Cancel" Content="{Binding Path=CancelButtonText, Mode=OneWay, FallbackValue='Cancel'}" />
 
                 <Button Grid.Column="2" Margin="5 0 0 0" x:Name="Save" Content="Save"/>
 

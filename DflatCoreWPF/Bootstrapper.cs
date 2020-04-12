@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Caliburn.Micro;
+using DflatCoreWPF.Models;
+using DflatCoreWPF.Utilities;
 using DflatCoreWPF.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -23,8 +25,8 @@ namespace DflatCoreWPF
         {
             var automapconfig = new MapperConfiguration(cfg =>
             {
-                //cfg.CreateMap<OneModel, NextModel>();
-                //cfg.CreateMap<OneModel, NextModel>();
+                cfg.CreateMap<FileSourceFolder, FileSourceFolderEditorViewModel>();
+                cfg.CreateMap<FileSourceFolderEditorViewModel, FileSourceFolder>();
             });
 
             var mapper = automapconfig.CreateMapper();
@@ -34,6 +36,7 @@ namespace DflatCoreWPF
             container
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>();
+            container.PerRequest<IFolderChooserDialog, FolderChooserDialog>();
 
             GetType().Assembly.GetTypes()
                 .Where(type => type.IsClass)

@@ -1,17 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 
 namespace DflatCoreWPF.Models
 {
-    public class FileSourceFolder
+    public class FileSourceFolder : INotifyPropertyChanged
     {
-        public int FileSourceFolderID { get; set; }
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public bool IsTemporaryMedia { get; set; }
-        public DateTime? LastScanStart { get; set; }
-        public bool IsChanged { get; set; }
-        public ICollection<ExcludePath> ExcludePaths { get; set; } = new HashSet<ExcludePath>();
+        private int fileSourceFolderID;
+
+        public int FileSourceFolderID
+        {
+            get { return fileSourceFolderID; }
+            set
+            {
+                fileSourceFolderID = value;
+                CallPropertyChanged(nameof(FileSourceFolderID));
+            }
+        }
+
+        private string name;
+
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                name = value;
+                CallPropertyChanged(nameof(Name));
+            }
+        }
+
+        private string path;
+
+        public string Path
+        {
+            get { return path; }
+            set
+            {
+                path = value;
+                CallPropertyChanged(nameof(Path));
+            }
+        }
+
+        private bool isTemporaryMedia;
+
+        public bool IsTemporaryMedia
+        {
+            get { return isTemporaryMedia; }
+            set
+            {
+                isTemporaryMedia = value;
+                CallPropertyChanged(nameof(IsTemporaryMedia));
+            }
+        }
+
+
+        private DateTime? lastScanStart;
+
+        public DateTime? LastScanStart
+        {
+            get { return lastScanStart; }
+            set
+            {
+                lastScanStart = value;
+                CallPropertyChanged(nameof(LastScanStart));
+            }
+        }
+
+
+        private bool isChanged;
+
+        public bool IsChanged
+        {
+            get { return isChanged; }
+            set {
+                isChanged = value;
+                CallPropertyChanged(nameof(IsChanged));
+            }
+        }
+
+
+
+        public ObservableCollection<ExcludePath> ExcludePaths { get; set; } = new ObservableCollection<ExcludePath>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void CallPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
     }
 }

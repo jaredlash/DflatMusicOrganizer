@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using AutoMapper;
+using Caliburn.Micro;
 using DflatCoreWPF.Models;
 using System;
 using System.Collections.Generic;
@@ -15,19 +16,29 @@ namespace DflatCoreWPF.ViewModels
         #region Private backing fields
 
         private FileSourceFolder selectedFileSourceFolder;
+        private readonly IMapper mapper;
         private readonly IWindowManager windowManager;
         private readonly ConfirmDialogViewModel confirmDialogViewModel;
+        private readonly FileSourceFolderEditorViewModel sourceFolderEditorViewModel;
+
+        private readonly List<FileSourceFolder> removedFolders;
 
         #endregion
 
 
         #region Constructor
 
-        public FileSourceManagerViewModel(IWindowManager windowManager, ConfirmDialogViewModel confirmDialogViewModel)
+        public FileSourceManagerViewModel(IMapper mapper,
+                                          IWindowManager windowManager,
+                                          ConfirmDialogViewModel confirmDialogViewModel,
+                                          FileSourceFolderEditorViewModel sourceFolderEditorViewModel)
         {
             this.FileSourceFolders = new BindingList<FileSourceFolder>();
+            this.removedFolders = new List<FileSourceFolder>();
+            this.mapper = mapper;
             this.windowManager = windowManager;
             this.confirmDialogViewModel = confirmDialogViewModel;
+            this.sourceFolderEditorViewModel = sourceFolderEditorViewModel;
         }
 
         #endregion
@@ -43,10 +54,38 @@ namespace DflatCoreWPF.ViewModels
         private void LoadFileSourceFolders()
         {
             FileSourceFolders.Clear();
+            removedFolders.Clear();
             SelectedFileSourceFolder = null;
 
             //foreach (var fileSourceFolder in uowManager.UnitOfWork.FileSourceFolderRepository.GetAll())
             //    FileSourceFolders.Add(fileSourceFolder);
+
+            //var testFolders = new List<FileSourceFolder>();
+            //var temp1 = new FileSourceFolder
+            //{
+            //    FileSourceFolderID = 1,
+            //    Name = "Mugsystem",
+            //    Path = "C:\\"
+            //};
+            //temp1.IsChanged = false;
+            //testFolders.Add(temp1);
+
+            //var withExcludeFolders = new FileSourceFolder
+            //{
+            //    FileSourceFolderID = 2,
+            //    Name = "Muganawa Media",
+            //    Path = @"Z:\"
+            //};
+            //var ex1 = new ExcludePath { ExcludePathID = 1, FileSourceFolderID = 2, Path = @"Z:\video" };
+            //var ex2 = new ExcludePath { ExcludePathID = 2, FileSourceFolderID = 2, Path = @"Z:\from_tim" };
+            //var ex3 = new ExcludePath { ExcludePathID = 3, FileSourceFolderID = 2, Path = @"Z:\downloads" };
+            //withExcludeFolders.ExcludePaths.Add(ex1);
+            //withExcludeFolders.ExcludePaths.Add(ex2);
+            //withExcludeFolders.ExcludePaths.Add(ex3);
+            //withExcludeFolders.IsChanged = false;
+            //testFolders.Add(withExcludeFolders);
+
+            //testFolders.ForEach(f => FileSourceFolders.Add(f));
         }
 
         #endregion
@@ -72,30 +111,75 @@ namespace DflatCoreWPF.ViewModels
                 selectedFileSourceFolder = value;
                 NotifyOfPropertyChange(() => SelectedFileSourceFolder);
                 NotifyOfPropertyChange(() => CanEdit);
+                NotifyOfPropertyChange(() => CanRemove);
                 NotifyOfPropertyChange(() => SelectedFileSourceFolderExcludeCount);
             }
         }
 
         public int SelectedFileSourceFolderExcludeCount => (SelectedFileSourceFolder != null ? SelectedFileSourceFolder.ExcludePaths.Count : 0);
 
+        public async Task Add()
+        {
+            var currentFolder = new FileSourceFolder();
+
+            mapper.Map<FileSourceFolder, FileSourceFolderEditorViewModel>(currentFolder, sourceFolderEditorViewModel);
+            sourceFolderEditorViewModel.IsChanged = currentFolder.IsChanged;
+            bool? acceptChanges = await windowManager.ShowDialogAsync(sourceFolderEditorViewModel);
+            if (acceptChanges == true)
+            {
+                mapper.Map<FileSourceFolderEditorViewModel, FileSourceFolder>(sourceFolderEditorViewModel, currentFolder);
+                FileSourceFolders.Add(currentFolder);
+            }
+            NotifyOfPropertyChange(() => HasChanges);
+            NotifyOfPropertyChange(() => CanSave);
+            NotifyOfPropertyChange(() => CancelButtonText);
+        }
+
         public bool CanEdit => SelectedFileSourceFolder != null;
 
-        public void Edit()
+        public async Task Edit()
         {
+            var currentFolder = SelectedFileSourceFolder;
 
+            mapper.Map<FileSourceFolder, FileSourceFolderEditorViewModel>(currentFolder, sourceFolderEditorViewModel);
+            sourceFolderEditorViewModel.IsChanged = currentFolder.IsChanged;
+            bool? acceptChanges = await windowManager.ShowDialogAsync(sourceFolderEditorViewModel);
+            if (acceptChanges == true)
+            {
+                mapper.Map<FileSourceFolderEditorViewModel, FileSourceFolder>(sourceFolderEditorViewModel, currentFolder);
+            }
+            NotifyOfPropertyChange(() => HasChanges);
+            NotifyOfPropertyChange(() => CanSave);
+            NotifyOfPropertyChange(() => CancelButtonText);
         }
 
         public bool CanRemove => SelectedFileSourceFolder != null;
 
         public void Remove()
         {
+            var currentFolder = SelectedFileSourceFolder;
+            if (currentFolder == null)
+                return;
 
+            if (currentFolder.FileSourceFolderID != 0) removedFolders.Add(currentFolder);
+
+            FileSourceFolders.Remove(currentFolder);
+            NotifyOfPropertyChange(() => CanSave);
+            NotifyOfPropertyChange(() => CancelButtonText);
+            NotifyOfPropertyChange(() => HasChanges);
         }
 
         public bool CanSave => HasChanges;
+
         public void Save()
         {
 
+        }
+
+      
+        public string CancelButtonText
+        {
+            get { return HasChanges ? "Cancel" : "Close"; }
         }
 
 
@@ -119,8 +203,8 @@ namespace DflatCoreWPF.ViewModels
 
         private async Task<bool?> PromptUnsavedChanges()
         {
-            confirmDialogViewModel.Title = "Confirm Unsaved Changes";
-            confirmDialogViewModel.Message = "There are unsaved changes. Click Cancel to Save";
+            confirmDialogViewModel.Title = "Discard unsaved Changes?";
+            confirmDialogViewModel.Message = "There are unsaved changes. Click Cancel to go back and Save.";
             confirmDialogViewModel.NoText = "Cancel";
             confirmDialogViewModel.YesText = "Close";
             var result = await windowManager.ShowDialogAsync(confirmDialogViewModel, null, null);
@@ -133,64 +217,9 @@ namespace DflatCoreWPF.ViewModels
 
         #region Private methods
 
-        //private bool HasChanges => FileSourceFolders.Any(f => f.IsChanged);
-        private bool HasChanges => true;
-
-        //private void AddFileSourceFolder()
-        //{
-        //    FileSourceFolder newFileSourceFolder = new FileSourceFolder();
-        //    bool? result = dialogService.FileSourceFolderEditor(uowManager, newFileSourceFolder, FileSourceFolderEditorMode.New);
-        //    if (result == true)
-        //    {
-        //        uowManager.UnitOfWork.FileSourceFolderRepository.Add(newFileSourceFolder);
-
-        //        // Added a new folder, so notify that we can save.
-        //        ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
-        //        FileSourceFolders.Add(newFileSourceFolder);
-        //        RaiseNotificationEventsAfterFolderEdit();
-        //    }
-        //}
-
-        //private void EditFileSourceFolder()
-        //{
-        //    dialogService.FileSourceFolderEditor(uowManager, SelectedFileSourceFolder, FileSourceFolderEditorMode.Edit);
-        //    ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
-        //    RaiseNotificationEventsAfterFolderEdit();
-        //    RaisePropertyChanged(nameof(SelectedFileSourceFolder));
-        //}
-
-        //private void RemoveFileSourceFolder()
-        //{
-        //    bool? result = dialogService.ConfirmDialog("Confirm", $"Are you sure you want to remove {SelectedFileSourceFolder.Path}?", "Yes", "Cancel");
-        //    if (result == true)
-        //    {
-        //        uowManager.UnitOfWork.FileSourceFolderRepository.Remove(SelectedFileSourceFolder);
-        //        FileSourceFolders.Remove(SelectedFileSourceFolder);
-        //        ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
-        //        RaiseNotificationEventsAfterFolderEdit();
-        //    }
-        //}
-
-        //private void RaiseNotificationEventsAfterFolderEdit()
-        //{
-        //    RaisePropertyChanged(nameof(Count));
+        private bool HasChanges => removedFolders.Count > 0 || FileSourceFolders.Any(f => f.IsChanged);
 
 
-        //    if (SelectedFileSourceFolder == null)
-        //        return;
-
-
-        //    RaisePropertyChanged(nameof(SelectedFileSourceFolder));
-        //    RaisePropertyChanged(nameof(SelectedFileSourceFolderExcludeCount));
-        //}
-
-
-
-        //private void SaveChanges()
-        //{
-        //    if (uowManager.UnitOfWork.HasChanges())
-        //        uowManager.UnitOfWork.SaveChanges();
-        //}
         #endregion
     }
 }
