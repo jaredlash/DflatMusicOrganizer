@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DflatCoreWPF.Views"
         xmlns:viewModels="clr-namespace:DflatCoreWPF.ViewModels"
-        xmlns:models="clr-namespace:DflatCoreWPF.Models"
+        xmlns:models="clr-namespace:Dflat.Application.Models;assembly=Dflat.Application"
         d:DataContext="{d:DesignInstance viewModels:FileSourceFolderEditorViewModel}"
         mc:Ignorable="d"
         x:Name="FileSourceFolderEditorWindow"

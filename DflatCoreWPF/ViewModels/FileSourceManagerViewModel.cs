@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Caliburn.Micro;
-using DflatCoreWPF.Models;
+using Dflat.Application.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

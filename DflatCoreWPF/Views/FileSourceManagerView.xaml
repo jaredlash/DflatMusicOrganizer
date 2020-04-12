@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DflatCoreWPF.Views"
         mc:Ignorable="d"
         xmlns:viewModels="clr-namespace:DflatCoreWPF.ViewModels"
-        xmlns:models="clr-namespace:DflatCoreWPF.Models"
+        xmlns:models="clr-namespace:Dflat.Application.Models;assembly=Dflat.Application"
         d:DataContext="{d:DesignInstance viewModels:FileSourceManagerViewModel}"
         Title="File Source Manager"
         Height="300"

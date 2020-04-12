@@ -1,5 +1,5 @@
 ﻿using Caliburn.Micro;
-using DflatCoreWPF.Models;
+using Dflat.Application.Models;
 using DflatCoreWPF.Utilities;
 using System;
 using System.Collections.Generic;

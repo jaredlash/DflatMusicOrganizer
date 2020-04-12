@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DflatCoreWPF.Models
+namespace Dflat.Application.Models
 {
     public class ExcludePath
     {

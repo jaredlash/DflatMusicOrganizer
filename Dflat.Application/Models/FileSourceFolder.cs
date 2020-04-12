@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 
-namespace DflatCoreWPF.Models
+namespace Dflat.Application.Models
 {
     public class FileSourceFolder : INotifyPropertyChanged
     {
@@ -75,7 +75,8 @@ namespace DflatCoreWPF.Models
         public bool IsChanged
         {
             get { return isChanged; }
-            set {
+            set
+            {
                 isChanged = value;
                 CallPropertyChanged(nameof(IsChanged));
             }
