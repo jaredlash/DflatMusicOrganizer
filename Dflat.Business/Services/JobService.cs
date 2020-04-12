@@ -1,6 +1,5 @@
 ﻿using Dflat.Business.Factories;
 using Dflat.Business.Models;
-using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dflat.Business.Services
 {
-    public abstract class JobService<JobType> : ViewModelBase, IJobService<JobType> where JobType : Job
+    public abstract class JobService<JobType> : IJobService<JobType> where JobType : Job
     {
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }

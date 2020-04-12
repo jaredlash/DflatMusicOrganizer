@@ -6,9 +6,6 @@
 	  <Folder Include="Properties\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
-	</ItemGroup>
-	<ItemGroup>
 	  <ProjectReference Include="..\Dflat.Infrastructure.IO.Filesystem\Dflat.Infrastructure.IO.Filesystem.csproj" />
 	</ItemGroup>
 </Project>
