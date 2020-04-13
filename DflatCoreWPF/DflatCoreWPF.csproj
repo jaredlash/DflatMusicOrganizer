@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Collection.EntityFrameworkCore" Version="1.0.1" />
     <PackageReference Include="Caliburn.Micro" Version="4.0.105-alpha" />
   </ItemGroup>
 
@@ -17,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dflat.Application\Dflat.Application.csproj" />
+    <ProjectReference Include="..\Dflat.EFCore.DB\Dflat.EFCore.DB.csproj" />
   </ItemGroup>
 
 </Project>

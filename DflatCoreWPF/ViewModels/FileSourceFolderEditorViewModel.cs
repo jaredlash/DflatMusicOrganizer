@@ -173,7 +173,7 @@ namespace DflatCoreWPF.ViewModels
             if (ExcludePaths.Any(p => p.Path == newPath))
                 return;
 
-            ExcludePaths.Add(new ExcludePath { FileSourceFolderID = FileSourceFolderID, Path = newPath });
+            ExcludePaths.Add(new ExcludePath { Path = newPath });
             IsChanged = true;
         }
 

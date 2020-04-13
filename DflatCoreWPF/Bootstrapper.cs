@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using Caliburn.Micro;
 using Dflat.Application.Models;
+using Dflat.Application.Repositories;
+using Dflat.EFCore.DB;
+using Dflat.EFCore.DB.Models;
+using Dflat.EFCore.DB.Repositories;
 using DflatCoreWPF.Utilities;
 using DflatCoreWPF.ViewModels;
 using System;
@@ -25,9 +29,27 @@ namespace DflatCoreWPF
         {
             var automapconfig = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<FileSourceFolder, FileSourceFolderEditorViewModel>();
-                cfg.CreateMap<FileSourceFolderEditorViewModel, FileSourceFolder>();
+
+                cfg.CreateMap<FileSourceFolder, FileSourceFolderEditorViewModel>()
+                    .ForMember(dest => dest.SelectedExcludePath, opt => opt.Ignore())
+                    .ForMember(dest => dest.IsInitialized, opt => opt.Ignore())
+                    .ForMember(dest => dest.Parent, opt => opt.Ignore())
+                    .ForMember(dest => dest.DisplayName, opt => opt.Ignore())
+                    .ForMember(dest => dest.IsActive, opt => opt.Ignore())
+                    .ForMember(dest => dest.IsNotifying, opt => opt.Ignore())
+                    .ReverseMap()
+                    .DisableCtorValidation();
+
+                //cfg.CreateMap<FileSourceFolderEditorViewModel, FileSourceFolder>();
+
+                cfg.UseEntityFrameworkCoreModel<DataContext>();
+                cfg.CreateMap<FileSourceFolderData, FileSourceFolder>()
+                    .ForMember(dest => dest.IsChanged, opt => opt.Ignore())
+                    .ReverseMap();
+                cfg.CreateMap<ExcludePathData, ExcludePath>().ReverseMap();
             });
+
+            //automapconfig.AssertConfigurationIsValid();
 
             var mapper = automapconfig.CreateMapper();
 
@@ -35,8 +57,9 @@ namespace DflatCoreWPF
 
             container
                 .Singleton<IWindowManager, WindowManager>()
-                .Singleton<IEventAggregator, EventAggregator>();
-            container.PerRequest<IFolderChooserDialog, FolderChooserDialog>();
+                .Singleton<IEventAggregator, EventAggregator>()
+                .PerRequest<IFolderChooserDialog, FolderChooserDialog>()
+                .PerRequest<IFileSourceFolderRepository, FileSourceFolderRepository>();
 
             GetType().Assembly.GetTypes()
                 .Where(type => type.IsClass)

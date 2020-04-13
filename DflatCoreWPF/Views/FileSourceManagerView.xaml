@@ -17,7 +17,12 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
     </Window.Resources>
-    <Border Margin="10">
+    <Grid>
+        <!-- Overlay -->
+        <Grid Panel.ZIndex="1000" Background="Black" Opacity="0.2" Visibility="{Binding EnableOverlay, Converter={StaticResource VisibilityConverter}, FallbackValue=Collapsed}" />
+        
+        <!-- Actual content -->
+        <Border Margin="10">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -102,7 +107,8 @@
 
             </Grid>
 
-
+            
         </Grid>
     </Border>
+    </Grid>
 </Window>

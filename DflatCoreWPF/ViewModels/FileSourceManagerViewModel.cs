@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Caliburn.Micro;
 using Dflat.Application.Models;
+using Dflat.Application.Repositories;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,6 +16,8 @@ namespace DflatCoreWPF.ViewModels
         #region Private backing fields
 
         private FileSourceFolder selectedFileSourceFolder;
+        private bool enableOverlay;
+        private readonly IFileSourceFolderRepository fileSourceFolderRepository;
         private readonly IMapper mapper;
         private readonly IWindowManager windowManager;
         private readonly ConfirmDialogViewModel confirmDialogViewModel;
@@ -28,17 +30,21 @@ namespace DflatCoreWPF.ViewModels
 
         #region Constructor
 
-        public FileSourceManagerViewModel(IMapper mapper,
+        public FileSourceManagerViewModel(IFileSourceFolderRepository fileSourceFolderRepository,
+                                          IMapper mapper,
                                           IWindowManager windowManager,
                                           ConfirmDialogViewModel confirmDialogViewModel,
                                           FileSourceFolderEditorViewModel sourceFolderEditorViewModel)
         {
             this.FileSourceFolders = new BindingList<FileSourceFolder>();
             this.removedFolders = new List<FileSourceFolder>();
+            this.fileSourceFolderRepository = fileSourceFolderRepository;
             this.mapper = mapper;
             this.windowManager = windowManager;
             this.confirmDialogViewModel = confirmDialogViewModel;
             this.sourceFolderEditorViewModel = sourceFolderEditorViewModel;
+
+            this.EnableOverlay = false;
         }
 
         #endregion
@@ -48,7 +54,9 @@ namespace DflatCoreWPF.ViewModels
         protected override void OnViewLoaded(object view)
         {
             LoadFileSourceFolders();
+            this.EnableOverlay = false;
         }
+
 
 
         private void LoadFileSourceFolders()
@@ -57,35 +65,9 @@ namespace DflatCoreWPF.ViewModels
             removedFolders.Clear();
             SelectedFileSourceFolder = null;
 
-            //foreach (var fileSourceFolder in uowManager.UnitOfWork.FileSourceFolderRepository.GetAll())
-            //    FileSourceFolders.Add(fileSourceFolder);
-
-            //var testFolders = new List<FileSourceFolder>();
-            //var temp1 = new FileSourceFolder
-            //{
-            //    FileSourceFolderID = 1,
-            //    Name = "Mugsystem",
-            //    Path = "C:\\"
-            //};
-            //temp1.IsChanged = false;
-            //testFolders.Add(temp1);
-
-            //var withExcludeFolders = new FileSourceFolder
-            //{
-            //    FileSourceFolderID = 2,
-            //    Name = "Muganawa Media",
-            //    Path = @"Z:\"
-            //};
-            //var ex1 = new ExcludePath { ExcludePathID = 1, FileSourceFolderID = 2, Path = @"Z:\video" };
-            //var ex2 = new ExcludePath { ExcludePathID = 2, FileSourceFolderID = 2, Path = @"Z:\from_tim" };
-            //var ex3 = new ExcludePath { ExcludePathID = 3, FileSourceFolderID = 2, Path = @"Z:\downloads" };
-            //withExcludeFolders.ExcludePaths.Add(ex1);
-            //withExcludeFolders.ExcludePaths.Add(ex2);
-            //withExcludeFolders.ExcludePaths.Add(ex3);
-            //withExcludeFolders.IsChanged = false;
-            //testFolders.Add(withExcludeFolders);
-
-            //testFolders.ForEach(f => FileSourceFolders.Add(f));
+            var sources = fileSourceFolderRepository.GetAll();
+            foreach (var fileSourceFolder in sources)
+                FileSourceFolders.Add(fileSourceFolder);
         }
 
         #endregion
@@ -169,11 +151,34 @@ namespace DflatCoreWPF.ViewModels
             NotifyOfPropertyChange(() => HasChanges);
         }
 
+        public bool EnableOverlay
+        {
+            get { return enableOverlay; }
+            set
+            {
+                enableOverlay = value;
+                NotifyOfPropertyChange(() => EnableOverlay);
+            }
+        }
+
         public bool CanSave => HasChanges;
 
-        public void Save()
+        public async Task Save()
         {
+            EnableOverlay = true;
+            try
+            {
+                await fileSourceFolderRepository.UpdateAllAsync(FileSourceFolders);
+                removedFolders.Clear();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            NotifyOfPropertyChange(() => CanSave);
+            NotifyOfPropertyChange(() => CancelButtonText);
 
+            EnableOverlay = false;
         }
 
       

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dflat.Application.Models
+namespace Dflat.EFCore.DB.Models
 {
-    public class ExcludePath
+    public class ExcludePathData
     {
         public int ExcludePathID { get; set; }
         public string Path { get; set; }
