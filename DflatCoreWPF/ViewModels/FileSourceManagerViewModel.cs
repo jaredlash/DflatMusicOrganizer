@@ -21,6 +21,7 @@ namespace DflatCoreWPF.ViewModels
         private readonly IMapper mapper;
         private readonly IWindowManager windowManager;
         private readonly ConfirmDialogViewModel confirmDialogViewModel;
+        private readonly AlertDialogViewModel alertDialogViewModel;
         private readonly FileSourceFolderEditorViewModel sourceFolderEditorViewModel;
 
         private readonly List<FileSourceFolder> removedFolders;
@@ -34,6 +35,7 @@ namespace DflatCoreWPF.ViewModels
                                           IMapper mapper,
                                           IWindowManager windowManager,
                                           ConfirmDialogViewModel confirmDialogViewModel,
+                                          AlertDialogViewModel alertDialogViewModel,
                                           FileSourceFolderEditorViewModel sourceFolderEditorViewModel)
         {
             this.FileSourceFolders = new BindingList<FileSourceFolder>();
@@ -42,6 +44,7 @@ namespace DflatCoreWPF.ViewModels
             this.mapper = mapper;
             this.windowManager = windowManager;
             this.confirmDialogViewModel = confirmDialogViewModel;
+            this.alertDialogViewModel = alertDialogViewModel;
             this.sourceFolderEditorViewModel = sourceFolderEditorViewModel;
 
             this.EnableOverlay = false;
@@ -65,7 +68,21 @@ namespace DflatCoreWPF.ViewModels
             removedFolders.Clear();
             SelectedFileSourceFolder = null;
 
-            var sources = fileSourceFolderRepository.GetAll();
+            IEnumerable<FileSourceFolder> sources = new List<FileSourceFolder>();
+
+            try
+            {
+
+                sources = fileSourceFolderRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                alertDialogViewModel.Title = "Problem loading source folders"; ;
+                alertDialogViewModel.Message = $"A problem was encountered when loading the source folders: {ex.Message}";
+                windowManager.ShowDialogAsync(alertDialogViewModel, null, null);
+            }
+
+
             foreach (var fileSourceFolder in sources)
                 FileSourceFolders.Add(fileSourceFolder);
         }
@@ -173,7 +190,9 @@ namespace DflatCoreWPF.ViewModels
             }
             catch (Exception ex)
             {
-                throw ex;
+                alertDialogViewModel.Title = "Problem saving changes"; ;
+                alertDialogViewModel.Message = $"Problem saving changes: {ex.Message}";
+                _ = await windowManager.ShowDialogAsync(alertDialogViewModel, null, null);
             }
             NotifyOfPropertyChange(() => CanSave);
             NotifyOfPropertyChange(() => CancelButtonText);
