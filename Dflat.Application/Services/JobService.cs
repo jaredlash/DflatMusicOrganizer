@@ -29,8 +29,10 @@ namespace Dflat.Application.Services
         }
 
 
-        public void RunJobs()
+        public List<Task> RunJobs()
         {
+            var taskList = new List<Task>();
+
             while (true)
             {
                 // Subclassed JobServices which need to make throttled HTTP connections, should
@@ -38,17 +40,17 @@ namespace Dflat.Application.Services
                 // don't get over-used (such as AcoustID and MusicBrainz)
 
                 if (RunningJobCount == MaxConcurrentJobs)
-                    return;
+                    return taskList;
 
                 var job = jobRepository.GetNextAvailable<JobType>();
                 if (job == null)
-                    return;
+                    return taskList;
 
                 RunningJobCount++;
 
                 SetupJob(job);
 
-                jobRunner.Run(job);
+                taskList.Add(jobRunner.Run(job));
             }
         }
 

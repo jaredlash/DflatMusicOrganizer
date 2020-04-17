@@ -3,7 +3,9 @@ using Dflat.Application.Repositories;
 using Dflat.Application.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Nito.AsyncEx;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Dflat.Application.UnitTests
 {
@@ -13,9 +15,6 @@ namespace Dflat.Application.UnitTests
     [TestClass]
     public class JobServiceTests
     {
-
-
-
         private Mock<IJobRepository> CreateMockJobRepository()
         {
             var repo = new Mock<IJobRepository>();
@@ -182,6 +181,94 @@ namespace Dflat.Application.UnitTests
             // Verify
             repo.Verify(m => m.Add(It.Is<TestJob>(j => j.Status == JobStatus.Queued)), Times.Once());
         }
+        #endregion
+
+        #region FinishJob
+
+        [TestMethod]
+        public void FinishJob_RunsThreeTimes_WhenThreeJobsRun()
+        {
+            var repo = CreateMockJobRepository();
+            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var iter = jobs.GetEnumerator();
+            repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
+            var runner = new BackgroundJobRunner<TestJob>();
+            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner);
+            var jobService = jobServiceMock.Object;
+            jobService.MaxConcurrentJobs = 5;
+
+            // Test
+            AsyncContext.Run(async () =>
+            {
+                await Task.WhenAll(jobService.RunJobs().ToArray());
+            });
+            
+
+            // Verify
+            jobServiceMock.Verify(m => m.FinishJob(It.IsAny<TestJob>()), Times.Exactly(3));
+        }
+
+        #endregion
+
+        #region RunningJobCount
+        [TestMethod]
+        public void RunningJobCount_IsZero_WhenThreeJobsFinished()
+        {
+            var repo = CreateMockJobRepository();
+            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var iter = jobs.GetEnumerator();
+            repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
+            var runner = new BackgroundJobRunner<TestJob>();
+            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner)
+            {
+                CallBase = true
+            };
+            var jobService = jobServiceMock.Object;
+            jobService.MaxConcurrentJobs = 5;
+
+            // Test
+            AsyncContext.Run(async () =>
+            {
+                await Task.WhenAll(jobService.RunJobs().ToArray());
+            });
+
+
+            // Verify
+            Assert.AreEqual(0, jobService.RunningJobCount);
+        }
+        #endregion
+
+        #region JobFinished Event
+
+        [TestMethod]
+        public void JobFinishedEvent_IsCalledThreeTimes_WhenThreeJobsFinishedAndCallbackRegistered()
+        {
+            var repo = CreateMockJobRepository();
+            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var iter = jobs.GetEnumerator();
+            repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
+            var runner = new BackgroundJobRunner<TestJob>();
+            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner)
+            {
+                CallBase = true
+            };
+            var jobService = jobServiceMock.Object;
+            jobService.MaxConcurrentJobs = 5;
+
+            int timesCalled = 0;
+            jobService.JobFinished += (o, e) => timesCalled++;
+
+            // Test
+            AsyncContext.Run(async () =>
+            {
+                await Task.WhenAll(jobService.RunJobs().ToArray());
+            });
+
+
+            // Verify
+            Assert.AreEqual(3, timesCalled);
+        }
+
         #endregion
     }
 }
