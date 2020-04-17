@@ -15,6 +15,7 @@ namespace Dflat.Application.UnitTests
     [TestClass]
     public class JobServiceTests
     {
+        #region Setup
         private Mock<IJobRepository> CreateMockJobRepository()
         {
             var repo = new Mock<IJobRepository>();
@@ -29,6 +30,8 @@ namespace Dflat.Application.UnitTests
 
             return runner;
         }
+
+        #endregion
 
         #region RunJobs
         [TestMethod]
