@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dflat.Application.Services
 {
-    //public abstract class JobService<JobType> : IJobService<JobType> where JobType : Job
-    public abstract class JobService<JobType> where JobType : Job
+    public abstract class JobService<JobType> : IJobService<JobType> where JobType : Job
     {
         private readonly IJobRepository jobRepository;
         private readonly IBackgroundJobRunner<JobType> jobRunner;
