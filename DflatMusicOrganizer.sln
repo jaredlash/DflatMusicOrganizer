@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dflat.Application.UnitTests", "Dflat.Application.UnitTests\Dflat.Application.UnitTests.csproj", "{431BA10E-0972-4BB8-8F88-72F649E7348A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{8F1159F8-7EB2-4BB3-9C9C-FDAC7C917033}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -478,6 +480,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{C3FA88D1-DFB8-47A5-BDEE-889A13B0361E} = {8F1159F8-7EB2-4BB3-9C9C-FDAC7C917033}
 		{C2439ABC-B2DB-4CE6-8F65-0B8C324D9F7C} = {64B6292E-330A-4D4D-997B-90994A78CD82}
 		{34723496-2663-47B6-983F-92E4F03A1B15} = {6ECC95DE-030C-4925-A786-A3446DEF1E96}
 		{5A9B7F30-3550-4DEF-815D-7D10EE32F6C8} = {350C17F8-4D41-499C-8868-44466680FE86}

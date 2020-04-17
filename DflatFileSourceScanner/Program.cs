@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dflat.Infrastructure.IO.Filesystem;
 using System.IO;
+using Dflat.Application.Services;
+using Dflat.Application.Wrappers;
 
 namespace DflatFileSourceScanner
 {
@@ -30,7 +31,7 @@ namespace DflatFileSourceScanner
 
         static int Main(string[] args)
         {
-            IFolderSearchService folderSearch = new FolderSearchService(MusicFilter);
+            IFolderSearchService folderSearch = new FolderSearchService(new SystemIOWrapper(), MusicFilter);
 
             var excludeDirectories = args.Skip(1);
 
@@ -47,6 +48,9 @@ namespace DflatFileSourceScanner
             foreach (var foundFile in result.FoundFiles)
                 Console.WriteLine("{0}: {1}", foundFile.Extension.ToUpperInvariant(), Path.Combine(foundFile.Directory, foundFile.Filename));
 
+            Console.WriteLine();
+            Console.WriteLine($"Found {result.FoundFiles.Count} files.");
+            Console.WriteLine($"{result.ErrorLog.Count} errors were encountered.");
             return 0;
         }
     }
