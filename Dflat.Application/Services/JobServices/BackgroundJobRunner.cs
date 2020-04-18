@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Dflat.Application.Services
+namespace Dflat.Application.Services.JobServices
 {
     public class BackgroundJobRunner<JobType> : IBackgroundJobRunner<JobType> where JobType : Job
     {

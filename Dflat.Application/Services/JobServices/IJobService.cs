@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dflat.Application.Services
+namespace Dflat.Application.Services.JobServices
 {
     public interface IJobService<JobType> where JobType : Job
     {

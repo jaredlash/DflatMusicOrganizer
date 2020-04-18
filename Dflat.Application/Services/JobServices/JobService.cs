@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dflat.Application.Services
+namespace Dflat.Application.Services.JobServices
 {
     public abstract class JobService<JobType> : IJobService<JobType> where JobType : Job
     {

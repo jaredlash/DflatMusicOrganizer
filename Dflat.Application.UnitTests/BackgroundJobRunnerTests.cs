@@ -1,6 +1,6 @@
 ﻿using Dflat.Application.Models;
 using Dflat.Application.Repositories;
-using Dflat.Application.Services;
+using Dflat.Application.Services.JobServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Nito.AsyncEx;

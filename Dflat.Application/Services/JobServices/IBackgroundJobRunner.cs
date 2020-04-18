@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Dflat.Application.Services
+namespace Dflat.Application.Services.JobServices
 {
     public interface IBackgroundJobRunner<JobType> where JobType : Job
     {
