@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dflat.Application.Services
 {
-    public class FileCollectionCompare
+    public class FileCollectionCompare : IFileCollectionCompare
     {
         public class CompareResult
         {
