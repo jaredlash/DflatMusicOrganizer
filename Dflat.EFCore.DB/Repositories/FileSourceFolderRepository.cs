@@ -139,5 +139,23 @@ namespace Dflat.EFCore.DB.Repositories
 
             return true;
         }
+
+        public FileSourceFolder Get(int fileSourceFolderID)
+        {
+            FileSourceFolder result = null;
+
+            using (var context = new DataContext())
+            {
+                var fileSourceFolder = context.FileSourceFolders
+                    .Where((f) => f.FileSourceFolderID == fileSourceFolderID)
+                    .Include(f => f.ExcludePaths).FirstOrDefault();
+
+                mapper.Map(fileSourceFolder, result);
+            }
+
+            result.IsChanged = false;
+
+            return result;
+        }
     }
 }

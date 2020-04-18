@@ -13,5 +13,7 @@ namespace Dflat.Application.Repositories
         Task<IEnumerable<FileSourceFolder>> GetAllAsync();
 
         Task<bool> UpdateAllAsync(IEnumerable<FileSourceFolder> fileSourceFolders);
+
+        FileSourceFolder Get(int fileSourceFolderID);
     }
 }
