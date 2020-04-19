@@ -58,6 +58,7 @@ namespace Dflat.Application.Services.JobServices
         {
             // TODO: Should probably add the job first in a new state such as "Queueing"
             // That way the job has an ID that can be used when queueing the prerequisites
+            // Reevaluate when implementing QueuePrerequisites for a subclass.
             QueuePrerequisites(job);
 
 
