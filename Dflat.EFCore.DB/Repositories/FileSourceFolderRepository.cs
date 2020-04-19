@@ -92,6 +92,15 @@ namespace Dflat.EFCore.DB.Repositories
                         };
 
                         context.FileSourceFolders.Add(fileSourceFolderData);
+                        try
+                        {
+                            _ = await context.SaveChangesAsync();
+                            source.FileSourceFolderID = fileSourceFolderData.FileSourceFolderID;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
                     }
                     else // Update
                     {
