@@ -15,6 +15,6 @@ namespace Dflat.Application.Repositories
         /// <returns></returns>
         JobType GetNextAvailable<JobType>() where JobType : Job;
 
-        bool PrerequisitesFinished(int jobID);
+        //bool PrerequisitesFinished(int jobID);
     }
 }

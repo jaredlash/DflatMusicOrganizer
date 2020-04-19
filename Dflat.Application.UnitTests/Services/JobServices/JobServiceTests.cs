@@ -127,25 +127,25 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             Assert.AreEqual(JobStatus.Ready, job.Status);
         }
 
-        [TestMethod]
-        public void SubmitJobRequest_SetsJobToQueued_WhenPrereqsExist()
-        {
-            // Setup
-            var job = new TestJob();
-            job.PrerequisiteJobs.Add(new TestJob());
-            job.PrerequisiteJobs.Add(new TestJob());
+        //[TestMethod]
+        //public void SubmitJobRequest_SetsJobToQueued_WhenPrereqsExist()
+        //{
+        //    // Setup
+        //    var job = new TestJob();
+        //    job.PrerequisiteJobs.Add(new TestJob());
+        //    job.PrerequisiteJobs.Add(new TestJob());
 
-            var repo = CreateMockJobRepository();
-            var runner = CreateBackgroundJobRunner();
-            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
-            var jobService = jobServiceMock.Object;
+        //    var repo = CreateMockJobRepository();
+        //    var runner = CreateBackgroundJobRunner();
+        //    var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
+        //    var jobService = jobServiceMock.Object;
 
-            // Test
-            jobService.SubmitJobRequest(job);
+        //    // Test
+        //    jobService.SubmitJobRequest(job);
 
-            // Verify
-            Assert.AreEqual(JobStatus.Queued, job.Status);
-        }
+        //    // Verify
+        //    Assert.AreEqual(JobStatus.Queued, job.Status);
+        //}
 
         [TestMethod]
         public void SubmitJobRequest_AddsReadyJobToRepo_WhenNoPrereqs()
@@ -165,25 +165,25 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             repo.Verify(m => m.Add(It.Is<TestJob>(j => j.Status == JobStatus.Ready)), Times.Once());
         }
 
-        [TestMethod]
-        public void SubmitJobRequest_AddsQueuedJobToRepo_WhenPrereqsExist()
-        {
-            // Setup
-            var job = new TestJob();
-            job.PrerequisiteJobs.Add(new TestJob());
-            job.PrerequisiteJobs.Add(new TestJob());
+        //[TestMethod]
+        //public void SubmitJobRequest_AddsQueuedJobToRepo_WhenPrereqsExist()
+        //{
+        //    // Setup
+        //    var job = new TestJob();
+        //    job.PrerequisiteJobs.Add(new TestJob());
+        //    job.PrerequisiteJobs.Add(new TestJob());
 
-            var repo = CreateMockJobRepository();
-            var runner = CreateBackgroundJobRunner();
-            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
-            var jobService = jobServiceMock.Object;
+        //    var repo = CreateMockJobRepository();
+        //    var runner = CreateBackgroundJobRunner();
+        //    var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
+        //    var jobService = jobServiceMock.Object;
 
-            // Test
-            jobService.SubmitJobRequest(job);
+        //    // Test
+        //    jobService.SubmitJobRequest(job);
 
-            // Verify
-            repo.Verify(m => m.Add(It.Is<TestJob>(j => j.Status == JobStatus.Queued)), Times.Once());
-        }
+        //    // Verify
+        //    repo.Verify(m => m.Add(It.Is<TestJob>(j => j.Status == JobStatus.Queued)), Times.Once());
+        //}
         #endregion
 
         #region FinishJob

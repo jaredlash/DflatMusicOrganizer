@@ -61,11 +61,12 @@ namespace Dflat.Application.Services.JobServices
             // Reevaluate when implementing QueuePrerequisites for a subclass.
             QueuePrerequisites(job);
 
-
-            if (job.PrerequisiteJobs.Count == 0)
-                job.Status = JobStatus.Ready;
-            else
-                job.Status = JobStatus.Queued;
+            // TODO: Re-implement prerequisites once actually used.
+            //if (job.PrerequisiteJobs.Count == 0)
+            //    job.Status = JobStatus.Ready;
+            //else
+            //    job.Status = JobStatus.Queued;
+            job.Status = JobStatus.Ready;
 
             // Then we add (possibly update, given note above) the job from Queueing to Queued or Ready depending on how
             // many prerequisites were queued.

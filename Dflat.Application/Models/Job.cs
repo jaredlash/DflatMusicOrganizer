@@ -27,6 +27,11 @@ namespace Dflat.Application.Models
         public string Output { get; set; }
         public string Errors { get; set; }
 
+        //public int? DependentJobID { get; set; }
+
+        //public ICollection<Job> PrerequisiteJobs { get; set; } = new HashSet<Job>();
+
+
         public void SetFromExisting(Job existingJob)
         {
             Status = existingJob.Status;
@@ -35,10 +40,6 @@ namespace Dflat.Application.Models
         }
 
 
-        public int? DependentJobID { get; set; }
-        public Job DependentJob { get; set; }
-
-        public ICollection<Job> PrerequisiteJobs { get; set; } = new HashSet<Job>();
 
         public abstract bool SameRequestAs(Job otherJob);
     }
