@@ -19,9 +19,9 @@ namespace Dflat.EFCore.DB.Repositories
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<FileSourceFolder>> GetAllAsync()
+        public async Task<IEnumerable<Application.Models.FileSourceFolder>> GetAllAsync()
         {
-            var result = new List<FileSourceFolder>();
+            var result = new List<Application.Models.FileSourceFolder>();
 
             using (var context = new DataContext())
             {
@@ -37,9 +37,9 @@ namespace Dflat.EFCore.DB.Repositories
         }
 
 
-        public IEnumerable<FileSourceFolder> GetAll()
+        public IEnumerable<Application.Models.FileSourceFolder> GetAll()
         {
-            var result = new List<FileSourceFolder>();
+            var result = new List<Application.Models.FileSourceFolder>();
 
             using (var context = new DataContext())
             {
@@ -55,7 +55,7 @@ namespace Dflat.EFCore.DB.Repositories
         }
 
 
-        public async Task<bool> UpdateAllAsync(IEnumerable<FileSourceFolder> fileSourceFolders)
+        public async Task<bool> UpdateAllAsync(IEnumerable<Application.Models.FileSourceFolder> fileSourceFolders)
         {
             using (var context = new DataContext())
             {
@@ -73,16 +73,16 @@ namespace Dflat.EFCore.DB.Repositories
 
                 foreach (var source in fileSourceFolders)
                 {
-                    List<ExcludePathData> excludePaths = new List<ExcludePathData>();
+                    List<Models.ExcludePath> excludePaths = new List<Models.ExcludePath>();
                     foreach (var path in source.ExcludePaths)
                     {
-                        excludePaths.Add(new ExcludePathData { ExcludePathID = path.ExcludePathID, Path = path.Path });
+                        excludePaths.Add(new Models.ExcludePath { ExcludePathID = path.ExcludePathID, Path = path.Path });
                     }
 
                     // Add
                     if (source.FileSourceFolderID == 0)
                     {
-                        FileSourceFolderData fileSourceFolderData = new FileSourceFolderData
+                        Models.FileSourceFolder fileSourceFolderData = new Models.FileSourceFolder
                         {
                             Path = source.Path,
                             Name = source.Name,
@@ -140,9 +140,9 @@ namespace Dflat.EFCore.DB.Repositories
             return true;
         }
 
-        public FileSourceFolder Get(int fileSourceFolderID)
+        public Application.Models.FileSourceFolder Get(int fileSourceFolderID)
         {
-            FileSourceFolder result = null;
+            Application.Models.FileSourceFolder result = null;
 
             using (var context = new DataContext())
             {

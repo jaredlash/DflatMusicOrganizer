@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Dflat.EFCore.DB.Models
 {
-    public class FileSourceFolderData
+    public class FileSourceFolder
     {
-        public FileSourceFolderData()
+        public FileSourceFolder()
         {
-            ExcludePaths = new HashSet<ExcludePathData>();
+            ExcludePaths = new HashSet<ExcludePath>();
         }
         public int FileSourceFolderID { get; set; }
         public string Name { get; set; }
@@ -16,6 +16,6 @@ namespace Dflat.EFCore.DB.Models
         public bool IsTemporaryMedia { get; set; }
         public DateTime? LastScanStart { get; set; }
 
-        public ICollection<ExcludePathData> ExcludePaths { get; set; }
+        public ICollection<ExcludePath> ExcludePaths { get; set; }
     }
 }

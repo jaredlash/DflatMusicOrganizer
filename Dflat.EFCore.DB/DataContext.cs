@@ -15,7 +15,7 @@ namespace Dflat.EFCore.DB
         {
         }
 
-        public DbSet<FileSourceFolderData> FileSourceFolders { get; set; }
+        public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -38,18 +38,18 @@ namespace Dflat.EFCore.DB
 
         private void buildFileSourceFolderModels(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ExcludePathData>().ToTable("ExcludePaths").HasKey(table => table.ExcludePathID);
+            modelBuilder.Entity<ExcludePath>().ToTable("ExcludePaths").HasKey(table => table.ExcludePathID);
             
-            modelBuilder.Entity<ExcludePathData>()
+            modelBuilder.Entity<ExcludePath>()
                 .Property(table => table.ExcludePathID).ValueGeneratedOnAdd();
-            modelBuilder.Entity<ExcludePathData>()
+            modelBuilder.Entity<ExcludePath>()
                 .Property(table => table.Path).IsRequired();
 
-            modelBuilder.Entity<FileSourceFolderData>().ToTable("FileSourceFolders").HasKey(table => table.FileSourceFolderID);
-            modelBuilder.Entity<FileSourceFolderData>().HasMany(p => p.ExcludePaths).WithOne().OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<FileSourceFolderData>()
+            modelBuilder.Entity<FileSourceFolder>().ToTable("FileSourceFolders").HasKey(table => table.FileSourceFolderID);
+            modelBuilder.Entity<FileSourceFolder>().HasMany(p => p.ExcludePaths).WithOne().OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<FileSourceFolder>()
                 .Property(table => table.Name).IsRequired();
-            modelBuilder.Entity<FileSourceFolderData>()
+            modelBuilder.Entity<FileSourceFolder>()
                 .Property(table => table.Path).IsRequired();
         }
     }

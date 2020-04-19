@@ -30,23 +30,23 @@ namespace DflatCoreWPF
             var automapconfig = new MapperConfiguration(cfg =>
             {
 
-                cfg.CreateMap<FileSourceFolder, FileSourceFolderEditorViewModel>()
-                    .ForMember(dest => dest.SelectedExcludePath, opt => opt.Ignore())
-                    .ForMember(dest => dest.IsInitialized, opt => opt.Ignore())
-                    .ForMember(dest => dest.Parent, opt => opt.Ignore())
-                    .ForMember(dest => dest.DisplayName, opt => opt.Ignore())
-                    .ForMember(dest => dest.IsActive, opt => opt.Ignore())
-                    .ForMember(dest => dest.IsNotifying, opt => opt.Ignore())
+                cfg.CreateMap<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel>()
+                    .ForMember((System.Linq.Expressions.Expression<Func<FileSourceFolderEditorViewModel, Dflat.Application.Models.ExcludePath>>)(dest => (Dflat.Application.Models.ExcludePath)dest.SelectedExcludePath), (Action<IMemberConfigurationExpression<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel, Dflat.Application.Models.ExcludePath>>)(opt => opt.Ignore()))
+                    .ForMember((System.Linq.Expressions.Expression<Func<FileSourceFolderEditorViewModel, bool>>)(dest => (bool)dest.IsInitialized), (Action<IMemberConfigurationExpression<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel, bool>>)(opt => opt.Ignore()))
+                    .ForMember((System.Linq.Expressions.Expression<Func<FileSourceFolderEditorViewModel, object>>)(dest => (object)dest.Parent), (Action<IMemberConfigurationExpression<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel, object>>)(opt => opt.Ignore()))
+                    .ForMember((System.Linq.Expressions.Expression<Func<FileSourceFolderEditorViewModel, string>>)(dest => (string)dest.DisplayName), (Action<IMemberConfigurationExpression<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel, string>>)(opt => opt.Ignore()))
+                    .ForMember((System.Linq.Expressions.Expression<Func<FileSourceFolderEditorViewModel, bool>>)(dest => (bool)dest.IsActive), (Action<IMemberConfigurationExpression<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel, bool>>)(opt => opt.Ignore()))
+                    .ForMember((System.Linq.Expressions.Expression<Func<FileSourceFolderEditorViewModel, bool>>)(dest => (bool)dest.IsNotifying), (Action<IMemberConfigurationExpression<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel, bool>>)(opt => opt.Ignore()))
                     .ReverseMap()
                     .DisableCtorValidation();
 
                 //cfg.CreateMap<FileSourceFolderEditorViewModel, FileSourceFolder>();
 
                 cfg.UseEntityFrameworkCoreModel<DataContext>();
-                cfg.CreateMap<FileSourceFolderData, FileSourceFolder>()
+                cfg.CreateMap<FileSourceFolder, FileSourceFolder>()
                     .ForMember(dest => dest.IsChanged, opt => opt.Ignore())
                     .ReverseMap();
-                cfg.CreateMap<ExcludePathData, ExcludePath>().ReverseMap();
+                cfg.CreateMap<ExcludePath, ExcludePath>().ReverseMap();
             });
 
             //automapconfig.AssertConfigurationIsValid();
