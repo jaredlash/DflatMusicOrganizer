@@ -10,22 +10,18 @@ namespace Dflat.Application.Services.JobServices
 {
     public class FileSourceFolderScanService : JobService<FileSourceFolderScanJob>, IJobService<FileSourceFolderScanJob>
     {
-        public enum ProcessFileMode
-        {
-            Stage,
-            Add
-        }
-
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
         private readonly IFileRepository fileRepository;
         private readonly IFolderSearchService folderScanner;
         private readonly IMapper mapper;
+        private readonly IFileCollectionCompare comparer;
         private readonly HashSet<string> validExtensions;
 
         public FileSourceFolderScanService(IFileSourceFolderRepository fileSourceFolderRepository,
                                            IFileRepository fileRepository,
                                            IFolderSearchService folderScanner,
                                            IMapper mapper,
+                                           IFileCollectionCompare comparer,
                                            IJobRepository jobRepository,
                                            IBackgroundJobRunner<FileSourceFolderScanJob> jobRunner)
             : base(jobRepository, jobRunner)
@@ -35,6 +31,7 @@ namespace Dflat.Application.Services.JobServices
             this.fileRepository = fileRepository;
             this.folderScanner = folderScanner;
             this.mapper = mapper;
+            this.comparer = comparer;
             validExtensions = new HashSet<string>() { ".aiff", ".flac", ".m4a", ".mp2", ".mp3", ".ogg", ".wav", ".wma" };
 
 
@@ -55,10 +52,28 @@ namespace Dflat.Application.Services.JobServices
 
         public override void DoWork(FileSourceFolderScanJob job)
         {
+            var fileSourceFolder = fileSourceFolderRepository.Get(job.FileSourceFolderID);
+            if (fileSourceFolder == null)
+            {
+                job.Errors = $"FileSouorceFolder with ID = {job.FileSourceFolderID} not found.";
+                job.Status = JobStatus.Error;
+
+                return;
+            }
+
+            var excludeFolders = new HashSet<string>(fileSourceFolder.ExcludePaths.Select((p) => p.Path));
+
+
             FolderSearchServiceResult result;
             try
             {
-                result = ScanFolder(job);
+                result = folderScanner.FindFiles(fileSourceFolder.Path, excludeFolders, MusicFilter);
+                job.Errors = string.Join("\n", result.ErrorLog);
+                if (result.ErrorLog.Count > 0 && result.FoundFiles.Count == 0)
+                {
+                        job.Status = JobStatus.Error;
+                        return;
+                }
             }
             catch (DirectoryNotFoundException e)
             {
@@ -68,58 +83,61 @@ namespace Dflat.Application.Services.JobServices
                 return;
             }
 
-            job.Errors = string.Join("\n", result.ErrorLog);
 
+            ProcessFoundFiles(fileSourceFolder.Path, result);
 
+            if (result.ErrorLog.Count > 0)
+                job.Status = JobStatus.SuccessWithErrors;
+            else
+                job.Status = JobStatus.Success;
+        }
+
+        private void ProcessFoundFiles(string path, FolderSearchServiceResult result)
+        {
+            // Set up our collections to compare
+            var beforeSearch = fileRepository.GetFromPath(path);        // "before" collection
+            List<Models.File> foundFiles = new List<Models.File>();     // "after" collection
+            
             foreach (var fileResult in result.FoundFiles)
             {
-                StageFileResult(fileResult);
+                Models.File newFile = new Models.File();
+                mapper.Map(fileResult, newFile);
+
+                foundFiles.Add(newFile);
             }
-        }
 
-        public void StageFileResult(FileResult fileResult)
-        {
-            var separator = new string(Path.DirectorySeparatorChar, 1);
-
-            int newFileID;
-            string fullFilePath;
-
-            // Create the File object if it doesn't already exist
-            Models.File newFile = new Models.File();
-
-            mapper.Map(fileResult, newFile);
-
-            fileRepository.Stage(newFile);
+            
+            // Figure out what has changed during since the last scan
+            var compareResult = comparer.Compare(beforeSearch, foundFiles);
 
 
-            newFileID = newFile.FileID;
-            fullFilePath = string.Join(separator, newFile.Directory, newFile.Filename);
+            foreach (var removedFile in compareResult.Removed)
+            {
+                fileRepository.MarkRemoved(removedFile.FileID);
+            }
 
 
+            foreach (var modifiedFile in compareResult.Modified)
+            {
+                fileRepository.Update(modifiedFile);
+            }
 
-            // Queue a MD5 and Chromaprint requests
-            //fileChromaprintService.SubmitJobRequest(new FileChromaprintJob { FileID = newFileID, Description = "Chromaprint: " + fullFilePath });
-            //fileMD5Service.SubmitJobRequest(new FileMD5Job { FileID = newFileID, Description = "MD5: " + fullFilePath });
-        }
+            foreach (var addedFile in compareResult.Added)
+            {
+                fileRepository.Add(addedFile); // Sets the FileID of the added file
+            }
 
-        public ProcessFileMode ShouldStageFile(Models.File newFile, Models.File existingFile)
-        {
-            // TODO: Make decision configurable based on user options
-            // for example: perhaps all files should be staged until MD5s can be compared
+            //Queue a MD5 and Chromaprint requests
+            foreach (var file in compareResult.Added.Concat(compareResult.Modified))
+            {
+                var separator = new string(Path.DirectorySeparatorChar, 1);
+               
+                var fullFilePath = string.Join(separator, file.Directory, file.Filename);
 
-            // If we don't have an existing file that might match, then just add the new one
-            if (existingFile == null)
-                return ProcessFileMode.Add;
-
-            return ProcessFileMode.Stage;
-        }
-
-        private FolderSearchServiceResult ScanFolder(FileSourceFolderScanJob job)
-        {
-            var fileSourceFolder = fileSourceFolderRepository.Get(job.FileSourceFolderID);
-            var excludeFolders = new HashSet<string>(fileSourceFolder.ExcludePaths.Select((p) => p.Path));
-
-            return folderScanner.FindFiles(fileSourceFolder.Path, excludeFolders, MusicFilter);
+                
+                //fileChromaprintService.SubmitJobRequest(new FileChromaprintJob { FileID = file.FileID, Description = "Chromaprint: " + fullFilePath });
+                //fileMD5Service.SubmitJobRequest(new FileMD5Job { FileID = fileID, Description = "MD5: " + fullFilePath });
+            }
         }
 
         private bool MusicFilter(string filename)
@@ -139,12 +157,5 @@ namespace Dflat.Application.Services.JobServices
 
             return false;
         }
-
-
-        public override void FinishJob(FileSourceFolderScanJob job)
-        {
-            base.FinishJob(job);
-        }
-
     }
 }
