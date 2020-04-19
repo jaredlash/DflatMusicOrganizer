@@ -11,11 +11,13 @@ namespace Dflat.EFCore.DB
 {
     public class DataContext : DbContext
     {
-        public DataContext()
-        {
-        }
-
         public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
+
+        public DbSet<FileSourceFolderScanJob> FileSourceFolderScanJobs { get; set; }
+
+
+        public DataContext() { }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -51,6 +53,14 @@ namespace Dflat.EFCore.DB
                 .Property(table => table.Name).IsRequired();
             modelBuilder.Entity<FileSourceFolder>()
                 .Property(table => table.Path).IsRequired();
+
+            modelBuilder.Entity<Job>().ToTable("Jobs").HasKey(table => table.JobID);
+            modelBuilder.Entity<Job>().Property(table => table.Description).IsRequired();
+            modelBuilder.Entity<Job>().Property(table => table.Errors).IsRequired();
+            modelBuilder.Entity<Job>().Property(table => table.CreationTime).IsRequired();
+            modelBuilder.Entity<Job>().Property(table => table.Output).IsRequired();
+            modelBuilder.Entity<Job>().HasDiscriminator<int>("JobType")
+                .HasValue<FileSourceFolderScanJob>(1);
         }
     }
 }

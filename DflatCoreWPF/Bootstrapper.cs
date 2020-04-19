@@ -47,6 +47,7 @@ namespace DflatCoreWPF
                     .ForMember(dest => dest.IsChanged, opt => opt.Ignore())
                     .ReverseMap();
                 cfg.CreateMap<Dflat.EFCore.DB.Models.ExcludePath, Dflat.Application.Models.ExcludePath>().ReverseMap();
+                cfg.CreateMap<Dflat.EFCore.DB.Models.FileSourceFolderScanJob, Dflat.Application.Models.FileSourceFolderScanJob>().ReverseMap();
             });
 
             //automapconfig.AssertConfigurationIsValid();

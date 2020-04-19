@@ -1,55 +1,123 @@
-﻿using Dflat.Application.Models;
+﻿using AutoMapper;
+using Dflat.Application.Models;
 using Dflat.Application.Repositories;
+using Dflat.EFCore.DB.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Dflat.EFCore.DB.Repositories
 {
     public class JobRepository : IJobRepository
     {
-        public void Add<JobType>(JobType job) where JobType : Job
+        private readonly IMapper mapper;
+
+        public JobRepository(IMapper mapper)
         {
-            throw new NotImplementedException();
+            this.mapper = mapper;
         }
 
-        public void Update<JobType>(JobType job) where JobType : Job 
+        // Sets the ID of the passed in job
+        public void Add<JobType>(JobType job) where JobType : Application.Models.Job
         {
-            throw new NotImplementedException();
-            // This was in the old JobService, but should be here instead.
-            // This update method is responsible for also updating the status of any parent
-            // jobs for which this job is a prerequisite.
+            switch (job)
+            {
+                case Application.Models.FileSourceFolderScanJob folderScanJob:
+                    Models.FileSourceFolderScanJob newJob = mapper.Map<Models.FileSourceFolderScanJob>(folderScanJob);
 
-            // Only do this if the job status is Success
+                    using (var context = new DataContext())
+                    {
+                        context.Add(newJob);
+                        context.SaveChanges();
+                    }
 
-            //private void UpdateDependentJobStatus(JobType job)
-            //{
-            //    if (job.DependentJobID == null)
-            //        return;
+                    folderScanJob.JobID = newJob.JobID;
+                    break;
 
-            //    int parentID = (int)job.DependentJobID;
-
-            //    using (var unitOfWork = unitOfWorkFactory.Create())
-            //    {
-            //        // See if our parent job is ready to be run
-            //        if (unitOfWork.JobRepository.PrerequisitesFinished(parentID))
-            //        {
-            //            var parentJob = unitOfWork.JobRepository.Get(parentID);
-            //            parentJob.Status = JobStatus.Ready;
-            //            unitOfWork.SaveChanges();
-            //        }
-            //    }
-            //}
+                default:
+                    throw new NotImplementedException();
+            }
+            
         }
 
-        public JobType GetNextAvailable<JobType>() where JobType : Job
+        // TODO: Make this responsible for updating the status of any parent
+        // jobs for which this job is a prerequisite
+        public void Update<JobType>(JobType job) where JobType : Application.Models.Job
         {
-            throw new NotImplementedException();
+            switch (job)
+            {
+                case Application.Models.FileSourceFolderScanJob folderScanJob:
+                    //Models.FileSourceFolderScanJob newJob = mapper.Map<Models.FileSourceFolderScanJob>(folderScanJob);
+
+                    using (var context = new DataContext())
+                    {
+                        Models.FileSourceFolderScanJob existingJob = context.FileSourceFolderScanJobs.Find(folderScanJob.JobID);
+                        if (existingJob == null)
+                            throw new Exception($"Job = {folderScanJob.JobID} not found");
+
+                        //existingJob.CreationTime  // Should not change
+                        existingJob.Status = folderScanJob.Status;
+                        existingJob.Description = folderScanJob.Description;
+                        existingJob.IgnoreCache = folderScanJob.IgnoreCache;
+                        existingJob.Output = folderScanJob.Output;
+                        existingJob.Errors = folderScanJob.Errors;
+                        existingJob.FileSourceFolderID = folderScanJob.FileSourceFolderID;
+                        
+                        context.SaveChanges();
+                    }
+
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
-        public bool PrerequisitesFinished(int jobID)
+        // Sets the returned job to running statsu
+        public JobType GetNextAvailable<JobType>() where JobType : Application.Models.Job
         {
-            throw new NotImplementedException();
+            Type jobType = typeof(JobType);
+
+
+            using (var context = new DataContext())
+            {
+                if (jobType == typeof(Application.Models.FileSourceFolderScanJob))
+                {
+
+                    // First get the jobs that are currently running so that we can check that the job we pick which is queued is not equivalent
+                    // to one that is currently running.
+                    var runningJobs = context.FileSourceFolderScanJobs.Where((j) => j.Status == JobStatus.Running).ToList();
+
+                    // Now get the jobs that are ready to be run
+                    var readyJobs = context.FileSourceFolderScanJobs.Where((j) => j.Status == JobStatus.Ready).ToList();
+
+                    var nextJob = readyJobs.Where((j) => runningJobs.Any((r) => r.SameRequestAs(j)) == false).FirstOrDefault();
+
+                    if (nextJob == null)
+                        return null;
+
+                    // Update job to running
+                    nextJob.Status = JobStatus.Running;
+                    context.SaveChanges();
+
+                    return mapper.Map<Application.Models.FileSourceFolderScanJob>(nextJob) as JobType;
+                }
+                else
+                    throw new NotImplementedException();
+            }
         }
+
+
+        //private List<JobType> GetCurrentlyRunning<JobType>() where JobType : Application.Models.Job
+        //{
+        //    return context.Jobs.AsNoTracking().OfType<JobType>().Where((j) => j.Status == JobStatus.Running).ToList();
+        //}
+
+
+        //private List<JobType> GetReadyJobs<JobType>() where JobType : Application.Models.Job
+        //{
+        //    return context.Jobs.AsNoTracking().OfType<JobType>().Where((j) => j.Status == JobStatus.Ready).ToList();
+        //}
     }
 }
