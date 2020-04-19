@@ -6,6 +6,7 @@
         Ready = 2,
         Running = 3,
         Success = 4,
-        Error = 5
+        SuccessWithErrors = 5,
+        Error = 6
     }
 }
