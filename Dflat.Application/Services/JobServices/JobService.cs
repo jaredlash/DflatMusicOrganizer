@@ -72,6 +72,9 @@ namespace Dflat.Application.Services.JobServices
             // Consider getting rid of the Prerequisites collection and moving this
             // logic to the database layer (although, it is more of a business concern...)
             jobRepository.Add(job);
+
+            // Start running jobs as soon as we get them
+            RunJobs();
         }
 
         public abstract void QueuePrerequisites(JobType job);
@@ -105,6 +108,8 @@ namespace Dflat.Application.Services.JobServices
             // Let things know we're done.
             JobFinished?.Invoke(job, null);
 
+            // Finished with a job means we can start running the next
+            RunJobs();
         }
 
 
