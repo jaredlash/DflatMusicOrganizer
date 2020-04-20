@@ -158,11 +158,13 @@ namespace Dflat.EFCore.DB.Repositories
                 var fileSourceFolder = context.FileSourceFolders
                     .Where((f) => f.FileSourceFolderID == fileSourceFolderID)
                     .Include(f => f.ExcludePaths).FirstOrDefault();
+                if (fileSourceFolder == null)
+                    return null;
 
-                mapper.Map(fileSourceFolder, result);
+                result = mapper.Map<Application.Models.FileSourceFolder>(fileSourceFolder);
             }
 
-            result.IsChanged = false;
+            if (result != null) result.IsChanged = false;
 
             return result;
         }
