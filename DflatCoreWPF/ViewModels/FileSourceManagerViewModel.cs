@@ -2,6 +2,7 @@
 using Caliburn.Micro;
 using Dflat.Application.Models;
 using Dflat.Application.Repositories;
+using Dflat.Application.Services.JobServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +19,7 @@ namespace DflatCoreWPF.ViewModels
         private FileSourceFolder selectedFileSourceFolder;
         private bool enableOverlay;
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
+        private readonly IJobService<FileSourceFolderScanJob> fileSourceFolderScanService;
         private readonly IMapper mapper;
         private readonly IWindowManager windowManager;
         private readonly ConfirmDialogViewModel confirmDialogViewModel;
@@ -26,12 +28,14 @@ namespace DflatCoreWPF.ViewModels
 
         private readonly List<FileSourceFolder> removedFolders;
 
+        private readonly HashSet<FileSourceFolder> addedOrUpdatedFolders;
         #endregion
 
 
         #region Constructor
 
         public FileSourceManagerViewModel(IFileSourceFolderRepository fileSourceFolderRepository,
+                                          IJobService<FileSourceFolderScanJob> fileSourceFolderScanService,
                                           IMapper mapper,
                                           IWindowManager windowManager,
                                           ConfirmDialogViewModel confirmDialogViewModel,
@@ -40,7 +44,9 @@ namespace DflatCoreWPF.ViewModels
         {
             this.FileSourceFolders = new BindingList<FileSourceFolder>();
             this.removedFolders = new List<FileSourceFolder>();
+            this.addedOrUpdatedFolders = new HashSet<FileSourceFolder>();
             this.fileSourceFolderRepository = fileSourceFolderRepository;
+            this.fileSourceFolderScanService = fileSourceFolderScanService;
             this.mapper = mapper;
             this.windowManager = windowManager;
             this.confirmDialogViewModel = confirmDialogViewModel;
@@ -185,6 +191,11 @@ namespace DflatCoreWPF.ViewModels
             EnableOverlay = true;
             try
             {
+                foreach (var folder in FileSourceFolders)
+                {
+                    if (folder.IsChanged)
+                        addedOrUpdatedFolders.Add(folder);
+                }
                 await fileSourceFolderRepository.UpdateAllAsync(FileSourceFolders);
                 removedFolders.Clear();
             }
@@ -216,13 +227,26 @@ namespace DflatCoreWPF.ViewModels
         {
             if (HasChanges)
             {
-                if (await PromptUnsavedChanges() == true)
-                    return true;
-                else
+                if (await PromptUnsavedChanges() != true)
                     return false;
             }
-            else
-                return true;
+
+            if (addedOrUpdatedFolders.Count > 0)
+            {
+                if (await PromptToScanFolders() == true)
+                {
+                    foreach (var folder in addedOrUpdatedFolders)
+                    {
+                        fileSourceFolderScanService.SubmitJobRequest(
+                            new FileSourceFolderScanJob
+                            {
+                                FileSourceFolderID = folder.FileSourceFolderID,
+                                Description = $"Scan of '{folder.Name}' {folder.Path}"
+                            });
+                    }
+                }
+            }
+            return true;
         }
 
         private async Task<bool?> PromptUnsavedChanges()
@@ -236,6 +260,15 @@ namespace DflatCoreWPF.ViewModels
         }
 
 
+        private async Task<bool?> PromptToScanFolders()
+        {
+            confirmDialogViewModel.Title = "Scan updated folders?";
+            confirmDialogViewModel.Message = "File Source folders have been changed.  Would you like to scan the changed folders?";
+            confirmDialogViewModel.NoText = "No";
+            confirmDialogViewModel.YesText = "Yes";
+            var result = await windowManager.ShowDialogAsync(confirmDialogViewModel, null, null);
+            return result;
+        }
         #endregion
 
 
