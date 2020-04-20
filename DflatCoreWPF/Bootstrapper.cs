@@ -2,6 +2,9 @@
 using Caliburn.Micro;
 using Dflat.Application.Models;
 using Dflat.Application.Repositories;
+using Dflat.Application.Services;
+using Dflat.Application.Services.JobServices;
+using Dflat.Application.Wrappers;
 using Dflat.EFCore.DB;
 using Dflat.EFCore.DB.Models;
 using Dflat.EFCore.DB.Repositories;
@@ -48,6 +51,11 @@ namespace DflatCoreWPF
                     .ReverseMap();
                 cfg.CreateMap<Dflat.EFCore.DB.Models.ExcludePath, Dflat.Application.Models.ExcludePath>().ReverseMap();
                 cfg.CreateMap<Dflat.EFCore.DB.Models.FileSourceFolderScanJob, Dflat.Application.Models.FileSourceFolderScanJob>().ReverseMap();
+                cfg.CreateMap<FileResult, Dflat.Application.Models.File>()
+                    .ForMember(dest => dest.FileID, opt => opt.Ignore())
+                    .ForMember(dest => dest.Chromaprint, opt => opt.Ignore())
+                    .ForMember(dest => dest.MD5Sum, opt => opt.Ignore());
+
             });
 
             //automapconfig.AssertConfigurationIsValid();
@@ -59,8 +67,16 @@ namespace DflatCoreWPF
             container
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>()
+                .Singleton<IJobService<Dflat.Application.Models.FileSourceFolderScanJob>, FileSourceFolderScanService>()
                 .PerRequest<IFolderChooserDialog, FolderChooserDialog>()
-                .PerRequest<IFileSourceFolderRepository, FileSourceFolderRepository>();
+                .PerRequest<IFileSourceFolderRepository, FileSourceFolderRepository>()
+                .PerRequest<IFileRepository, FileRepository>()
+                .PerRequest<IFolderSearchService, FolderSearchService>()
+                .PerRequest<IFileCollectionCompare, FileCollectionCompare>()
+                .PerRequest<IJobRepository, JobRepository>()
+                .PerRequest<IBackgroundJobRunner<Dflat.Application.Models.FileSourceFolderScanJob>, BackgroundJobRunner<Dflat.Application.Models.FileSourceFolderScanJob>>()
+                .PerRequest<ISystemIOWrapper, SystemIOWrapper>();
+
 
             GetType().Assembly.GetTypes()
                 .Where(type => type.IsClass)
