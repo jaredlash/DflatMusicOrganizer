@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Dflat.Application.Services.JobServices
 {
@@ -84,7 +85,7 @@ namespace Dflat.Application.Services.JobServices
             }
 
 
-            ProcessFoundFiles(fileSourceFolder.Path, result);
+            job.Output = ProcessFoundFiles(fileSourceFolder.Path, result);
 
             if (result.ErrorLog.Count > 0)
                 job.Status = JobStatus.SuccessWithErrors;
@@ -92,16 +93,17 @@ namespace Dflat.Application.Services.JobServices
                 job.Status = JobStatus.Success;
         }
 
-        private void ProcessFoundFiles(string path, FolderSearchServiceResult result)
+        private string ProcessFoundFiles(string path, FolderSearchServiceResult result)
         {
+            StringBuilder output = new StringBuilder();
+
             // Set up our collections to compare
             var beforeSearch = fileRepository.GetFromPath(path);        // "before" collection
             List<Models.File> foundFiles = new List<Models.File>();     // "after" collection
             
             foreach (var fileResult in result.FoundFiles)
             {
-                Models.File newFile = new Models.File();
-                mapper.Map(fileResult, newFile);
+                Models.File newFile = mapper.Map<Models.File>(fileResult);
 
                 foundFiles.Add(newFile);
             }
@@ -113,17 +115,20 @@ namespace Dflat.Application.Services.JobServices
 
             foreach (var removedFile in compareResult.Removed)
             {
+                output.AppendLine($"Removed: {removedFile.Directory}{Path.DirectorySeparatorChar}{removedFile.Filename}");
                 fileRepository.MarkRemoved(removedFile.FileID);
             }
 
 
             foreach (var modifiedFile in compareResult.Modified)
             {
+                output.AppendLine($"Modified: {modifiedFile.Directory}{Path.DirectorySeparatorChar}{modifiedFile.Filename}");
                 fileRepository.Update(modifiedFile);
             }
 
             foreach (var addedFile in compareResult.Added)
             {
+                output.AppendLine($"Added: {addedFile.Directory}{Path.DirectorySeparatorChar}{addedFile.Filename}");
                 fileRepository.Add(addedFile); // Sets the FileID of the added file
             }
 
@@ -138,6 +143,13 @@ namespace Dflat.Application.Services.JobServices
                 //fileChromaprintService.SubmitJobRequest(new FileChromaprintJob { FileID = file.FileID, Description = "Chromaprint: " + fullFilePath });
                 //fileMD5Service.SubmitJobRequest(new FileMD5Job { FileID = fileID, Description = "MD5: " + fullFilePath });
             }
+
+            output.AppendLine("-----------------------------");
+            output.AppendLine($"Added: {compareResult.Added.Count} files");
+            output.AppendLine($"Removed: {compareResult.Removed.Count} files");
+            output.AppendLine($"Modified: {compareResult.Modified.Count} files");
+
+            return output.ToString();
         }
 
         private bool MusicFilter(string filename)
