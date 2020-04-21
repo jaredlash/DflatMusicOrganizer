@@ -6,8 +6,48 @@
         xmlns:local="clr-namespace:DflatCoreWPF.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-        <StackPanel>
-        <Button x:Name="OpenFileSourceManager" Content="Open File Source Manager" />
-        <Button x:Name="OpenJobsView" Content="Open Jobs View" />
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        
+        <Menu Grid.Row="0">
+            <MenuItem Header="Windows">
+                <MenuItem x:Name="OpenFileSourceManager" Header="File Source Folder Manager" />
+                <MenuItem  x:Name="OpenJobsView" Header="Jobs View" />
+            </MenuItem>
+        </Menu
+              >
+        <Grid Grid.Row="1">
+        </Grid>
+        
+        <StatusBar Grid.Row="2">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <TextBlock Text="Files in collection" />
+            </StatusBarItem>
+            <Separator Grid.Column="1" />
+            <StatusBarItem Grid.Column="2">
+                <TextBlock>Processing 1234 files</TextBlock>
+            </StatusBarItem>
+            <Separator Grid.Column="3" />
+            <StatusBarItem Grid.Column="4">
+                <TextBlock Text="0 jobs running" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
 </Window>
