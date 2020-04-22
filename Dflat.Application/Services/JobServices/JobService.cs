@@ -49,6 +49,8 @@ namespace Dflat.Application.Services.JobServices
 
                 SetupJob(job);
 
+                JobStarted?.Invoke(job.JobID, null);
+
                 taskList.Add(jobRunner.Run(job));
             }
         }
@@ -107,13 +109,13 @@ namespace Dflat.Application.Services.JobServices
             RunningJobCount--;
 
             // Let things know we're done.
-            JobFinished?.Invoke(job, null);
+            JobFinished?.Invoke(job.JobID, null);
 
             // Finished with a job means we can start running the next
             RunJobs();
         }
 
-
+        public event EventHandler JobStarted;
         public event EventHandler JobFinished;
     }
 }
