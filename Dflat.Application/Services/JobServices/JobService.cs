@@ -75,6 +75,7 @@ namespace Dflat.Application.Services.JobServices
             // Consider getting rid of the Prerequisites collection and moving this
             // logic to the database layer (although, it is more of a business concern...)
             jobRepository.Add(job);
+            JobSubmitted?.Invoke(job.JobID, null);
 
             // Start running jobs as soon as we get them
             RunJobs();
@@ -115,6 +116,7 @@ namespace Dflat.Application.Services.JobServices
             RunJobs();
         }
 
+        public event EventHandler JobSubmitted;
         public event EventHandler JobStarted;
         public event EventHandler JobFinished;
     }

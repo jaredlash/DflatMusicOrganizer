@@ -241,6 +241,36 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
         }
         #endregion
 
+        #region JobSubmitted Event
+
+        [TestMethod]
+        public void JobSubmittedEvent_IsCalledThreeTimes_WhenThreeJobsSubmittedAndCallbackRegistered()
+        {
+            var repo = CreateMockJobRepository();
+            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var iter = jobs.GetEnumerator();
+            var runner = CreateBackgroundJobRunner();
+            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object)
+            {
+                CallBase = true
+            };
+            var jobService = jobServiceMock.Object;
+            jobService.MaxConcurrentJobs = 5;
+
+            int timesCalled = 0;
+            jobService.JobSubmitted += (o, e) => timesCalled++;
+
+            // Test
+            foreach (var job in jobs)
+                jobService.SubmitJobRequest(job);
+
+
+            // Verify
+            Assert.AreEqual(3, timesCalled);
+        }
+
+        #endregion
+
         #region JobStarted Event
 
         [TestMethod]
