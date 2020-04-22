@@ -16,7 +16,7 @@
         <Menu Grid.Row="0">
             <MenuItem Header="Windows">
                 <MenuItem x:Name="OpenFileSourceManager" Header="File Source Folder Manager" />
-                <MenuItem  x:Name="OpenJobsView" Header="Jobs View" />
+                <MenuItem  x:Name="OpenJobsView" Header="Job Monitor" />
             </MenuItem>
         </Menu
               >
