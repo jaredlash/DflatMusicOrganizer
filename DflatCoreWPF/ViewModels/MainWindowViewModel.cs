@@ -1,6 +1,9 @@
 ﻿using Caliburn.Micro;
+using Dflat.Application.Models;
+using Dflat.Application.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,16 +17,21 @@ namespace DflatCoreWPF.ViewModels
 
         private readonly IWindowManager windowManager;
         private readonly FileSourceManagerViewModel fileSourceManagerViewModel;
+        private readonly JobMonitor jobMonitor;
 
         #endregion
 
         #region Constructor
 
-        public MainWindowViewModel(IWindowManager windowManager, FileSourceManagerViewModel fileSourceManagerViewModel)
+        public MainWindowViewModel(IWindowManager windowManager, FileSourceManagerViewModel fileSourceManagerViewModel, JobMonitor jobMonitor)
         {
             this.windowManager = windowManager;
             this.fileSourceManagerViewModel = fileSourceManagerViewModel;
+            this.jobMonitor = jobMonitor;
+
+            this.jobMonitor.PropertyChanged += JobMonitor_PropertyChanged;
         }
+
 
         #endregion
 
@@ -41,6 +49,36 @@ namespace DflatCoreWPF.ViewModels
 
 
         #endregion
+
+
+
+        private void JobMonitor_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "QueuedJobCount" || e.PropertyName == "RunningJobCount" || e.PropertyName == "FinishedJobCount")
+            {
+                var status = new List<string>();
+                if (jobMonitor.QueuedJobCount > 0)
+                    status.Add($"{jobMonitor.QueuedJobCount} queued");
+                if (jobMonitor.RunningJobCount > 0)
+                    status.Add($"{jobMonitor.RunningJobCount} running");
+                if (jobMonitor.FinishedJobCount > 0)
+                    status.Add($"{jobMonitor.FinishedJobCount} finished");
+
+                JobStatus = "Jobs: " + string.Join(", ", status);
+            }
+        }
+
+        private string jobStatus;
+
+        public string JobStatus
+        {
+            get { return jobStatus; }
+            set
+            {
+                jobStatus = value;
+                NotifyOfPropertyChange(() => JobStatus);
+            }
+        }
 
     }
 }

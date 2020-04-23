@@ -68,6 +68,7 @@ namespace DflatCoreWPF
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>()
                 .Singleton<IJobService<Dflat.Application.Models.FileSourceFolderScanJob>, FileSourceFolderScanService>()
+                .Singleton<JobMonitor>()
                 .PerRequest<IFolderChooserDialog, FolderChooserDialog>()
                 .PerRequest<IFileSourceFolderRepository, FileSourceFolderRepository>()
                 .PerRequest<IFileRepository, FileRepository>()
