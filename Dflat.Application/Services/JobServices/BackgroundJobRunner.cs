@@ -13,21 +13,17 @@ namespace Dflat.Application.Services.JobServices
 
         public Task Run(JobType job)
         {
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            var context = SynchronizationContext.Current;
 
             Task backgroundTask = new Task(() =>
             {
                 BackgroundWork(job);
+                context.Post((o) => FinishWork(job), null);
             }, TaskCreationOptions.LongRunning);
-
-            var finishTask = backgroundTask.ContinueWith((t) =>
-            {
-                FinishWork(job);
-            }, scheduler);
 
             backgroundTask.Start();
 
-            return finishTask;
+            return backgroundTask;
         }
 
 
