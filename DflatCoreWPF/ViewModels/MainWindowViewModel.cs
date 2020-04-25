@@ -17,16 +17,21 @@ namespace DflatCoreWPF.ViewModels
 
         private readonly IWindowManager windowManager;
         private readonly FileSourceManagerViewModel fileSourceManagerViewModel;
+        private readonly JobMonitorViewModel jobMonitorViewModel;
         private readonly JobMonitor jobMonitor;
 
         #endregion
 
         #region Constructor
 
-        public MainWindowViewModel(IWindowManager windowManager, FileSourceManagerViewModel fileSourceManagerViewModel, JobMonitor jobMonitor)
+        public MainWindowViewModel(IWindowManager windowManager,
+                                   FileSourceManagerViewModel fileSourceManagerViewModel,
+                                   JobMonitorViewModel jobMonitorViewModel,
+                                   JobMonitor jobMonitor)
         {
             this.windowManager = windowManager;
             this.fileSourceManagerViewModel = fileSourceManagerViewModel;
+            this.jobMonitorViewModel = jobMonitorViewModel;
             this.jobMonitor = jobMonitor;
 
             this.jobMonitor.PropertyChanged += JobMonitor_PropertyChanged;
@@ -42,9 +47,9 @@ namespace DflatCoreWPF.ViewModels
             await windowManager.ShowDialogAsync(fileSourceManagerViewModel, null, null);
         }
 
-        public void OpenJobsView()
+        public async Task OpenJobsView()
         {
-            throw new NotImplementedException();
+            await windowManager.ShowWindowAsync(jobMonitorViewModel, null, null);
         }
 
 

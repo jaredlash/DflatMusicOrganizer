@@ -1,0 +1,36 @@
+﻿<Window x:Class="DflatCoreWPF.Views.JobMonitorView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DflatCoreWPF.Views"
+        mc:Ignorable="d"
+        Title="Job Monitor" Height="450" Width="800">
+    <Border Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid AllowDrop="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="False"
+                      IsManipulationEnabled="False"
+                      IsReadOnly="True" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Job ID"/>
+                    <DataGridTextColumn Header="Date Created" />
+                    <DataGridTextColumn Header="Status" />
+                    <DataGridTextColumn Header="Description" />
+                </DataGrid.Columns>
+                
+            </DataGrid>
+        
+        </Grid>
+    </Border>
+</Window>
