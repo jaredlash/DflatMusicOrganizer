@@ -8,7 +8,6 @@
         xmlns:models="clr-namespace:Dflat.Application.Models;assembly=Dflat.Application"
         d:DataContext="{d:DesignInstance viewModels:FileSourceFolderEditorViewModel}"
         mc:Ignorable="d"
-        x:Name="FileSourceFolderEditorWindow"
         Title="File Source Folder Editor" Height="350" Width="500" WindowStyle="ToolWindow">
     <Border Padding="10">
         <Grid>
@@ -47,12 +46,12 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Padding="0 0 10 0">Folder Path:</TextBlock>
-                <TextBox Grid.Column="1" x:Name="Path" />
+                <TextBox Grid.Column="1" Text="{Binding Path}" />
             </Grid>
-            <Button Grid.Row="1" Grid.Column="1" Margin="10 0 0 0" Content="Select" x:Name="ChoosePath"/>
+            <Button Grid.Row="1" Grid.Column="1" Margin="10 0 0 0" Content="Select" Command="{Binding ChoosePathCommand}" />
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 10 0 10" IsChecked="{Binding IsTemporaryMedia}" Content="Temporary media (e.g. removable drives)" />
             <TextBlock Grid.Row="3" Margin="0 10 0 0" Text="Excluded Folders" />
-            <ListBox Grid.Column="0" Grid.Row="4" x:Name="ExcludePaths" SelectedItem="{Binding SelectedExcludePath}">
+            <ListBox Grid.Column="0" Grid.Row="4" ItemsSource="{Binding ExcludePaths}" SelectedItem="{Binding SelectedExcludePath}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Path=Path}" />
@@ -68,8 +67,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Button Margin="10 0 0 0" Grid.Row="0" Content="Add" x:Name="AddExcludePath" />
-                <Button Margin="10 10 0 0" Grid.Row="1" Content="Remove" x:Name="RemoveExcludePath" />
+                <Button Margin="10 0 0 0" Grid.Row="0" Content="Add" Command="{Binding AddExcludePathCommand}" />
+                <Button Margin="10 10 0 0" Grid.Row="1" Content="Remove" Command="{Binding RemoveExcludePathCommand}" IsEnabled="{Binding CanRemoveExcludePath}" />
 
             </Grid>
 
@@ -79,8 +78,8 @@
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="60" />
                 </Grid.ColumnDefinitions>
-                <Button Margin="0 10 5 0" Grid.Column="1" Content="Cancel" x:Name="Cancel" />
-                <Button Margin="5 10 0 0" Grid.Column="2" Content="OK" x:Name="Okay" />
+                <Button Margin="0 10 5 0" Grid.Column="1" Content="Cancel" Command="{Binding CancelCommand}" />
+                <Button Margin="5 10 0 0" Grid.Column="2" Content="OK" Command="{Binding OkayCommand}" IsEnabled="{Binding CanOkay}" />
 
             </Grid>
         </Grid>

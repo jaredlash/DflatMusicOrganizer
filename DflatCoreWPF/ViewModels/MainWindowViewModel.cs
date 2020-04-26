@@ -1,21 +1,17 @@
-﻿using Caliburn.Micro;
-using Dflat.Application.Models;
-using Dflat.Application.Services;
-using System;
+﻿using Dflat.Application.Services;
+using DflatCoreWPF.WindowService;
+using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class MainWindowViewModel : Screen
+    public class MainWindowViewModel : ViewModelBase
     {
 
         #region Private backing fields
-
-
-        private readonly IWindowManager windowManager;
+        private readonly IWindowService windowService;
         private readonly FileSourceManagerViewModel fileSourceManagerViewModel;
         private readonly JobMonitorViewModel jobMonitorViewModel;
         private readonly JobMonitor jobMonitor;
@@ -24,12 +20,12 @@ namespace DflatCoreWPF.ViewModels
 
         #region Constructor
 
-        public MainWindowViewModel(IWindowManager windowManager,
+        public MainWindowViewModel(IWindowService windowService,
                                    FileSourceManagerViewModel fileSourceManagerViewModel,
                                    JobMonitorViewModel jobMonitorViewModel,
                                    JobMonitor jobMonitor)
         {
-            this.windowManager = windowManager;
+            this.windowService = windowService;
             this.fileSourceManagerViewModel = fileSourceManagerViewModel;
             this.jobMonitorViewModel = jobMonitorViewModel;
             this.jobMonitor = jobMonitor;
@@ -40,22 +36,55 @@ namespace DflatCoreWPF.ViewModels
 
         #endregion
 
-        #region public Commands
+        #region Bindable Properties
+        private string jobStatus;
 
-        public async Task OpenFileSourceManager()
+        public string JobStatus
         {
-            await windowManager.ShowDialogAsync(fileSourceManagerViewModel, null, null);
+            get { return jobStatus; }
+            set
+            {
+                jobStatus = value;
+                RaisePropertyChanged(() => JobStatus);
+            }
+        }
+        #endregion
+
+
+
+        #region Public Commands
+        public ICommand OpenFileSourceManagerCommand
+        {
+            get => new RelayCommand(() => OpenFileSourceManager());
         }
 
-        public async Task OpenJobsView()
+
+        public ICommand OpenJobsViewCommand
         {
-            await windowManager.ShowWindowAsync(jobMonitorViewModel, null, null);
+            get => new RelayCommand(() => OpenJobsView());
         }
+
 
 
         #endregion
 
 
+        #region Private command methods
+
+        private void OpenFileSourceManager()
+        {
+            windowService.ShowDialog(fileSourceManagerViewModel);
+        }
+
+        private void OpenJobsView()
+        {
+            windowService.ShowWindow(jobMonitorViewModel);
+        }
+        #endregion
+
+
+
+        #region Event handlers
 
         private void JobMonitor_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -73,17 +102,7 @@ namespace DflatCoreWPF.ViewModels
             }
         }
 
-        private string jobStatus;
-
-        public string JobStatus
-        {
-            get { return jobStatus; }
-            set
-            {
-                jobStatus = value;
-                NotifyOfPropertyChange(() => JobStatus);
-            }
-        }
+        #endregion
 
     }
 }

@@ -1,18 +1,18 @@
-﻿using Caliburn.Micro;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GalaSoft.MvvmLight.Command;
+using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class AlertDialogViewModel : Screen
+    public class AlertDialogViewModel : ViewModelBase
     {
         public string Title { get; set; }
         public string Message { get; set; }
         
+        public ICommand OkayCommand { get => new RelayCommand(() => Okay()); }
+
         public void Okay()
         {
-            TryCloseAsync(true);
+            TryClose(true);
         }
     }
 }

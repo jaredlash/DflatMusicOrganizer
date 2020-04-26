@@ -1,12 +1,8 @@
-﻿using Caliburn.Micro;
-using Dflat.Application.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Dflat.Application.Services;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class JobMonitorViewModel : Screen
+    public class JobMonitorViewModel : ViewModelBase
     {
         private readonly JobMonitor jobMonitor;
 

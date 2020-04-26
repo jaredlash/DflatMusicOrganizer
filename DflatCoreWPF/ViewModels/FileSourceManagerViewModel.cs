@@ -1,18 +1,21 @@
 ﻿using AutoMapper;
-using Caliburn.Micro;
 using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using Dflat.Application.Services.JobServices;
+using DflatCoreWPF.WindowService;
+using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Xml;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class FileSourceManagerViewModel : Screen
+    public class FileSourceManagerViewModel : ViewModelBase
     {
         #region Private backing fields
 
@@ -21,7 +24,7 @@ namespace DflatCoreWPF.ViewModels
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
         private readonly IJobService<FileSourceFolderScanJob> fileSourceFolderScanService;
         private readonly IMapper mapper;
-        private readonly IWindowManager windowManager;
+        private readonly IWindowService windowService;
         private readonly ConfirmDialogViewModel confirmDialogViewModel;
         private readonly AlertDialogViewModel alertDialogViewModel;
         private readonly FileSourceFolderEditorViewModel sourceFolderEditorViewModel;
@@ -37,7 +40,7 @@ namespace DflatCoreWPF.ViewModels
         public FileSourceManagerViewModel(IFileSourceFolderRepository fileSourceFolderRepository,
                                           IJobService<FileSourceFolderScanJob> fileSourceFolderScanService,
                                           IMapper mapper,
-                                          IWindowManager windowManager,
+                                          IWindowService windowService,
                                           ConfirmDialogViewModel confirmDialogViewModel,
                                           AlertDialogViewModel alertDialogViewModel,
                                           FileSourceFolderEditorViewModel sourceFolderEditorViewModel)
@@ -48,7 +51,7 @@ namespace DflatCoreWPF.ViewModels
             this.fileSourceFolderRepository = fileSourceFolderRepository;
             this.fileSourceFolderScanService = fileSourceFolderScanService;
             this.mapper = mapper;
-            this.windowManager = windowManager;
+            this.windowService = windowService;
             this.confirmDialogViewModel = confirmDialogViewModel;
             this.alertDialogViewModel = alertDialogViewModel;
             this.sourceFolderEditorViewModel = sourceFolderEditorViewModel;
@@ -60,32 +63,33 @@ namespace DflatCoreWPF.ViewModels
 
         #region ViewModel Load
 
-        protected override void OnViewLoaded(object view)
+        public void Initialize()
         {
+            FileSourceFolders.Clear();
+            removedFolders.Clear();
+            addedOrUpdatedFolders.Clear();
+            SelectedFileSourceFolder = null;
+
+
             LoadFileSourceFolders();
             this.EnableOverlay = false;
         }
 
 
-
         private void LoadFileSourceFolders()
         {
-            FileSourceFolders.Clear();
-            removedFolders.Clear();
-            SelectedFileSourceFolder = null;
-
             IEnumerable<FileSourceFolder> sources = new List<FileSourceFolder>();
 
             try
             {
-
+                // TODO: Make async
                 sources = fileSourceFolderRepository.GetAll();
             }
             catch (Exception ex)
             {
                 alertDialogViewModel.Title = "Problem loading source folders"; ;
                 alertDialogViewModel.Message = $"A problem was encountered when loading the source folders: {ex.Message}";
-                windowManager.ShowDialogAsync(alertDialogViewModel, null, null);
+                windowService.ShowDialog(alertDialogViewModel);
             }
 
 
@@ -96,7 +100,7 @@ namespace DflatCoreWPF.ViewModels
         #endregion
 
 
-        #region Caliburn Micro bindings
+        #region Bindable Properties
 
         public BindingList<FileSourceFolder> FileSourceFolders { get; private set; }
 
@@ -114,53 +118,93 @@ namespace DflatCoreWPF.ViewModels
             set
             {
                 selectedFileSourceFolder = value;
-                NotifyOfPropertyChange(() => SelectedFileSourceFolder);
-                NotifyOfPropertyChange(() => CanEdit);
-                NotifyOfPropertyChange(() => CanRemove);
-                NotifyOfPropertyChange(() => SelectedFileSourceFolderExcludeCount);
+                RaisePropertyChanged(() => SelectedFileSourceFolder);
+                RaisePropertyChanged(() => CanEdit);
+                (EditCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (RemoveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                RaisePropertyChanged(() => SelectedFileSourceFolderExcludeCount);
             }
+        }
+
+        public bool CanEdit { get => SelectedFileSourceFolder != null; }
+
+        public bool EnableOverlay
+        {
+            get { return enableOverlay; }
+            set
+            {
+                enableOverlay = value;
+                RaisePropertyChanged(() => EnableOverlay);
+            }
+        }
+
+        public string CancelButtonText
+        {
+            get { return HasChanges ? "Cancel" : "Close"; }
         }
 
         public int SelectedFileSourceFolderExcludeCount => (SelectedFileSourceFolder != null ? SelectedFileSourceFolder.ExcludePaths.Count : 0);
 
-        public async Task Add()
+        public bool CanSave { get => HasChanges; }
+        #endregion
+
+
+        #region Commands
+        public ICommand InitializeCommand { get => new RelayCommand(() => Initialize()); }
+
+        public ICommand AddCommand { get => new RelayCommand(() => Add()); }
+        
+        public ICommand EditCommand { get => new RelayCommand(() => Edit(), CanEdit); }
+        
+        public ICommand RemoveCommand { get => new RelayCommand(() => Remove(), CanRemove); }
+        
+        public ICommand SaveCommand { get => new RelayCommand(async () => await Save(), CanSave); }
+
+        public ICommand ClosingCommand { get => new RelayCommand<CancelEventArgs>((e) => OnClosing(e)); }
+       
+        public ICommand CancelCommand { get => new RelayCommand(() => Cancel()); }
+
+        #endregion
+
+
+        #region Private methods
+        private void Add()
         {
             var currentFolder = new FileSourceFolder();
 
             mapper.Map<FileSourceFolder, FileSourceFolderEditorViewModel>(currentFolder, sourceFolderEditorViewModel);
             sourceFolderEditorViewModel.IsChanged = currentFolder.IsChanged;
-            bool? acceptChanges = await windowManager.ShowDialogAsync(sourceFolderEditorViewModel);
+            bool? acceptChanges = windowService.ShowDialog(sourceFolderEditorViewModel);
             if (acceptChanges == true)
             {
                 mapper.Map<FileSourceFolderEditorViewModel, FileSourceFolder>(sourceFolderEditorViewModel, currentFolder);
                 FileSourceFolders.Add(currentFolder);
             }
-            NotifyOfPropertyChange(() => HasChanges);
-            NotifyOfPropertyChange(() => CanSave);
-            NotifyOfPropertyChange(() => CancelButtonText);
+            RaisePropertyChanged(() => HasChanges);
+            RaisePropertyChanged(() => CanSave);
+            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            RaisePropertyChanged(() => CancelButtonText);
         }
 
-        public bool CanEdit => SelectedFileSourceFolder != null;
-
-        public async Task Edit()
+        private void Edit()
         {
             var currentFolder = SelectedFileSourceFolder;
 
             mapper.Map<FileSourceFolder, FileSourceFolderEditorViewModel>(currentFolder, sourceFolderEditorViewModel);
             sourceFolderEditorViewModel.IsChanged = currentFolder.IsChanged;
-            bool? acceptChanges = await windowManager.ShowDialogAsync(sourceFolderEditorViewModel);
+            bool? acceptChanges = windowService.ShowDialog(sourceFolderEditorViewModel);
             if (acceptChanges == true)
             {
                 mapper.Map<FileSourceFolderEditorViewModel, FileSourceFolder>(sourceFolderEditorViewModel, currentFolder);
             }
-            NotifyOfPropertyChange(() => HasChanges);
-            NotifyOfPropertyChange(() => CanSave);
-            NotifyOfPropertyChange(() => CancelButtonText);
+            RaisePropertyChanged(() => HasChanges);
+            RaisePropertyChanged(() => CanSave);
+            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            RaisePropertyChanged(() => CancelButtonText);
         }
 
-        public bool CanRemove => SelectedFileSourceFolder != null;
-
-        public void Remove()
+        private bool CanRemove => SelectedFileSourceFolder != null;
+        private void Remove()
         {
             var currentFolder = SelectedFileSourceFolder;
             if (currentFolder == null)
@@ -169,24 +213,15 @@ namespace DflatCoreWPF.ViewModels
             if (currentFolder.FileSourceFolderID != 0) removedFolders.Add(currentFolder);
 
             FileSourceFolders.Remove(currentFolder);
-            NotifyOfPropertyChange(() => CanSave);
-            NotifyOfPropertyChange(() => CancelButtonText);
-            NotifyOfPropertyChange(() => HasChanges);
+            RaisePropertyChanged(() => CanSave);
+            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            RaisePropertyChanged(() => CancelButtonText);
+            RaisePropertyChanged(() => HasChanges);
         }
 
-        public bool EnableOverlay
-        {
-            get { return enableOverlay; }
-            set
-            {
-                enableOverlay = value;
-                NotifyOfPropertyChange(() => EnableOverlay);
-            }
-        }
 
-        public bool CanSave => HasChanges;
 
-        public async Task Save()
+        private async Task Save()
         {
             EnableOverlay = true;
             try
@@ -203,37 +238,30 @@ namespace DflatCoreWPF.ViewModels
             {
                 alertDialogViewModel.Title = "Problem saving changes"; ;
                 alertDialogViewModel.Message = $"Problem saving changes: {ex.Message}";
-                _ = await windowManager.ShowDialogAsync(alertDialogViewModel, null, null);
+                windowService.ShowDialog(alertDialogViewModel);
             }
-            NotifyOfPropertyChange(() => CanSave);
-            NotifyOfPropertyChange(() => CancelButtonText);
+            RaisePropertyChanged(() => CanSave);
+            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            RaisePropertyChanged(() => CancelButtonText);
 
             EnableOverlay = false;
         }
 
-      
-        public string CancelButtonText
-        {
-            get { return HasChanges ? "Cancel" : "Close"; }
-        }
 
-
-        public async Task Cancel()
-        {
-            await TryCloseAsync();
-        }
-
-        public override async Task<bool> CanCloseAsync(CancellationToken cancellationToken)
+        private void OnClosing(CancelEventArgs args)
         {
             if (HasChanges)
             {
-                if (await PromptUnsavedChanges() != true)
-                    return false;
+                if (PromptUnsavedChanges() != true)
+                {
+                    args.Cancel = true;
+                    return;
+                }
             }
 
             if (addedOrUpdatedFolders.Count > 0)
             {
-                if (await PromptToScanFolders() == true)
+                if (PromptToScanFolders() == true)
                 {
                     foreach (var folder in addedOrUpdatedFolders)
                     {
@@ -246,37 +274,36 @@ namespace DflatCoreWPF.ViewModels
                     }
                 }
             }
-            return true;
+            args.Cancel = false;
         }
 
-        private async Task<bool?> PromptUnsavedChanges()
+        private bool? PromptUnsavedChanges()
         {
             confirmDialogViewModel.Title = "Discard unsaved Changes?";
             confirmDialogViewModel.Message = "There are unsaved changes. Click Cancel to go back and Save.";
             confirmDialogViewModel.NoText = "Cancel";
             confirmDialogViewModel.YesText = "Close";
-            var result = await windowManager.ShowDialogAsync(confirmDialogViewModel, null, null);
+            var result = windowService.ShowDialog(confirmDialogViewModel);
             return result;
         }
 
 
-        private async Task<bool?> PromptToScanFolders()
+        private bool? PromptToScanFolders()
         {
             confirmDialogViewModel.Title = "Scan updated folders?";
             confirmDialogViewModel.Message = "File Source folders have been changed.  Would you like to scan the changed folders?";
             confirmDialogViewModel.NoText = "No";
             confirmDialogViewModel.YesText = "Yes";
-            var result = await windowManager.ShowDialogAsync(confirmDialogViewModel, null, null);
+            var result = windowService.ShowDialog(confirmDialogViewModel);
             return result;
         }
-        #endregion
 
-
-        #region Private methods
+        private void Cancel()
+        {
+            TryClose();
+        }
 
         private bool HasChanges => removedFolders.Count > 0 || FileSourceFolders.Any(f => f.IsChanged);
-
-
         #endregion
     }
 }

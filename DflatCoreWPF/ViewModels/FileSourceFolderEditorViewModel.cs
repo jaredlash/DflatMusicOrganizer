@@ -1,16 +1,14 @@
-﻿using Caliburn.Micro;
-using Dflat.Application.Models;
+﻿using Dflat.Application.Models;
 using DflatCoreWPF.Utilities;
+using GalaSoft.MvvmLight.Command;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class FileSourceFolderEditorViewModel : Screen
+    public class FileSourceFolderEditorViewModel : ViewModelBase
     {
         private readonly IFolderChooserDialog folderChooserDialog;
 
@@ -23,6 +21,7 @@ namespace DflatCoreWPF.ViewModels
 
 
 
+        #region Bindable properties
 
         private int fileSourceFolderID;
 
@@ -36,7 +35,7 @@ namespace DflatCoreWPF.ViewModels
                     fileSourceFolderID = value;
                     IsChanged = true;
                 }
-                NotifyOfPropertyChange(() => FileSourceFolderID);
+                RaisePropertyChanged(() => FileSourceFolderID);
             }
         }
 
@@ -52,8 +51,9 @@ namespace DflatCoreWPF.ViewModels
                     name = value;
                     IsChanged = true;
                 }
-                NotifyOfPropertyChange(() => Name);
-                NotifyOfPropertyChange(() => CanOkay);
+                RaisePropertyChanged(() => Name);
+                RaisePropertyChanged(() => CanOkay);
+                (OkayCommand as RelayCommand)?.RaiseCanExecuteChanged();
             }
         }
 
@@ -69,8 +69,9 @@ namespace DflatCoreWPF.ViewModels
                     path = value;
                     IsChanged = true;
                 }
-                NotifyOfPropertyChange(() => Path);
-                NotifyOfPropertyChange(() => CanOkay);
+                RaisePropertyChanged(() => Path);
+                RaisePropertyChanged(() => CanOkay);
+                (OkayCommand as RelayCommand)?.RaiseCanExecuteChanged();
             }
         }
 
@@ -86,7 +87,7 @@ namespace DflatCoreWPF.ViewModels
                     isTemporaryMedia = value;
                     IsChanged = true;
                 }
-                NotifyOfPropertyChange(() => IsTemporaryMedia);
+                RaisePropertyChanged(() => IsTemporaryMedia);
             }
         }
 
@@ -102,7 +103,7 @@ namespace DflatCoreWPF.ViewModels
                     lastScanStart = value;
                     IsChanged = true;
                 }
-                NotifyOfPropertyChange(() => LastScanStart);
+                RaisePropertyChanged(() => LastScanStart);
             }
         }
 
@@ -114,31 +115,12 @@ namespace DflatCoreWPF.ViewModels
             set
             {
                 isChanged = value;
-                NotifyOfPropertyChange(() => IsChanged);
-            }
-        }
-
-
-
-
-        public void ChoosePath()
-        {
-            folderChooserDialog.InitialFolder = path;
-            folderChooserDialog.Title = "Choose File Source Folder";
-            var result = folderChooserDialog.ShowDialog();
-
-            var newPath = folderChooserDialog.ResultFolder;
-
-            
-            if (result == true && !string.IsNullOrEmpty(newPath))
-            {
-                Path = newPath;
+                RaisePropertyChanged(() => IsChanged);
             }
         }
 
 
         public ObservableCollection<ExcludePath> ExcludePaths { get; set; } = new ObservableCollection<ExcludePath>();
-
 
         private ExcludePath selectedExcludePath;
         public ExcludePath SelectedExcludePath
@@ -150,21 +132,58 @@ namespace DflatCoreWPF.ViewModels
             set
             {
                 selectedExcludePath = value;
-                NotifyOfPropertyChange(() => SelectedExcludePath);
-                NotifyOfPropertyChange(() => CanRemoveExcludePath);
+                RaisePropertyChanged(() => SelectedExcludePath);
+                RaisePropertyChanged(() => CanRemoveExcludePath);
+                (RemoveExcludePathCommand as RelayCommand)?.RaiseCanExecuteChanged();
             }
         }
 
+        public bool CanRemoveExcludePath { get => (selectedExcludePath != null); }
+
+        public bool CanOkay { get => !string.IsNullOrWhiteSpace(Path) && !string.IsNullOrWhiteSpace(Name); }
+
+        #endregion
+
+        #region Commands
+
+        public ICommand ChoosePathCommand { get => new RelayCommand(() => ChoosePath()); }
+
+        public ICommand AddExcludePathCommand { get => new RelayCommand(() => AddExcludePath()); }
+        
+        public ICommand RemoveExcludePathCommand { get => new RelayCommand(() => RemoveExcludePath(), CanRemoveExcludePath); }
+
+        public ICommand CancelCommand { get => new RelayCommand(() => Cancel()); }
+
+        public ICommand OkayCommand { get => new RelayCommand(() => Okay(), CanOkay); }
+        
+        
+        #endregion
 
 
-        public void AddExcludePath()
+        #region Private command methods
+        private void ChoosePath()
+        {
+            folderChooserDialog.InitialFolder = path;
+            folderChooserDialog.Title = "Choose File Source Folder";
+            var result = folderChooserDialog.ShowDialog();
+
+            var newPath = folderChooserDialog.ResultFolder;
+
+
+            if (result == true && !string.IsNullOrEmpty(newPath))
+            {
+                Path = newPath;
+            }
+        }
+
+        private void AddExcludePath()
         {
             folderChooserDialog.InitialFolder = path;
             folderChooserDialog.Title = "Chooser Folder to exclude";
             var result = folderChooserDialog.ShowDialog();
 
             string newPath = folderChooserDialog.ResultFolder;
-            
+
 
             if (result != true || string.IsNullOrEmpty(newPath))
                 return;
@@ -177,9 +196,7 @@ namespace DflatCoreWPF.ViewModels
             IsChanged = true;
         }
 
-        public bool CanRemoveExcludePath => (selectedExcludePath != null);
-
-        public void RemoveExcludePath()
+        private void RemoveExcludePath()
         {
             if (selectedExcludePath == null)
                 return;
@@ -187,27 +204,21 @@ namespace DflatCoreWPF.ViewModels
             IsChanged = true;
 
             ExcludePaths.Remove(SelectedExcludePath);
-            NotifyOfPropertyChange(() => CanOkay);
+            RaisePropertyChanged(() => CanOkay);
+            (OkayCommand as RelayCommand)?.RaiseCanExecuteChanged();
         }
 
-        public async Task Cancel()
+        private void Cancel()
         {
-            await TryCloseAsync(false);
+            TryClose(false);
         }
 
-
-        public bool CanOkay
+        private void Okay()
         {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(Path) && !string.IsNullOrWhiteSpace(Name);
-            }
+            TryClose(true);
         }
 
-        public async Task Okay()
-        {
-            await TryCloseAsync(true);
-        }
 
+        #endregion
     }
 }

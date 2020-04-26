@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DflatCoreWPF.Views"
+        xmlns:viewModels="clr-namespace:DflatCoreWPF.ViewModels"
+        d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
@@ -15,8 +17,8 @@
         
         <Menu Grid.Row="0">
             <MenuItem Header="Windows">
-                <MenuItem x:Name="OpenFileSourceManager" Header="File Source Folder Manager" />
-                <MenuItem  x:Name="OpenJobsView" Header="Job Monitor" />
+                <MenuItem Command="{Binding OpenFileSourceManagerCommand}" Header="File Source Folder Manager" />
+                <MenuItem  Command="{Binding OpenJobsViewCommand}" Header="Job Monitor" />
             </MenuItem>
         </Menu
               >
@@ -46,7 +48,7 @@
             </StatusBarItem>
             <Separator Grid.Column="3" />
             <StatusBarItem Grid.Column="4">
-                <TextBlock x:Name="JobStatus" />
+                <TextBlock Text="{Binding JobStatus}" />
             </StatusBarItem>
         </StatusBar>
     </Grid>

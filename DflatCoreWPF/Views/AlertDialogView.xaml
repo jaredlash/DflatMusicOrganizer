@@ -26,7 +26,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Ok button -->
-                <Button Grid.Column="2" Margin="5 10 0 0" x:Name="Okay" Content="OK" />
+                <Button Grid.Column="2" Margin="5 10 0 0" Command="{Binding OkayCommand}" Content="OK" />
             </Grid>
 
         </Grid>
