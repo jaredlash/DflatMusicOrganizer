@@ -13,6 +13,7 @@ namespace Dflat.EFCore.DB
     {
         public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
 
+        public DbSet<Job> Jobs { get; set; }
         public DbSet<FileSourceFolderScanJob> FileSourceFolderScanJobs { get; set; }
 
 
@@ -59,8 +60,8 @@ namespace Dflat.EFCore.DB
             modelBuilder.Entity<Job>().Property(table => table.Errors).IsRequired();
             modelBuilder.Entity<Job>().Property(table => table.CreationTime).IsRequired();
             modelBuilder.Entity<Job>().Property(table => table.Output).IsRequired();
-            modelBuilder.Entity<Job>().HasDiscriminator<int>("JobType")
-                .HasValue<FileSourceFolderScanJob>(1);
+            modelBuilder.Entity<Job>().HasDiscriminator<Application.Models.JobType>("JobType")
+                .HasValue<FileSourceFolderScanJob>(Application.Models.JobType.FileSourceFolderScanJob);
         }
     }
 }
