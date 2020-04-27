@@ -1,4 +1,6 @@
 ﻿using Dflat.Application.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Dflat.Application.Repositories
 {
@@ -16,5 +18,7 @@ namespace Dflat.Application.Repositories
         JobType GetNextAvailable<JobType>() where JobType : Job;
 
         //bool PrerequisitesFinished(int jobID);
+
+       IEnumerable<JobInfo> GetAllJobInfo();
     }
 }

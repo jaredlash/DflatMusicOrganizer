@@ -3,9 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:DflatCoreWPF.Views"
         mc:Ignorable="d"
-        Title="Job Monitor" Height="450" Width="800">
+        xmlns:viewModels="clr-namespace:DflatCoreWPF.ViewModels"
+        xmlns:models="clr-namespace:Dflat.Application.Models;assembly=Dflat.Application"
+        d:DataContext="{d:DesignInstance viewModels:JobMonitorViewModel}"
+        Title="Job Monitor" Height="600" Width="1000">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding InitializeCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Border Margin="10">
         <Grid>
             <Grid.RowDefinitions>
@@ -16,17 +28,20 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid AllowDrop="False"
+                      AutoGenerateColumns="False"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       CanUserResizeColumns="True"
                       CanUserReorderColumns="False"
                       IsManipulationEnabled="False"
-                      IsReadOnly="True" >
+                      IsReadOnly="True" 
+                      ItemsSource="{Binding JobInfoList}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Job ID"/>
-                    <DataGridTextColumn Header="Date Created" />
-                    <DataGridTextColumn Header="Status" />
-                    <DataGridTextColumn Header="Description" />
+                    <DataGridTextColumn Header="Job ID" Binding="{Binding JobID}"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding JobType}"/>
+                    <DataGridTextColumn Header="Date Created" Binding="{Binding CreationTime}"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
                 </DataGrid.Columns>
                 
             </DataGrid>

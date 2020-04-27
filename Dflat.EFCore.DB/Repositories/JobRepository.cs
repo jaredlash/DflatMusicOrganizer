@@ -2,10 +2,12 @@
 using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using Dflat.EFCore.DB.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Dflat.EFCore.DB.Repositories
 {
@@ -108,6 +110,37 @@ namespace Dflat.EFCore.DB.Repositories
             }
         }
 
+
+        public IEnumerable<JobInfo> GetAllJobInfo()
+        {
+            List<JobInfo> result = new List<JobInfo>();
+
+            using (var context = new DataContext())
+            {
+                result = context.Jobs.Select(
+                    (j) => new JobInfo
+                    {
+                        JobID = j.JobID,
+                        JobType = JobTypeFromJobObject(j),
+                        CreationTime = j.CreationTime,
+                        Description = j.Description,
+                        Status = j.Status,
+                        IgnoreCache = j.IgnoreCache
+                    }).ToList();
+            }
+
+            return result;
+        }
+
+
+        private static JobType JobTypeFromJobObject(Models.Job job)
+        {
+            return job switch
+            {
+                Models.FileSourceFolderScanJob _ => JobType.FileSourceFolderScanJob,
+                _ => JobType.FileSourceFolderScanJob,
+            };
+        }
 
         //private List<JobType> GetCurrentlyRunning<JobType>() where JobType : Application.Models.Job
         //{
