@@ -94,6 +94,7 @@ namespace DflatCoreWPF
             container.RegisterType<Window, FileSourceFolderEditorView>(nameof(FileSourceFolderEditorViewModel));
             container.RegisterType<Window, FileSourceManagerView>(nameof(FileSourceManagerViewModel));
             container.RegisterType<Window, JobMonitorView>(nameof(JobMonitorViewModel));
+            container.RegisterType<Window, JobDetailView>(nameof(JobDetailViewModel));
             container.RegisterType<Window, MainWindowView>(nameof(MainWindowViewModel));
 
         }

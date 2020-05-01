@@ -2,6 +2,7 @@
 using Dflat.Application.Repositories;
 using Dflat.Application.Services;
 using Dflat.Application.Services.JobServices;
+using DflatCoreWPF.Views;
 using DflatCoreWPF.WindowService;
 using GalaSoft.MvvmLight.Command;
 using System;
@@ -20,6 +21,7 @@ namespace DflatCoreWPF.ViewModels
         private readonly JobMonitor jobMonitor;
         private readonly IJobRepository jobRepository;
         private readonly IWindowService windowService;
+        private readonly JobDetailViewModel jobDetailViewModel;
         private readonly AlertDialogViewModel alertDialogViewModel;
 
         private BindingList<JobInfo> jobInfoList;
@@ -31,11 +33,13 @@ namespace DflatCoreWPF.ViewModels
         public JobMonitorViewModel(JobMonitor jobMonitor,
                                    IJobRepository jobRepository,
                                    IWindowService windowService,
+                                   JobDetailViewModel jobDetailViewModel,
                                    AlertDialogViewModel alertDialogViewModel)
         {
             this.jobMonitor = jobMonitor;
             this.jobRepository = jobRepository;
             this.windowService = windowService;
+            this.jobDetailViewModel = jobDetailViewModel;
             this.alertDialogViewModel = alertDialogViewModel;
             JobInfoList = new BindingList<JobInfo>();
 
@@ -128,12 +132,12 @@ namespace DflatCoreWPF.ViewModels
 
         private void ViewJobDetails()
         {
-            // TODO: Implement a dialog to display the Job's detailed info, including output and errors
-            alertDialogViewModel.Title = "Selected Job Info"; ;
-            alertDialogViewModel.Message = $"Selected Job with ID: {SelectedJobInfo.JobID}";
-            windowService.ShowDialog(alertDialogViewModel);
+            jobDetailViewModel.JobID = SelectedJobInfo.JobID;
+            windowService.ShowDialog(jobDetailViewModel);
+            jobDetailViewModel.Clear();
         }
 
+ 
 
 
         private void DisplayJobType(JobType jobType)
