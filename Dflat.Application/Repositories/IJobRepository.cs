@@ -19,6 +19,8 @@ namespace Dflat.Application.Repositories
 
         //bool PrerequisitesFinished(int jobID);
 
-       IEnumerable<JobInfo> GetAllJobInfo();
+        IEnumerable<JobInfo> GetJobInfoByCriteria(JobType jobType = JobType.None, JobStatus status = JobStatus.None);
+
+        JobInfo GetJobInfo(int jobID);
     }
 }

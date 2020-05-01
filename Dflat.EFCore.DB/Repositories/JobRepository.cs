@@ -40,7 +40,7 @@ namespace Dflat.EFCore.DB.Repositories
                 default:
                     throw new NotImplementedException();
             }
-            
+
         }
 
         // TODO: Make this responsible for updating the status of any parent
@@ -65,7 +65,7 @@ namespace Dflat.EFCore.DB.Repositories
                         existingJob.Output = folderScanJob.Output;
                         existingJob.Errors = folderScanJob.Errors;
                         existingJob.FileSourceFolderID = folderScanJob.FileSourceFolderID;
-                        
+
                         context.SaveChanges();
                     }
 
@@ -110,27 +110,60 @@ namespace Dflat.EFCore.DB.Repositories
             }
         }
 
+        public JobInfo GetJobInfo(int jobID)
+        {
+            using var context = new DataContext();
 
-        public IEnumerable<JobInfo> GetAllJobInfo()
+            var job = context.Jobs.Find(jobID);
+            return new JobInfo
+            {
+                JobID = job.JobID,
+                JobType = JobTypeFromJobObject(job),
+                CreationTime = job.CreationTime,
+                Description = job.Description,
+                Status = job.Status,
+                IgnoreCache = job.IgnoreCache
+            };
+        }
+
+        public IEnumerable<JobInfo> GetJobInfoByCriteria(JobType jobType = JobType.None, JobStatus status = JobStatus.None)
         {
             List<JobInfo> result = new List<JobInfo>();
 
             using (var context = new DataContext())
             {
-                result = context.Jobs.Select(
-                    (j) => new JobInfo
-                    {
-                        JobID = j.JobID,
-                        JobType = JobTypeFromJobObject(j),
-                        CreationTime = j.CreationTime,
-                        Description = j.Description,
-                        Status = j.Status,
-                        IgnoreCache = j.IgnoreCache
-                    }).ToList();
+                IQueryable<Models.Job> q;
+
+                switch (jobType)
+                {
+                    case JobType.FileSourceFolderScanJob:
+                        q = context.FileSourceFolderScanJobs;
+                        break;
+
+                    default:
+                        q = context.Jobs;
+                        break;
+                }
+
+                if (status != JobStatus.None)
+                    q = q.Where((j) => j.Status == status);
+
+                q = q.OrderByDescending((j) => j.CreationTime);
+
+                result = q.Select((j) => new JobInfo
+                                  {
+                                      JobID = j.JobID,
+                                      JobType = JobTypeFromJobObject(j),
+                                      CreationTime = j.CreationTime,
+                                      Description = j.Description,
+                                      Status = j.Status,
+                                      IgnoreCache = j.IgnoreCache
+                                  }).ToList();
             }
 
             return result;
         }
+
 
 
         private static JobType JobTypeFromJobObject(Models.Job job)
