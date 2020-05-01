@@ -110,6 +110,21 @@ namespace Dflat.EFCore.DB.Repositories
             }
         }
 
+
+        public Application.Models.Job Get(int jobID)
+        {
+            using var context = new DataContext();
+
+            var job = context.Jobs.Find(jobID);
+
+            return job switch
+            {
+                Models.FileSourceFolderScanJob j => mapper.Map<Application.Models.FileSourceFolderScanJob>(j),
+                _ => null,
+            };
+        }
+
+
         public JobInfo GetJobInfo(int jobID)
         {
             using var context = new DataContext();
@@ -174,6 +189,8 @@ namespace Dflat.EFCore.DB.Repositories
                 _ => JobType.FileSourceFolderScanJob,
             };
         }
+
+
 
         //private List<JobType> GetCurrentlyRunning<JobType>() where JobType : Application.Models.Job
         //{

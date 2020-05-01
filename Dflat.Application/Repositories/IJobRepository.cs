@@ -18,6 +18,7 @@ namespace Dflat.Application.Repositories
         JobType GetNextAvailable<JobType>() where JobType : Job;
 
         //bool PrerequisitesFinished(int jobID);
+        Job Get(int jobID);
 
         IEnumerable<JobInfo> GetJobInfoByCriteria(JobType jobType = JobType.None, JobStatus status = JobStatus.None);
 
