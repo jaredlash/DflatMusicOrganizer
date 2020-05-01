@@ -2,6 +2,7 @@
 {
     public enum JobStatus
     {
+        None = 0,
         Queued = 1,
         Ready = 2,
         Running = 3,
