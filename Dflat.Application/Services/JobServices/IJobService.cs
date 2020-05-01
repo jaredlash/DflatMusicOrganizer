@@ -10,9 +10,9 @@ namespace Dflat.Application.Services.JobServices
         int MaxConcurrentJobs { get; set; }
         int RunningJobCount { get; }
 
-        event EventHandler JobSubmitted;
-        event EventHandler JobStarted;
-        event EventHandler JobFinished;
+        event EventHandler<JobServiceEventArgs> JobSubmitted;
+        event EventHandler<JobServiceEventArgs> JobStarted;
+        event EventHandler<JobServiceEventArgs> JobFinished;
 
         List<Task> RunJobs();
         void SubmitJobRequest(JobType job);
