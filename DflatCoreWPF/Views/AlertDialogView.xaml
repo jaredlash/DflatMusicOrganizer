@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DflatCoreWPF.Views"
         mc:Ignorable="d"
         d:DataContext="dialog:AlertDialogViewModel"
-        Title="{Binding Title}" Height="200" Width="400" ResizeMode="NoResize" WindowStyle="ToolWindow">
+        Title="{Binding Title}" Height="200" Width="400" ResizeMode="CanResize" WindowStyle="ToolWindow">
     <Border Margin="10">
         <Grid>
             <Grid.RowDefinitions>
