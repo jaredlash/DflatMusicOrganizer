@@ -9,6 +9,7 @@
         xmlns:viewModels="clr-namespace:DflatCoreWPF.ViewModels"
         xmlns:models="clr-namespace:Dflat.Application.Models;assembly=Dflat.Application"
         d:DataContext="{d:DesignInstance viewModels:JobMonitorViewModel}"
+        Name="JobMonitorWindow"
         Title="Job Monitor" Height="600" Width="1000">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
@@ -70,22 +71,20 @@
                           SelectionUnit="FullRow"
                           IsSynchronizedWithCurrentItem="True"
                           >
-                    <!--<DataGrid.Resources>
-                    <ContextMenu x:Key="JobContextMenu">
-                        <MenuItem Header="Restart Jobs" />
-                        <MenuItem Header="Cancel Jobs" />
+                    <DataGrid.Resources>
+                        <ContextMenu x:Key="JobContextMenu"  DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                        <MenuItem Header="Restart Jobs" Command="{Binding RestartSelectedJobsCommand}"/>
+                        <MenuItem Header="Cancel Jobs" Command="{Binding CancelSelectedJobsCommand}"/>
                         <Separator />
-                        <MenuItem Header="Delete Jobs" />
+                        <MenuItem Header="Remove Jobs" Command="{Binding RemoveSelectedJobsCommand}"/>
                     </ContextMenu>
                     </DataGrid.Resources>
-                    -->
-                    <!--
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                            <Setter Property="Tag" Value="{Binding ElementName=JobMonitorWindow, Path=DataContext}" />
                             <Setter Property="ContextMenu" Value="{StaticResource JobContextMenu}" />
                         </Style>
                     </DataGrid.RowStyle>
-                    -->
                     <DataGrid.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick"
                                       Command="{Binding ViewJobDetailsCommand}"

@@ -67,6 +67,10 @@ namespace DflatCoreWPF.ViewModels
         public ICommand DisplayJobTypeCommand { get => new RelayCommand<JobType>((jobType) => DisplayJobType(jobType)); }
 
         public ICommand DisplayJobStatusCommand { get => new RelayCommand<JobStatus>((jobStatus) => DisplayJobStatus(jobStatus)); }
+
+        public ICommand RestartSelectedJobsCommand { get => new RelayCommand(() => RestartSelectedJobs()); }
+        public ICommand CancelSelectedJobsCommand { get => new RelayCommand(() => CancelSelectedJobs()); }
+        public ICommand RemoveSelectedJobsCommand { get => new RelayCommand(() => RemoveSelectedJobs()); }
         #endregion
 
 
@@ -162,6 +166,28 @@ namespace DflatCoreWPF.ViewModels
             RaisePropertyChanged(() => DisplaySuccessWithErrorJobs);
             RaisePropertyChanged(() => DisplayErroredJobs);
         }
+
+        private void RestartSelectedJobs()
+        {
+            alertDialogViewModel.Title = "Restart Selected Jobs"; ;
+            alertDialogViewModel.Message = $"Attempt to restart: {SelectedJobInfo?.JobID}";
+            windowService.ShowDialog(alertDialogViewModel);
+        }
+
+        private void CancelSelectedJobs()
+        {
+            alertDialogViewModel.Title = "Cancel Selected Jobs"; ;
+            alertDialogViewModel.Message = $"Attempt to cancel: {SelectedJobInfo?.JobID}";
+            windowService.ShowDialog(alertDialogViewModel);
+        }
+
+        private void RemoveSelectedJobs()
+        {
+            alertDialogViewModel.Title = "Remove Selected Jobs"; ;
+            alertDialogViewModel.Message = $"Attempt to remove: {SelectedJobInfo?.JobID}";
+            windowService.ShowDialog(alertDialogViewModel);
+        }
+
 
 
         private void JobMonitor_JobSubmitted(object sender, JobServiceEventArgs e)
