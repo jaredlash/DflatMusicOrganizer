@@ -18,25 +18,35 @@ namespace Dflat.Application.Services
 
 
             // Register listeners
-            folderScanService.JobSubmitted += JobSubmitted;
-            folderScanService.JobStarted += JobStarted;
-            folderScanService.JobFinished += JobFinished;
+            folderScanService.JobSubmitted += ChildJobSubmitted;
+            folderScanService.JobStarted += ChildJobStarted;
+            folderScanService.JobFinished += ChildJobFinished;
         }
 
-        private void JobSubmitted(object sender, EventArgs e)
+
+        public event EventHandler<JobServiceEventArgs> JobSubmitted;
+        public event EventHandler<JobServiceEventArgs> JobStarted;
+        public event EventHandler<JobServiceEventArgs> JobFinished;
+
+
+
+        private void ChildJobSubmitted(object sender, JobServiceEventArgs e)
         {
             QueuedJobCount++;
+            JobSubmitted?.Invoke(this, e);
         }
 
-        private void JobStarted(object sender, EventArgs e)
+        private void ChildJobStarted(object sender, JobServiceEventArgs e)
         {
             RunningJobCount++;
             QueuedJobCount--;
+            JobStarted?.Invoke(this, e);
         }
-        private void JobFinished(object sender, EventArgs e)
+        private void ChildJobFinished(object sender, JobServiceEventArgs e)
         {
             RunningJobCount--;
             FinishedJobCount++;
+            JobFinished?.Invoke(this, e);
         }
 
 
