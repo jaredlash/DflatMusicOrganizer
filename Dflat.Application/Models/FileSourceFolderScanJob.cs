@@ -28,5 +28,10 @@ namespace Dflat.Application.Models
 
             return compareJob.FileSourceFolderID == FileSourceFolderID;
         }
+
+        public override string ToString()
+        {
+            return "File Source Folder Scan";
+        }
     }
 }
