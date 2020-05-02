@@ -17,8 +17,8 @@ namespace Dflat.Application.Services.JobServices
 
             Task backgroundTask = new Task(() =>
             {
-                BackgroundWork(job);
-                context.Post((o) => FinishWork(job), null);
+                BackgroundWork(job, cancellationToken);
+                context.Post((o) => FinishWork(job, cancellationToken), null);
             }, TaskCreationOptions.LongRunning);
 
             backgroundTask.Start();
@@ -27,8 +27,8 @@ namespace Dflat.Application.Services.JobServices
         }
 
 
-        public Action<JobType> BackgroundWork { get; set; }
+        public Action<JobType, CancellationToken> BackgroundWork { get; set; }
 
-        public Action<JobType> FinishWork { get; set; }
+        public Action<JobType, CancellationToken> FinishWork { get; set; }
     }
 }

@@ -100,7 +100,8 @@ namespace Dflat.Application.Services.JobServices
         /// Override to indicate the actual work for the job which must be done on a background thread.
         /// </summary>
         /// <param name="job"></param>
-        public abstract void DoWork(JobType job);
+        /// <param name="cancellationToken"></param>
+        public abstract void DoWork(JobType job, CancellationToken cancellationToken);
 
         /// <summary>
         /// Override to indicate work to finish the job.
@@ -108,8 +109,9 @@ namespace Dflat.Application.Services.JobServices
         /// This happens on the original thread (not the background thread).  Also, overriding classes should call
         /// the base class method as the last step in any overrides.
         /// </summary>
-        /// <param name="job"></param>
-        public virtual void FinishJob(JobType job)
+        /// <param name="job">Finishing job</param>
+        /// <param name="cancellationToken"></param>
+        public virtual void FinishJob(JobType job, CancellationToken cancellationToken)
         {
             // Save the job's status, and update status of any jobs waiting on this one
             jobRepository.Update(job);

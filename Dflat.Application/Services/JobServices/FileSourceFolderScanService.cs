@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Dflat.Application.Services.JobServices
 {
@@ -51,7 +52,7 @@ namespace Dflat.Application.Services.JobServices
             // This job type does not need setup
         }
 
-        public override void DoWork(FileSourceFolderScanJob job)
+        public override void DoWork(FileSourceFolderScanJob job, CancellationToken cancellationToken)
         {
             var fileSourceFolder = fileSourceFolderRepository.Get(job.FileSourceFolderID);
             if (fileSourceFolder == null)

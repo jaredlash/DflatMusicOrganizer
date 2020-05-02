@@ -209,7 +209,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
 
 
             // Verify
-            jobServiceMock.Verify(m => m.FinishJob(It.IsAny<TestJob>()), Times.Exactly(3));
+            jobServiceMock.Verify(m => m.FinishJob(It.IsAny<TestJob>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
         }
 
         #endregion

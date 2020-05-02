@@ -10,6 +10,7 @@ using Moq;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Dflat.Application.Services.JobServices.Tests
 {
@@ -67,7 +68,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             Assert.AreEqual(JobStatus.Error, job.Status);
             System.Text.RegularExpressions.Match m = Regex.Match(job.Errors, @"FileSouorceFolder with ID = [0-9]+ not found\.");
@@ -87,7 +88,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             Assert.AreEqual(JobStatus.Error, job.Status);
         }
@@ -108,7 +109,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             Assert.AreEqual(JobStatus.Error, job.Status);
         }
@@ -131,7 +132,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             Assert.AreEqual(JobStatus.Success, job.Status);
         }
@@ -157,7 +158,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             Assert.AreEqual(JobStatus.SuccessWithErrors, job.Status);
             Assert.AreEqual(2, job.Errors.Split('\n').Length);
@@ -184,7 +185,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             comparerMock.Verify(c => c.Compare(It.IsAny<IEnumerable<Models.File>>(), It.Is<IEnumerable<Models.File>>(l => l.Count() == 2)), Times.Once);
         }
@@ -210,7 +211,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             fileRepositoryMock.Verify(f => f.MarkRemoved(It.IsAny<int>()), Times.Exactly(2));
         }
@@ -235,7 +236,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             fileRepositoryMock.Verify(f => f.Add(It.IsAny<Models.File>()), Times.Exactly(2));
         }
@@ -260,7 +261,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             };
 
             var scanService = CreateFileSourceFolderScanService();
-            scanService.DoWork(job);
+            scanService.DoWork(job, new CancellationToken());
 
             fileRepositoryMock.Verify(f => f.Update(It.IsAny<Models.File>()), Times.Exactly(2));
         }

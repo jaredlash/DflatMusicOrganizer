@@ -23,8 +23,8 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             Thread startingThread = Thread.CurrentThread;
             Thread backgroundThread = null;
 
-            runner.BackgroundWork = (n) => backgroundThread = Thread.CurrentThread;
-            runner.FinishWork = (n) => { };
+            runner.BackgroundWork = (n, t) => backgroundThread = Thread.CurrentThread;
+            runner.FinishWork = (n, t) => { };
 
             AsyncContext.Run(() =>
             {
@@ -46,8 +46,8 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             Thread finishThread = null;
 
 
-            runner.BackgroundWork = (n) => backgroundThread = Thread.CurrentThread;
-            runner.FinishWork = (n) => finishThread = Thread.CurrentThread;
+            runner.BackgroundWork = (n, t) => backgroundThread = Thread.CurrentThread;
+            runner.FinishWork = (n, t) => finishThread = Thread.CurrentThread;
 
             AsyncContext.Run(async () =>
             {
