@@ -95,7 +95,13 @@ namespace DflatCoreWPF.ViewModels
             {
                 selectedJobInfo = value;
                 RaisePropertyChanged(() => SelectedJobInfo);
+                RaisePropertyChanged(() => CanCancelSelectedJobs);
             }
+        }
+
+        public bool CanCancelSelectedJobs
+        {
+            get => SelectedJobInfo?.Status != JobStatus.Success && SelectedJobInfo?.Status != JobStatus.SuccessWithErrors;
         }
 
 
@@ -132,6 +138,7 @@ namespace DflatCoreWPF.ViewModels
                 alertDialogViewModel.Message = $"A problem was encountered when loading the jobs: {ex.Message}";
                 windowService.ShowDialog(alertDialogViewModel);
             }
+            RaisePropertyChanged(() => CanCancelSelectedJobs);
         }
 
         private void ViewJobDetails()
