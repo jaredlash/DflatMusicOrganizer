@@ -14,7 +14,7 @@ namespace Dflat.Application.Services.JobServices
         private readonly IJobRepository jobRepository;
         private readonly IBackgroundJobRunner<JobType> jobRunner;
 
-        private readonly Dictionary<int, CancellationToken> runningJobs;
+        private readonly Dictionary<int, CancellationTokenSource> runningJobs;
 
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
@@ -29,7 +29,7 @@ namespace Dflat.Application.Services.JobServices
             this.jobRunner.FinishWork = FinishJob;
             RunningJobCount = 0;
 
-            runningJobs = new Dictionary<int, CancellationToken>();
+            runningJobs = new Dictionary<int, CancellationTokenSource>();
         }
 
 
@@ -52,14 +52,14 @@ namespace Dflat.Application.Services.JobServices
 
                 RunningJobCount++;
 
-                var cancellationToken = new CancellationToken();
-                runningJobs.Add(job.JobID, cancellationToken);
+                var cancellationTokenSource = new CancellationTokenSource();
+                runningJobs.Add(job.JobID, cancellationTokenSource);
 
                 SetupJob(job);
 
                 JobStarted?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
 
-                taskList.Add(jobRunner.Run(job, cancellationToken));
+                taskList.Add(jobRunner.Run(job, cancellationTokenSource.Token));
             }
         }
 
@@ -119,7 +119,12 @@ namespace Dflat.Application.Services.JobServices
 
             RunningJobCount--;
 
-            runningJobs.Remove(job.JobID);
+            if (runningJobs.ContainsKey(job.JobID))
+            {
+                var cancellationTokenSource = runningJobs[job.JobID];
+                runningJobs.Remove(job.JobID);
+                cancellationTokenSource.Dispose();
+            }
 
             // Let things know we're done.
             JobFinished?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
@@ -132,15 +137,20 @@ namespace Dflat.Application.Services.JobServices
         /// Attempts to cancel a queued or running job
         /// </summary>
         /// <param name="jobID">Job ID to cancel</param>
-        /// <returns>True if job successfully cancelled</returns>
-        public bool TryCancelJobByID(int jobID)
+        public void TryCancelJobByID(int jobID)
         {
-            // TODO: If the job is currently running, cancel it.
+            // If the job is currently running, cancel it.
             // FinishJob should know about the cancellation, so that additional jobs don't get scheduled based on this.
+            if (runningJobs.ContainsKey(jobID))
+            {
+                var cancellationTokenSource = runningJobs[jobID];
+                cancellationTokenSource.Cancel();
+                return;
+            }
 
             // TODO: If the job is not currently running, then cancel job in JobRepository
 
-            return false;
+            return;
         }
 
         public event EventHandler<JobServiceEventArgs> JobSubmitted;
