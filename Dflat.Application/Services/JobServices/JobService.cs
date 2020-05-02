@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dflat.Application.Services.JobServices
@@ -57,7 +58,7 @@ namespace Dflat.Application.Services.JobServices
 
                 JobStarted?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
 
-                taskList.Add(jobRunner.Run(job));
+                taskList.Add(jobRunner.Run(job, new CancellationToken()));
             }
         }
 

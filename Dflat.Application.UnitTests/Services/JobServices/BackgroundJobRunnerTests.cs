@@ -28,7 +28,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
 
             AsyncContext.Run(() =>
             {
-                runner.Run(job);
+                runner.Run(job, new CancellationToken());
             }
             );
 
@@ -51,7 +51,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
 
             AsyncContext.Run(async () =>
             {
-                await runner.Run(job);
+                await runner.Run(job, new CancellationToken());
             });
 
             Assert.IsNotNull(finishThread);

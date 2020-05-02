@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Nito.AsyncEx;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dflat.Application.UnitTests.Services.JobServices.Tests
@@ -68,7 +69,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
 
             // Verify
             jobServiceMock.Verify(m => m.SetupJob(It.IsAny<TestJob>()), Times.Exactly(2));
-            runner.Verify(m => m.Run(It.IsAny<TestJob>()), Times.Exactly(2));
+            runner.Verify(m => m.Run(It.IsAny<TestJob>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
 
         [TestMethod]
@@ -88,7 +89,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
 
             // Verify
             jobServiceMock.Verify(m => m.SetupJob(It.IsAny<TestJob>()), Times.Exactly(2));
-            runner.Verify(m => m.Run(It.IsAny<TestJob>()), Times.Exactly(2));
+            runner.Verify(m => m.Run(It.IsAny<TestJob>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
         #endregion
 

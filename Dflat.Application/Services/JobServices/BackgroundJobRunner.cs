@@ -11,7 +11,7 @@ namespace Dflat.Application.Services.JobServices
     public class BackgroundJobRunner<JobType> : IBackgroundJobRunner<JobType> where JobType : Job
     {
 
-        public Task Run(JobType job)
+        public Task Run(JobType job, CancellationToken cancellationToken)
         {
             var context = SynchronizationContext.Current;
 
