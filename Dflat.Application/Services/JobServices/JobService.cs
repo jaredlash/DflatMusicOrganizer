@@ -137,7 +137,7 @@ namespace Dflat.Application.Services.JobServices
         /// Attempts to cancel a queued or running job
         /// </summary>
         /// <param name="jobID">Job ID to cancel</param>
-        public void TryCancelJobByID(int jobID)
+        public void TryCancelJob(int jobID)
         {
             // If the job is currently running, cancel it.
             // FinishJob should know about the cancellation, so that additional jobs don't get scheduled based on this.
