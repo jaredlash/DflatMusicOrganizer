@@ -134,10 +134,11 @@ namespace Dflat.Application.Services.JobServices
         }
 
         /// <summary>
-        /// Attempts to cancel a queued or running job
+        /// Attempts to cancel a running job
         /// </summary>
         /// <param name="jobID">Job ID to cancel</param>
-        public void TryCancelJob(int jobID)
+        /// <returns>True if JobService was currently running job</returns>
+        public bool TryCancelJob(int jobID)
         {
             // If the job is currently running, cancel it.
             // FinishJob should know about the cancellation, so that additional jobs don't get scheduled based on this.
@@ -145,12 +146,10 @@ namespace Dflat.Application.Services.JobServices
             {
                 var cancellationTokenSource = runningJobs[jobID];
                 cancellationTokenSource.Cancel();
-                return;
+                return true;
             }
 
-            // TODO: If the job is not currently running, then cancel job in JobRepository
-
-            return;
+            return false;
         }
 
         public event EventHandler<JobServiceEventArgs> JobSubmitted;

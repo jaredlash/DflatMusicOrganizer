@@ -17,6 +17,6 @@ namespace Dflat.Application.Services.JobServices
         List<Task> RunJobs();
         void SubmitJobRequest(JobType job);
 
-        void TryCancelJob(int jobID);
+        bool TryCancelJob(int jobID);
     }
 }
