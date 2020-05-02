@@ -13,6 +13,8 @@ namespace Dflat.Application.Services.JobServices
         private readonly IJobRepository jobRepository;
         private readonly IBackgroundJobRunner<JobType> jobRunner;
 
+        private readonly HashSet<int> runningJobs;
+
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
 
@@ -25,6 +27,8 @@ namespace Dflat.Application.Services.JobServices
             this.jobRunner.BackgroundWork = DoWork;
             this.jobRunner.FinishWork = FinishJob;
             RunningJobCount = 0;
+
+            runningJobs = new HashSet<int>();
         }
 
 
@@ -46,6 +50,8 @@ namespace Dflat.Application.Services.JobServices
                     return taskList;
 
                 RunningJobCount++;
+
+                runningJobs.Add(job.JobID);
 
                 SetupJob(job);
 
@@ -109,11 +115,28 @@ namespace Dflat.Application.Services.JobServices
 
             RunningJobCount--;
 
+            runningJobs.Remove(job.JobID);
+
             // Let things know we're done.
             JobFinished?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
 
             // Finished with a job means we can start running the next
             RunJobs();
+        }
+
+        /// <summary>
+        /// Attempts to cancel a queued or running job
+        /// </summary>
+        /// <param name="jobID">Job ID to cancel</param>
+        /// <returns>True if job successfully cancelled</returns>
+        public bool TryCancelJobByID(int jobID)
+        {
+            // TODO: If the job is currently running, cancel it.
+            // FinishJob should know about the cancellation, so that additional jobs don't get scheduled based on this.
+
+            // TODO: If the job is not currently running, then cancel job in JobRepository
+
+            return false;
         }
 
         public event EventHandler<JobServiceEventArgs> JobSubmitted;
