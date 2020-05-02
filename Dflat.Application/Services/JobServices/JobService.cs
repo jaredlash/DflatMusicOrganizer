@@ -14,7 +14,7 @@ namespace Dflat.Application.Services.JobServices
         private readonly IJobRepository jobRepository;
         private readonly IBackgroundJobRunner<JobType> jobRunner;
 
-        private readonly HashSet<int> runningJobs;
+        private readonly Dictionary<int, CancellationToken> runningJobs;
 
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
@@ -29,7 +29,7 @@ namespace Dflat.Application.Services.JobServices
             this.jobRunner.FinishWork = FinishJob;
             RunningJobCount = 0;
 
-            runningJobs = new HashSet<int>();
+            runningJobs = new Dictionary<int, CancellationToken>();
         }
 
 
@@ -52,13 +52,14 @@ namespace Dflat.Application.Services.JobServices
 
                 RunningJobCount++;
 
-                runningJobs.Add(job.JobID);
+                var cancellationToken = new CancellationToken();
+                runningJobs.Add(job.JobID, cancellationToken);
 
                 SetupJob(job);
 
                 JobStarted?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
 
-                taskList.Add(jobRunner.Run(job, new CancellationToken()));
+                taskList.Add(jobRunner.Run(job, cancellationToken));
             }
         }
 
