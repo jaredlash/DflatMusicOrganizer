@@ -369,7 +369,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
             sysio.Setup(s => s.GetDirectories(It.IsAny<string>())).Returns((string p) => subDirs[p].ToArray());
             sysio.Setup(s => s.GetFiles(It.IsAny<string>())).Returns((string p) => files[p].ToArray());
             sysio.Setup(s => s.GetFileInfo(It.IsAny<string>())).Returns(mockFileInfo.Object);
-            sysio.Setup(s => s.GetFileInfo(It.Is<string>((p) => p == @"Z:\dir1\file1.mp3"))).Throws(new Exception("Test")); // File1 exception
+            sysio.Setup(s => s.GetFileInfo(It.Is<string>((p) => p == @"Z:\dir1\file1.mp3"))).Throws(new UnauthorizedAccessException("Test")); // File1 exception
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
