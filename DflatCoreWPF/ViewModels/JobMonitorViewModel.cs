@@ -43,9 +43,7 @@ namespace DflatCoreWPF.ViewModels
             this.alertDialogViewModel = alertDialogViewModel;
             JobInfoList = new BindingList<JobInfo>();
 
-            jobMonitor.JobSubmitted += JobMonitor_JobSubmitted;
-            jobMonitor.JobStarted += JobMonitor_JobStatusChange;
-            jobMonitor.JobFinished += JobMonitor_JobStatusChange;
+            jobMonitor.JobChanged += JobMonitor_JobStatusChange;
         }
 
 
@@ -195,17 +193,6 @@ namespace DflatCoreWPF.ViewModels
             windowService.ShowDialog(alertDialogViewModel);
         }
 
-
-
-        private void JobMonitor_JobSubmitted(object sender, JobChangeEventArgs e)
-        {
-            JobInfo jobInfo = jobRepository.GetJobInfo(e.JobID);
-
-            if ((displayedJobStatus == JobStatus.None || jobInfo.Status == displayedJobStatus) &&
-                (displayedJobType == JobType.None || jobInfo.JobType == displayedJobType))
-                JobInfoList.Insert(0, jobInfo);
-                
-        }
 
         private void JobMonitor_JobStatusChange(object sender, JobChangeEventArgs e)
         {

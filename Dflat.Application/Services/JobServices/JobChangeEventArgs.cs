@@ -9,6 +9,7 @@ namespace Dflat.Application.Services.JobServices
         public enum JobChangeType
         {
             Submitted,
+            Started,
             Updated,
             Finished
         }

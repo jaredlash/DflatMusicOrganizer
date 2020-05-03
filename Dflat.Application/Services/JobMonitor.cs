@@ -27,9 +27,7 @@ namespace Dflat.Application.Services
             // Register listeners
             foreach (var jobService in jobServices)
             {
-                jobService.JobSubmitted += ChildJobSubmitted;
-                jobService.JobStarted += ChildJobStarted;
-                jobService.JobFinished += ChildJobFinished;
+                jobService.JobChanged += ChildJobChanged;
             }
         }
 
@@ -47,9 +45,7 @@ namespace Dflat.Application.Services
         #endregion
 
         #region Public events
-        public event EventHandler<JobChangeEventArgs> JobSubmitted;
-        public event EventHandler<JobChangeEventArgs> JobStarted;
-        public event EventHandler<JobChangeEventArgs> JobFinished;
+        public event EventHandler<JobChangeEventArgs> JobChanged;
         #endregion
 
         #region Bindable properties
@@ -89,23 +85,26 @@ namespace Dflat.Application.Services
 
         #region Private methods
 
-        private void ChildJobSubmitted(object sender, JobChangeEventArgs e)
+        private void ChildJobChanged(object sender, JobChangeEventArgs e)
         {
-            QueuedJobCount++;
-            JobSubmitted?.Invoke(this, e);
-        }
+            switch (e.ChangeType)
+            {
+                case JobChangeEventArgs.JobChangeType.Submitted:
+                    QueuedJobCount++;
+                    break;
 
-        private void ChildJobStarted(object sender, JobChangeEventArgs e)
-        {
-            RunningJobCount++;
-            QueuedJobCount--;
-            JobStarted?.Invoke(this, e);
-        }
-        private void ChildJobFinished(object sender, JobChangeEventArgs e)
-        {
-            RunningJobCount--;
-            FinishedJobCount++;
-            JobFinished?.Invoke(this, e);
+                case JobChangeEventArgs.JobChangeType.Started:
+                    RunningJobCount++;
+                    QueuedJobCount--;
+                    break;
+
+                case JobChangeEventArgs.JobChangeType.Finished:
+                    RunningJobCount--;
+                    FinishedJobCount++;
+                    break;
+            }
+
+            JobChanged?.Invoke(sender, e);
         }
 
         #endregion

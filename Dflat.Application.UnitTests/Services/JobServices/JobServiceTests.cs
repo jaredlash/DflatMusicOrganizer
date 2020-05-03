@@ -259,7 +259,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             jobService.MaxConcurrentJobs = 5;
 
             int timesCalled = 0;
-            jobService.JobSubmitted += (o, e) => timesCalled++;
+            jobService.JobChanged += (o, e) => { if (e.ChangeType == JobChangeEventArgs.JobChangeType.Submitted) timesCalled++; };
 
             // Test
             foreach (var job in jobs)
@@ -290,7 +290,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             jobService.MaxConcurrentJobs = 5;
 
             int timesCalled = 0;
-            jobService.JobStarted += (o, e) => timesCalled++;
+            jobService.JobChanged += (o, e) => { if (e.ChangeType == JobChangeEventArgs.JobChangeType.Started) timesCalled++; };
 
             // Test
             AsyncContext.Run(async () =>
@@ -323,7 +323,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             jobService.MaxConcurrentJobs = 5;
 
             int timesCalled = 0;
-            jobService.JobFinished += (o, e) => timesCalled++;
+            jobService.JobChanged += (o, e) => { if (e.ChangeType == JobChangeEventArgs.JobChangeType.Finished) timesCalled++; };
 
             // Test
             AsyncContext.Run(async () =>
