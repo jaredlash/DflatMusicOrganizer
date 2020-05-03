@@ -56,7 +56,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
         public void RunJobs_RunsTwice_WhenTwoJobsAvailable()
         {
             var repo = CreateMockJobRepository();
-            var jobs = new List<TestJob> { new TestJob(), new TestJob() };
+            var jobs = new List<TestJob> { new TestJob { JobID = 1 }, new TestJob { JobID = 2 } };
             var iter = jobs.GetEnumerator();
             repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
             var runner = CreateBackgroundJobRunner();
@@ -76,7 +76,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
         public void RunJobs_RunsTwice_WhenThreeJobsAvilableAndMaxJobsIsTwo()
         {
             var repo = CreateMockJobRepository();
-            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var jobs = new List<TestJob> { new TestJob { JobID = 1 }, new TestJob { JobID = 2 }, new TestJob { JobID = 3 } }; // Set up with 3 jobs
             var iter = jobs.GetEnumerator();
             repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
             var runner = CreateBackgroundJobRunner();
@@ -193,7 +193,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
         public void FinishJob_RunsThreeTimes_WhenThreeJobsRun()
         {
             var repo = CreateMockJobRepository();
-            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var jobs = new List<TestJob> { new TestJob { JobID = 1 }, new TestJob { JobID = 2 }, new TestJob { JobID = 3 } }; // Set up with 3 jobs
             var iter = jobs.GetEnumerator();
             repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
             var runner = new BackgroundJobRunner<TestJob>();
@@ -219,7 +219,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
         public void RunningJobCount_IsZero_WhenThreeJobsFinished()
         {
             var repo = CreateMockJobRepository();
-            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var jobs = new List<TestJob> { new TestJob { JobID = 1 }, new TestJob { JobID = 2 }, new TestJob { JobID = 3 } }; // Set up with 3 jobs
             var iter = jobs.GetEnumerator();
             repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
             var runner = new BackgroundJobRunner<TestJob>();
@@ -278,7 +278,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
         public void JobStartedEvent_IsCalledThreeTimes_WhenThreeJobsStartedAndCallbackRegistered()
         {
             var repo = CreateMockJobRepository();
-            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var jobs = new List<TestJob> { new TestJob { JobID = 1 }, new TestJob { JobID = 2 }, new TestJob { JobID = 3 } }; // Set up with 3 jobs
             var iter = jobs.GetEnumerator();
             repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
             var runner = new BackgroundJobRunner<TestJob>();
@@ -311,7 +311,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
         public void JobFinishedEvent_IsCalledThreeTimes_WhenThreeJobsFinishedAndCallbackRegistered()
         {
             var repo = CreateMockJobRepository();
-            var jobs = new List<TestJob> { new TestJob(), new TestJob(), new TestJob() }; // Set up with 3 jobs
+            var jobs = new List<TestJob> { new TestJob { JobID = 1 }, new TestJob { JobID = 2 }, new TestJob { JobID = 3 } }; // Set up with 3 jobs
             var iter = jobs.GetEnumerator();
             repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
             var runner = new BackgroundJobRunner<TestJob>();
