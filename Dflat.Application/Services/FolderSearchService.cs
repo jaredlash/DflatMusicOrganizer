@@ -58,12 +58,7 @@ namespace Dflat.Application.Services
 					// choice of which exceptions to catch depends entirely on the specific task
 					// you are intending to perform and also on how much you know with certainty
 					// about the systems on which this code will run.
-					catch (UnauthorizedAccessException e)
-					{
-						result.ErrorLog.Add($"{currentDirectory} -- {e.Message}");
-						continue;
-					}
-					catch (System.IO.DirectoryNotFoundException e)
+					catch (Exception e) when (e is UnauthorizedAccessException || e is System.IO.DirectoryNotFoundException)
 					{
 						result.ErrorLog.Add($"{currentDirectory} -- {e.Message}");
 						continue;
@@ -83,14 +78,9 @@ namespace Dflat.Application.Services
 						cancellationToken.ThrowIfCancellationRequested();
 						files = systemIOWrapper.GetFiles(currentDirectory);
 					}
-					catch (UnauthorizedAccessException e)
+					catch (Exception e) when (e is UnauthorizedAccessException || e is System.IO.DirectoryNotFoundException)
 					{
 
-						result.ErrorLog.Add($"{currentDirectory} -- {e.Message}");
-						continue;
-					}
-					catch (System.IO.DirectoryNotFoundException e)
-					{
 						result.ErrorLog.Add($"{currentDirectory} -- {e.Message}");
 						continue;
 					}
@@ -113,7 +103,10 @@ namespace Dflat.Application.Services
 												fileInfo.LastWriteTime));
 							}
 						}
-						catch (System.IO.FileNotFoundException e)
+						catch (Exception e)
+						when (e is UnauthorizedAccessException ||
+						      e is System.IO.DirectoryNotFoundException ||
+						      e is System.IO.FileNotFoundException)
 						{
 							// If file was deleted by a separate application then just continue.
 							result.ErrorLog.Add($"{file} -- {e.Message}");
