@@ -181,9 +181,10 @@ namespace DflatCoreWPF.ViewModels
 
         private void CancelSelectedJobs()
         {
-            alertDialogViewModel.Title = "Cancel Selected Jobs"; ;
-            alertDialogViewModel.Message = $"Attempt to cancel: {SelectedJobInfo?.JobID}";
-            windowService.ShowDialog(alertDialogViewModel);
+            if (SelectedJobInfo != null)
+            {
+                jobMonitor.CancelJob(SelectedJobInfo.JobID);
+            }
         }
 
         private void RemoveSelectedJobs()
