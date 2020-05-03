@@ -11,9 +11,9 @@ namespace Dflat.Application.Services.JobServices
         int RunningJobCount { get; }
 
 
-        event EventHandler<JobServiceEventArgs> JobSubmitted;
-        event EventHandler<JobServiceEventArgs> JobStarted;
-        event EventHandler<JobServiceEventArgs> JobFinished;
+        event EventHandler<JobChangeEventArgs> JobSubmitted;
+        event EventHandler<JobChangeEventArgs> JobStarted;
+        event EventHandler<JobChangeEventArgs> JobFinished;
 
         List<Task> RunJobs();
 

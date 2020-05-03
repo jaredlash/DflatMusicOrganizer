@@ -57,7 +57,7 @@ namespace Dflat.Application.Services.JobServices
 
                 SetupJob(job);
 
-                JobStarted?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
+                JobStarted?.Invoke(this, new JobChangeEventArgs { JobID = job.JobID });
 
                 taskList.Add(jobRunner.Run(job, cancellationTokenSource.Token));
             }
@@ -83,7 +83,7 @@ namespace Dflat.Application.Services.JobServices
             // Consider getting rid of the Prerequisites collection and moving this
             // logic to the database layer (although, it is more of a business concern...)
             jobRepository.Add(job);
-            JobSubmitted?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
+            JobSubmitted?.Invoke(this, new JobChangeEventArgs { JobID = job.JobID });
 
             // Start running jobs as soon as we get them
             RunJobs();
@@ -127,7 +127,7 @@ namespace Dflat.Application.Services.JobServices
             }
 
             // Let things know we're done.
-            JobFinished?.Invoke(this, new JobServiceEventArgs { JobID = job.JobID });
+            JobFinished?.Invoke(this, new JobChangeEventArgs { JobID = job.JobID });
 
             // Finished with a job means we can start running the next
             RunJobs();
@@ -152,8 +152,8 @@ namespace Dflat.Application.Services.JobServices
             return false;
         }
 
-        public event EventHandler<JobServiceEventArgs> JobSubmitted;
-        public event EventHandler<JobServiceEventArgs> JobStarted;
-        public event EventHandler<JobServiceEventArgs> JobFinished;
+        public event EventHandler<JobChangeEventArgs> JobSubmitted;
+        public event EventHandler<JobChangeEventArgs> JobStarted;
+        public event EventHandler<JobChangeEventArgs> JobFinished;
     }
 }

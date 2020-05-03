@@ -197,7 +197,7 @@ namespace DflatCoreWPF.ViewModels
 
 
 
-        private void JobMonitor_JobSubmitted(object sender, JobServiceEventArgs e)
+        private void JobMonitor_JobSubmitted(object sender, JobChangeEventArgs e)
         {
             JobInfo jobInfo = jobRepository.GetJobInfo(e.JobID);
 
@@ -207,7 +207,7 @@ namespace DflatCoreWPF.ViewModels
                 
         }
 
-        private void JobMonitor_JobStatusChange(object sender, JobServiceEventArgs e)
+        private void JobMonitor_JobStatusChange(object sender, JobChangeEventArgs e)
         {
             JobInfo jobInfo = jobRepository.GetJobInfo(e.JobID);
 

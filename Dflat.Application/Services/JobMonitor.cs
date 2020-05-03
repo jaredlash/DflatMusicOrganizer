@@ -4,6 +4,7 @@ using Dflat.Application.Services.JobServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Dflat.Application.Services
@@ -12,46 +13,47 @@ namespace Dflat.Application.Services
     {
         private readonly IJobRepository jobRepository;
 
+        private readonly ICollection<IJobService> jobServices;
+
         public JobMonitor(IJobRepository jobRepository, IJobService<FileSourceFolderScanJob> folderScanService)
         {
             this.jobRepository = jobRepository;
 
+            jobServices = new List<IJobService>
+            {
+                folderScanService
+            };
 
             // Register listeners
-            folderScanService.JobSubmitted += ChildJobSubmitted;
-            folderScanService.JobStarted += ChildJobStarted;
-            folderScanService.JobFinished += ChildJobFinished;
+            foreach (var jobService in jobServices)
+            {
+                jobService.JobSubmitted += ChildJobSubmitted;
+                jobService.JobStarted += ChildJobStarted;
+                jobService.JobFinished += ChildJobFinished;
+            }
         }
 
-
-        public event EventHandler<JobServiceEventArgs> JobSubmitted;
-        public event EventHandler<JobServiceEventArgs> JobStarted;
-        public event EventHandler<JobServiceEventArgs> JobFinished;
-
-
-
-        private void ChildJobSubmitted(object sender, JobServiceEventArgs e)
+        #region Public methods
+        public void CancelJob(int jobID)
         {
-            QueuedJobCount++;
-            JobSubmitted?.Invoke(this, e);
+            if (jobServices.Any((s) => s.TryCancelJob(jobID)) == false)
+            {
+                // None of the job services were currently running the specified job
+                // Cancel the job in the repository
+                //jobRepository.CancelJob(jobID);
+            }
         }
 
-        private void ChildJobStarted(object sender, JobServiceEventArgs e)
-        {
-            RunningJobCount++;
-            QueuedJobCount--;
-            JobStarted?.Invoke(this, e);
-        }
-        private void ChildJobFinished(object sender, JobServiceEventArgs e)
-        {
-            RunningJobCount--;
-            FinishedJobCount++;
-            JobFinished?.Invoke(this, e);
-        }
+        #endregion
 
+        #region Public events
+        public event EventHandler<JobChangeEventArgs> JobSubmitted;
+        public event EventHandler<JobChangeEventArgs> JobStarted;
+        public event EventHandler<JobChangeEventArgs> JobFinished;
+        #endregion
 
+        #region Bindable properties
         private int runningJobCount;
-
         public int RunningJobCount
         {
             get { return runningJobCount; }
@@ -63,7 +65,6 @@ namespace Dflat.Application.Services
         }
 
         private int queuedJobCount;
-
         public int QueuedJobCount
         {
             get { return queuedJobCount; }
@@ -75,7 +76,6 @@ namespace Dflat.Application.Services
         }
 
         private int finishedJobCount;
-
         public int FinishedJobCount
         {
             get { return finishedJobCount; }
@@ -85,10 +85,32 @@ namespace Dflat.Application.Services
                 CallPropertyChanged(nameof(FinishedJobCount));
             }
         }
+        #endregion
 
+        #region Private methods
 
+        private void ChildJobSubmitted(object sender, JobChangeEventArgs e)
+        {
+            QueuedJobCount++;
+            JobSubmitted?.Invoke(this, e);
+        }
 
+        private void ChildJobStarted(object sender, JobChangeEventArgs e)
+        {
+            RunningJobCount++;
+            QueuedJobCount--;
+            JobStarted?.Invoke(this, e);
+        }
+        private void ChildJobFinished(object sender, JobChangeEventArgs e)
+        {
+            RunningJobCount--;
+            FinishedJobCount++;
+            JobFinished?.Invoke(this, e);
+        }
 
+        #endregion
+
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void CallPropertyChanged(string propertyName)
@@ -96,5 +118,6 @@ namespace Dflat.Application.Services
             var handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }
