@@ -73,7 +73,7 @@
                           >
                     <DataGrid.Resources>
                         <ContextMenu x:Key="JobContextMenu"  DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
-                        <MenuItem Header="Restart Jobs" Command="{Binding RestartSelectedJobsCommand}"/>
+                        <MenuItem Header="Restart Jobs" Command="{Binding RestartSelectedJobsCommand}" IsEnabled="{Binding CanRestartSelectedJobs}"/>
                             <MenuItem Header="Cancel Jobs" Command="{Binding CancelSelectedJobsCommand}" IsEnabled="{Binding CanCancelSelectedJobs}"/>
                         <Separator />
                         <MenuItem Header="Remove Jobs" Command="{Binding RemoveSelectedJobsCommand}"/>

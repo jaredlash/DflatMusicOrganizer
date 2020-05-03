@@ -93,8 +93,16 @@ namespace DflatCoreWPF.ViewModels
             {
                 selectedJobInfo = value;
                 RaisePropertyChanged(() => SelectedJobInfo);
+                RaisePropertyChanged(() => CanRestartSelectedJobs);
                 RaisePropertyChanged(() => CanCancelSelectedJobs);
             }
+        }
+
+        public bool CanRestartSelectedJobs
+        {
+            get => SelectedJobInfo?.Status != JobStatus.Running &&
+                SelectedJobInfo?.Status != JobStatus.Queued &&
+                SelectedJobInfo?.Status != JobStatus.Ready;
         }
 
         public bool CanCancelSelectedJobs
@@ -136,6 +144,7 @@ namespace DflatCoreWPF.ViewModels
                 alertDialogViewModel.Message = $"A problem was encountered when loading the jobs: {ex.Message}";
                 windowService.ShowDialog(alertDialogViewModel);
             }
+            RaisePropertyChanged(() => CanRestartSelectedJobs);
             RaisePropertyChanged(() => CanCancelSelectedJobs);
         }
 
@@ -218,6 +227,9 @@ namespace DflatCoreWPF.ViewModels
                 // It does not fit the display criteria for the current list, so remove it if found
                 if (foundJobInfo != null) JobInfoList.Remove(foundJobInfo);
             }
+
+            RaisePropertyChanged(() => CanRestartSelectedJobs);
+            RaisePropertyChanged(() => CanCancelSelectedJobs);
         }
 
         #endregion
