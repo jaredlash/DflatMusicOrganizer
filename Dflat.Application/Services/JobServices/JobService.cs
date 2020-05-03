@@ -107,13 +107,16 @@ namespace Dflat.Application.Services.JobServices
         /// <summary>
         /// Override to indicate work to finish the job.
         /// 
-        /// This happens on the original thread (not the background thread).  Also, overriding classes should call
+        /// This happens on the original thread (not the background thread).  Overriding classes should call
         /// the base class method as the last step in any overrides.
         /// </summary>
         /// <param name="job">Finishing job</param>
         /// <param name="cancellationToken"></param>
         public virtual void FinishJob(JobType job, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+                job.Status = JobStatus.Cancelled;
+
             // Save the job's status, and update status of any jobs waiting on this one
             jobRepository.Update(job);
 
@@ -127,7 +130,13 @@ namespace Dflat.Application.Services.JobServices
             }
 
             // Let things know we're done.
-            JobChanged?.Invoke(this, new JobChangeEventArgs { JobID = job.JobID, ChangeType = JobChangeEventArgs.JobChangeType.Finished });
+            var changeEventArgs = new JobChangeEventArgs { JobID = job.JobID };
+            if (job.Status == JobStatus.Cancelled)
+                changeEventArgs.ChangeType = JobChangeEventArgs.JobChangeType.Cancelled;
+            else
+                changeEventArgs.ChangeType = JobChangeEventArgs.JobChangeType.Finished;
+
+            JobChanged?.Invoke(this, changeEventArgs);
 
             // Finished with a job means we can start running the next
             RunJobs();
