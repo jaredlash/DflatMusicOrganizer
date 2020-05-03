@@ -5,18 +5,23 @@ using System.Threading.Tasks;
 
 namespace Dflat.Application.Services.JobServices
 {
-    public interface IJobService<JobType> where JobType : Job
+    public interface IJobService
     {
         int MaxConcurrentJobs { get; set; }
         int RunningJobCount { get; }
+
 
         event EventHandler<JobServiceEventArgs> JobSubmitted;
         event EventHandler<JobServiceEventArgs> JobStarted;
         event EventHandler<JobServiceEventArgs> JobFinished;
 
         List<Task> RunJobs();
-        void SubmitJobRequest(JobType job);
 
         bool TryCancelJob(int jobID);
+    }
+
+    public interface IJobService<JobType> : IJobService where JobType : Job
+    {
+        void SubmitJobRequest(JobType job);
     }
 }
