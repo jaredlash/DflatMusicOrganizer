@@ -122,6 +122,7 @@ namespace DflatCoreWPF.ViewModels
         public bool DisplaySuccessfulJobs { get => displayedJobStatus == JobStatus.Success; }
         public bool DisplaySuccessWithErrorJobs { get => displayedJobStatus == JobStatus.SuccessWithErrors; }
         public bool DisplayErroredJobs { get => displayedJobStatus == JobStatus.Error; }
+        public bool DisplayCancelledJobs { get => displayedJobStatus == JobStatus.Cancelled; }
 
 
         #endregion
@@ -179,6 +180,7 @@ namespace DflatCoreWPF.ViewModels
             RaisePropertyChanged(() => DisplaySuccessfulJobs);
             RaisePropertyChanged(() => DisplaySuccessWithErrorJobs);
             RaisePropertyChanged(() => DisplayErroredJobs);
+            RaisePropertyChanged(() => DisplayCancelledJobs);
         }
 
         private void RestartSelectedJobs()

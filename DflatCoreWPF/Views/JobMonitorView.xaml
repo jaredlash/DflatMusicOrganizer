@@ -40,6 +40,7 @@
                     <MenuItem Header="Successful"             Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Success}" IsChecked="{Binding DisplaySuccessfulJobs, Mode=OneWay}" />
                     <MenuItem Header="Successful with Errors" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.SuccessWithErrors}" IsChecked="{Binding DisplaySuccessWithErrorJobs, Mode=OneWay}" />
                     <MenuItem Header="Errored"                Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Error}" IsChecked="{Binding DisplayErroredJobs, Mode=OneWay}" />
+                    <MenuItem Header="Cancelled"              Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Cancelled}" IsChecked="{Binding DisplayCancelledJobs, Mode=OneWay}" />
                 </MenuItem>
             </MenuItem>
 
