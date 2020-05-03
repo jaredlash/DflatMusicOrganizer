@@ -11,7 +11,8 @@ namespace Dflat.Application.Services.JobServices
             Submitted,
             Started,
             Updated,
-            Finished
+            Finished,
+            Cancelled
         }
 
         public int JobID { get; set; }

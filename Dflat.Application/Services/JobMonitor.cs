@@ -81,6 +81,18 @@ namespace Dflat.Application.Services
                 CallPropertyChanged(nameof(FinishedJobCount));
             }
         }
+
+        private int cancelledJobCount;
+        public int CancelledJobCount
+        {
+            get { return cancelledJobCount; }
+            set
+            {
+                cancelledJobCount = value;
+                CallPropertyChanged(nameof(CancelledJobCount));
+            }
+        }
+
         #endregion
 
         #region Private methods
@@ -101,6 +113,11 @@ namespace Dflat.Application.Services
                 case JobChangeEventArgs.JobChangeType.Finished:
                     RunningJobCount--;
                     FinishedJobCount++;
+                    break;
+
+                case JobChangeEventArgs.JobChangeType.Cancelled:
+                    RunningJobCount--;
+                    CancelledJobCount++;
                     break;
             }
 
