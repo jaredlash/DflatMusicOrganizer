@@ -8,6 +8,7 @@
         Running = 3,
         Success = 4,
         SuccessWithErrors = 5,
-        Error = 6
+        Error = 6,
+        Cancelled = 7
     }
 }
