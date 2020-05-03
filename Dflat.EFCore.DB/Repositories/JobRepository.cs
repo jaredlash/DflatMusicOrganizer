@@ -76,6 +76,30 @@ namespace Dflat.EFCore.DB.Repositories
             }
         }
 
+        public bool CancelJob(int jobID)
+        {
+            using var context = new DataContext();
+
+            var job = context.Jobs.Find(jobID);
+
+            if (job.Status != JobStatus.Success && job.Status != JobStatus.SuccessWithErrors)
+                job.Status = JobStatus.Cancelled;
+            else
+                return false;
+
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
         // Sets the returned job to running statsu
         public JobType GetNextAvailable<JobType>() where JobType : Application.Models.Job
         {

@@ -10,6 +10,8 @@ namespace Dflat.Application.Repositories
 
         void Update<JobType>(JobType job) where JobType : Job;
 
+        bool CancelJob(int jobID);
+
         /// <summary>
         /// Retrieves the next available job of the specified type.  Job is retrieved in the "Running" state.
         /// </summary>

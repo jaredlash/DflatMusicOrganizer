@@ -38,7 +38,12 @@ namespace Dflat.Application.Services
             {
                 // None of the job services were currently running the specified job
                 // Cancel the job in the repository
-                //jobRepository.CancelJob(jobID);
+                var success = jobRepository.CancelJob(jobID);
+                if (success)
+                {
+                    JobChanged?.Invoke(this, new JobChangeEventArgs { JobID = jobID, ChangeType = JobChangeEventArgs.JobChangeType.Cancelled });
+                    QueuedJobCount--;
+                }
             }
         }
 
