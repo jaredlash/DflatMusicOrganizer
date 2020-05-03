@@ -107,7 +107,9 @@ namespace DflatCoreWPF.ViewModels
 
         public bool CanCancelSelectedJobs
         {
-            get => SelectedJobInfo?.Status != JobStatus.Success && SelectedJobInfo?.Status != JobStatus.SuccessWithErrors;
+            get => SelectedJobInfo?.Status != JobStatus.Success &&
+                SelectedJobInfo?.Status != JobStatus.SuccessWithErrors &&
+                SelectedJobInfo?.Status != JobStatus.Cancelled;
         }
 
 
