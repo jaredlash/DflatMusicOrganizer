@@ -73,8 +73,8 @@ namespace Dflat.Application.Services.JobServices
                 job.Errors = string.Join("\n", result.ErrorLog);
                 if (result.ErrorLog.Count > 0 && result.FoundFiles.Count == 0)
                 {
-                        job.Status = JobStatus.Error;
-                        return;
+                    job.Status = cancellationToken.IsCancellationRequested ? JobStatus.Cancelled : JobStatus.Error;
+                    return;
                 }
             }
             catch (DirectoryNotFoundException e)
