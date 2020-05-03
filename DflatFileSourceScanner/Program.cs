@@ -35,7 +35,7 @@ namespace DflatFileSourceScanner
 
             var excludeDirectories = args.Skip(1);
 
-            var result = folderSearch.FindFiles(args[0], new HashSet<string>(excludeDirectories), MusicFilter);
+            var result = folderSearch.FindFiles(args[0], new HashSet<string>(excludeDirectories), MusicFilter, new System.Threading.CancellationToken());
 
             if (result.ErrorLog.Count > 0)
             {

@@ -69,7 +69,7 @@ namespace Dflat.Application.Services.JobServices
             FolderSearchServiceResult result;
             try
             {
-                result = folderScanner.FindFiles(fileSourceFolder.Path, excludeFolders, MusicFilter);
+                result = folderScanner.FindFiles(fileSourceFolder.Path, excludeFolders, MusicFilter, cancellationToken);
                 job.Errors = string.Join("\n", result.ErrorLog);
                 if (result.ErrorLog.Count > 0 && result.FoundFiles.Count == 0)
                 {

@@ -2,6 +2,7 @@ using Dflat.Application.Models;
 using Dflat.Application.Wrappers;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Dflat.Application.Services
 {
@@ -20,7 +21,10 @@ namespace Dflat.Application.Services
 			_searchFilter = condition;
 		}
 
-		public FolderSearchServiceResult FindFiles(string sourceDirectory, HashSet<string> excludeDirectories, Predicate<string> condition)
+		public FolderSearchServiceResult FindFiles(string sourceDirectory,
+											       HashSet<string> excludeDirectories,
+											       Predicate<string> condition,
+											       CancellationToken cancellationToken)
 		{
 			Stack<string> dirs = new Stack<string>(20);
 			FolderSearchServiceResult result = new FolderSearchServiceResult();
@@ -120,14 +124,14 @@ namespace Dflat.Application.Services
 			return result;
 		}
 
-		public FolderSearchServiceResult FindFiles(string sourceDirectory, Predicate<string> condition)
+		public FolderSearchServiceResult FindFiles(string sourceDirectory, Predicate<string> condition, CancellationToken cancellationToken)
 		{
-			return FindFiles(sourceDirectory, new HashSet<string>(), condition);
+			return FindFiles(sourceDirectory, new HashSet<string>(), condition, cancellationToken);
 		}
 
-		public FolderSearchServiceResult FindFiles(string sourceDirectory)
+		public FolderSearchServiceResult FindFiles(string sourceDirectory, CancellationToken cancellationToken)
 		{
-			return FindFiles(sourceDirectory, new HashSet<string>(), _searchFilter);
+			return FindFiles(sourceDirectory, new HashSet<string>(), _searchFilter, cancellationToken);
 		}
 	}
 }

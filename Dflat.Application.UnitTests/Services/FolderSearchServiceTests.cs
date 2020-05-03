@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace Dflat.Application.UnitTests.Services.Tests
 {
@@ -41,7 +42,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            var results = folderSearchService.FindFiles(@"Z:\");
+            var results = folderSearchService.FindFiles(@"Z:\", new CancellationToken());
 
 
             Assert.AreEqual(5, results.FoundFiles.Count);
@@ -72,7 +73,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object, f => f.EndsWith(".ogg"));   // Criteria supplied in constructor
 
-            var results = folderSearchService.FindFiles(@"Z:\");
+            var results = folderSearchService.FindFiles(@"Z:\", new CancellationToken());
 
 
             Assert.AreEqual(3, results.FoundFiles.Count);
@@ -105,7 +106,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            var results = folderSearchService.FindFiles(@"Z:\");
+            var results = folderSearchService.FindFiles(@"Z:\", new CancellationToken());
 
 
             Assert.AreEqual(5, results.FoundFiles.Count);
@@ -136,7 +137,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object, f => f.EndsWith(".ogg"));   // Criteria supplied in constructor
 
-            var results = folderSearchService.FindFiles(@"Z:\");
+            var results = folderSearchService.FindFiles(@"Z:\", new CancellationToken());
 
 
             Assert.AreEqual(3, results.FoundFiles.Count);
@@ -169,7 +170,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            var results = folderSearchService.FindFiles(@"Z:\", new HashSet<string> { @"Z:\" }, (f) => true);   // Root folder excluded
+            var results = folderSearchService.FindFiles(@"Z:\", new HashSet<string> { @"Z:\" }, (f) => true, new CancellationToken());   // Root folder excluded
 
 
             Assert.AreEqual(0, results.FoundFiles.Count);
@@ -201,7 +202,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            Assert.ThrowsException<DirectoryNotFoundException>(() => folderSearchService.FindFiles(@"Z:\"));
+            Assert.ThrowsException<DirectoryNotFoundException>(() => folderSearchService.FindFiles(@"Z:\", new CancellationToken()));
         }
 
 
@@ -241,7 +242,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            var results = folderSearchService.FindFiles(@"Z:\");
+            var results = folderSearchService.FindFiles(@"Z:\", new CancellationToken());
 
 
             Assert.AreEqual(5, results.FoundFiles.Count);
@@ -283,7 +284,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            var results = folderSearchService.FindFiles(@"Z:\", (p) => p.EndsWith(".mp3") == false);    // Criteria provided in call to FindFiles
+            var results = folderSearchService.FindFiles(@"Z:\", (p) => p.EndsWith(".mp3") == false, new CancellationToken());    // Criteria provided in call to FindFiles
 
 
             Assert.AreEqual(3, results.FoundFiles.Count);
@@ -326,7 +327,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            var results = folderSearchService.FindFiles(@"Z:\");
+            var results = folderSearchService.FindFiles(@"Z:\", new CancellationToken());
 
 
             Assert.AreEqual(2, results.FoundFiles.Count);
@@ -372,7 +373,7 @@ namespace Dflat.Application.UnitTests.Services.Tests
 
             var folderSearchService = new FolderSearchService(sysio.Object);
 
-            var results = folderSearchService.FindFiles(@"Z:\");
+            var results = folderSearchService.FindFiles(@"Z:\", new CancellationToken());
 
 
             Assert.AreEqual(4, results.FoundFiles.Count);

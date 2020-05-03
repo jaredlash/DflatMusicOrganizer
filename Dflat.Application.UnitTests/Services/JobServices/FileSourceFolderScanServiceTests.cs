@@ -79,7 +79,7 @@ namespace Dflat.Application.Services.JobServices.Tests
         public void DoWork_ResultsInError_WhenFileSourceFolderNotFound()
         {
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), It.IsAny<CancellationToken>()))
                 .Throws(new DirectoryNotFoundException());
             var job = new FileSourceFolderScanJob()
             {
@@ -100,7 +100,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             result.ErrorLog.Add("Error");
             result.ErrorLog.Add("Error");
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), It.IsAny<CancellationToken>()))
                 .Returns(result);
             var job = new FileSourceFolderScanJob()
             {
@@ -120,7 +120,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             FolderSearchServiceResult result = new FolderSearchServiceResult();
             FileCollectionCompare.CompareResult compareResult = new FileCollectionCompare.CompareResult();
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), It.IsAny<CancellationToken>()))
                 .Returns(result);
             fileRepositoryMock.Setup(r => r.GetFromPath(It.IsAny<string>(), true)).Returns(new List<Models.File>());
             comparerMock.Setup(c => c.Compare(It.IsAny<IEnumerable<Models.File>>(), It.IsAny<IEnumerable<Models.File>>()))
@@ -146,7 +146,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             result.ErrorLog.Add("Error");
             result.FoundFiles.Add(new FileResult("", "", "", 0, DateTime.Now));
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), It.IsAny<CancellationToken>()))
                 .Returns(result);
             fileRepositoryMock.Setup(r => r.GetFromPath(It.IsAny<string>(), true)).Returns(new List<Models.File>());
             comparerMock.Setup(c => c.Compare(It.IsAny<IEnumerable<Models.File>>(), It.IsAny<IEnumerable<Models.File>>()))
@@ -173,7 +173,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             result.FoundFiles.Add(new FileResult("", "", "", 0, DateTime.Now));
             result.FoundFiles.Add(new FileResult("", "", "", 0, DateTime.Now));
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), It.IsAny<CancellationToken>()))
                 .Returns(result);
             fileRepositoryMock.Setup(r => r.GetFromPath(It.IsAny<string>(), true)).Returns(new List<Models.File>());
             comparerMock.Setup(c => c.Compare(It.IsAny<IEnumerable<Models.File>>(), It.IsAny<IEnumerable<Models.File>>()))
@@ -199,7 +199,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             compareResult.Removed.Add(new Models.File());
             compareResult.Removed.Add(new Models.File());
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), new CancellationToken()))
                 .Returns(result);
             fileRepositoryMock.Setup(r => r.GetFromPath(It.IsAny<string>(), true)).Returns(new List<Models.File>());
             comparerMock.Setup(c => c.Compare(It.IsAny<IEnumerable<Models.File>>(), It.IsAny<IEnumerable<Models.File>>()))
@@ -224,7 +224,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             compareResult.Added.Add(new Models.File());
             compareResult.Added.Add(new Models.File());
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), new CancellationToken()))
                 .Returns(result);
             fileRepositoryMock.Setup(r => r.GetFromPath(It.IsAny<string>(), true)).Returns(new List<Models.File>());
             comparerMock.Setup(c => c.Compare(It.IsAny<IEnumerable<Models.File>>(), It.IsAny<IEnumerable<Models.File>>()))
@@ -249,7 +249,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             compareResult.Modified.Add(new Models.File());
             compareResult.Modified.Add(new Models.File());
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns(new FileSourceFolder());
-            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>()))
+            folderScannerMock.Setup(s => s.FindFiles(It.IsAny<string>(), It.IsAny<HashSet<string>>(), It.IsAny<Predicate<string>>(), It.IsAny<CancellationToken>()))
                 .Returns(result);
             fileRepositoryMock.Setup(r => r.GetFromPath(It.IsAny<string>(), true)).Returns(new List<Models.File>());
             comparerMock.Setup(c => c.Compare(It.IsAny<IEnumerable<Models.File>>(), It.IsAny<IEnumerable<Models.File>>()))
