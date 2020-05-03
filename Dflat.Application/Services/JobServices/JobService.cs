@@ -43,22 +43,29 @@ namespace Dflat.Application.Services.JobServices
                 // use a custom HttpClient which performs the throttling to ensure APIs that are rate-limited
                 // don't get over-used (such as AcoustID and MusicBrainz)
 
+                // Limit number of concurrent jobs
                 if (RunningJobCount == MaxConcurrentJobs)
                     return taskList;
 
+                // See if we have any more jobs ready to run
                 var job = jobRepository.GetNextAvailable<JobType>();
                 if (job == null)
                     return taskList;
 
+                // Found a job to run
                 RunningJobCount++;
 
+                // Allow cancelling the job if we know the ID
                 var cancellationTokenSource = new CancellationTokenSource();
                 runningJobs.Add(job.JobID, cancellationTokenSource);
 
+                // Perform any setup operations before background processing
                 SetupJob(job);
 
+                // Notify that we are running this job
                 JobChanged?.Invoke(this, new JobChangeEventArgs { JobID = job.JobID, ChangeType = JobChangeEventArgs.JobChangeType.Started });
 
+                // Run the job on a background thread
                 taskList.Add(jobRunner.Run(job, cancellationTokenSource.Token));
             }
         }
@@ -114,14 +121,17 @@ namespace Dflat.Application.Services.JobServices
         /// <param name="cancellationToken"></param>
         public virtual void FinishJob(JobType job, CancellationToken cancellationToken)
         {
+            // Last chance to cancel
             if (cancellationToken.IsCancellationRequested)
                 job.Status = JobStatus.Cancelled;
 
             // Save the job's status, and update status of any jobs waiting on this one
             jobRepository.Update(job);
 
+            // No longer running this job
             RunningJobCount--;
 
+            // Dispose of our CancellationTokenSource
             if (runningJobs.ContainsKey(job.JobID))
             {
                 var cancellationTokenSource = runningJobs[job.JobID];
