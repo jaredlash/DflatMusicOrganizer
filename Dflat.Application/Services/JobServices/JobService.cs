@@ -14,7 +14,7 @@ namespace Dflat.Application.Services.JobServices
         private readonly IJobRepository jobRepository;
         private readonly IBackgroundJobRunner<JobType> jobRunner;
 
-        private readonly Dictionary<int, CancellationTokenSource> runningJobs;
+        private readonly Dictionary<int, CancellationTokenSource> jobCancellationTokenSources;
 
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
@@ -29,7 +29,7 @@ namespace Dflat.Application.Services.JobServices
             this.jobRunner.FinishWork = FinishJob;
             RunningJobCount = 0;
 
-            runningJobs = new Dictionary<int, CancellationTokenSource>();
+            jobCancellationTokenSources = new Dictionary<int, CancellationTokenSource>();
         }
 
 
@@ -57,7 +57,7 @@ namespace Dflat.Application.Services.JobServices
 
                 // Allow cancelling the job if we know the ID
                 var cancellationTokenSource = new CancellationTokenSource();
-                runningJobs.Add(job.JobID, cancellationTokenSource);
+                jobCancellationTokenSources.Add(job.JobID, cancellationTokenSource);
 
                 // Perform any setup operations before background processing
                 SetupJob(job);
@@ -132,10 +132,10 @@ namespace Dflat.Application.Services.JobServices
             RunningJobCount--;
 
             // Dispose of our CancellationTokenSource
-            if (runningJobs.ContainsKey(job.JobID))
+            if (jobCancellationTokenSources.ContainsKey(job.JobID))
             {
-                var cancellationTokenSource = runningJobs[job.JobID];
-                runningJobs.Remove(job.JobID);
+                var cancellationTokenSource = jobCancellationTokenSources[job.JobID];
+                jobCancellationTokenSources.Remove(job.JobID);
                 cancellationTokenSource.Dispose();
             }
 
@@ -161,9 +161,9 @@ namespace Dflat.Application.Services.JobServices
         {
             // If the job is currently running, cancel it.
             // FinishJob should know about the cancellation, so that additional jobs don't get scheduled based on this.
-            if (runningJobs.ContainsKey(jobID))
+            if (jobCancellationTokenSources.ContainsKey(jobID))
             {
-                var cancellationTokenSource = runningJobs[jobID];
+                var cancellationTokenSource = jobCancellationTokenSources[jobID];
                 cancellationTokenSource.Cancel();
                 return true;
             }
