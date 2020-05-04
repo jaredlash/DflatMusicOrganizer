@@ -76,6 +76,35 @@ namespace Dflat.EFCore.DB.Repositories
             }
         }
 
+        public bool RestartJob(int jobID)
+        {
+            using var context = new DataContext();
+
+            var job = context.Jobs.Find(jobID);
+
+            if (job.Status != JobStatus.Running && job.Status != JobStatus.Queued && job.Status != JobStatus.Ready)
+            {
+                // If pre-requisites get implemented, then this should still work with the addition of a "Queueing" state.  In which case,
+                // Queuing gets added to the excluded Statuses above.  In other words, if restarting a job is a valid operation, then Ready is valid.
+                // This might get more complicated if restarting groups of jobs at once where one of those jobs in the group is a pre-requisite for another
+                // job in the group, but that is not now.
+                job.Status = JobStatus.Ready;
+            }
+            else
+                return false;
+
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool CancelJob(int jobID)
         {
             using var context = new DataContext();
@@ -214,17 +243,5 @@ namespace Dflat.EFCore.DB.Repositories
             };
         }
 
-
-
-        //private List<JobType> GetCurrentlyRunning<JobType>() where JobType : Application.Models.Job
-        //{
-        //    return context.Jobs.AsNoTracking().OfType<JobType>().Where((j) => j.Status == JobStatus.Running).ToList();
-        //}
-
-
-        //private List<JobType> GetReadyJobs<JobType>() where JobType : Application.Models.Job
-        //{
-        //    return context.Jobs.AsNoTracking().OfType<JobType>().Where((j) => j.Status == JobStatus.Ready).ToList();
-        //}
     }
 }

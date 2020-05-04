@@ -1,4 +1,5 @@
 ﻿using Dflat.Application.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace Dflat.Application.Repositories
         void Add<JobType>(JobType job) where JobType : Job;
 
         void Update<JobType>(JobType job) where JobType : Job;
+
+        bool RestartJob(int jobID);
 
         bool CancelJob(int jobID);
 
