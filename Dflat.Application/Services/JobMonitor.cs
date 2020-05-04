@@ -32,6 +32,28 @@ namespace Dflat.Application.Services
         }
 
         #region Public methods
+        public void RestartJob(int jobID)
+        {
+            var success = jobRepository.RestartJob(jobID);
+            
+            // Notify appropriate listeners that we changed the job
+            // Tell the appropriate JobService to run ready jobs now that we've made the job ready
+            if (success)
+            {
+                JobChanged?.Invoke(this, new JobChangeEventArgs { JobID = jobID, ChangeType = JobChangeEventArgs.JobChangeType.Updated });
+                var job = jobRepository.Get(jobID);
+
+                foreach (var jobService in jobServices)
+                {
+                    if (jobService.AcceptedRequestTypes.Contains(job.GetType()))
+                    {
+                        jobService.RunJobs();
+                        break;
+                    }
+                }
+            }
+        }
+
         public void CancelJob(int jobID)
         {
             if (jobServices.Any((s) => s.TryCancelJob(jobID)) == false)

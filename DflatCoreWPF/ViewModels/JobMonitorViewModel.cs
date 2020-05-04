@@ -193,9 +193,10 @@ namespace DflatCoreWPF.ViewModels
 
         private void RestartSelectedJobs()
         {
-            alertDialogViewModel.Title = "Restart Selected Jobs"; ;
-            alertDialogViewModel.Message = $"Attempt to restart: {SelectedJobInfo?.JobID}";
-            windowService.ShowDialog(alertDialogViewModel);
+            if (SelectedJobInfo != null)
+            {
+                jobMonitor.RestartJob(SelectedJobInfo.JobID);
+            }
         }
 
         private void CancelSelectedJobs()
