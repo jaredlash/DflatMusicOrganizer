@@ -38,6 +38,7 @@ namespace Dflat.Application.Services.JobServices
 
 
             MaxConcurrentJobs = 5;
+            AcceptedRequestTypes.Add(typeof(FileSourceFolderScanJob));
         }
 
 

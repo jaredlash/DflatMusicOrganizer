@@ -9,6 +9,7 @@ namespace Dflat.Application.Services.JobServices
     {
         int MaxConcurrentJobs { get; set; }
         int RunningJobCount { get; }
+        ICollection<Type> AcceptedRequestTypes { get; }
 
         event EventHandler<JobChangeEventArgs> JobChanged;
 

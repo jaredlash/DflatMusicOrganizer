@@ -18,7 +18,7 @@ namespace Dflat.Application.Services.JobServices
 
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
-
+        public ICollection<Type> AcceptedRequestTypes { get; private set; }
 
         public JobService(IJobRepository jobRepository, IBackgroundJobRunner<JobType> jobRunner)
         {
@@ -27,7 +27,9 @@ namespace Dflat.Application.Services.JobServices
 
             this.jobRunner.BackgroundWork = DoWork;
             this.jobRunner.FinishWork = FinishJob;
+
             RunningJobCount = 0;
+            AcceptedRequestTypes = new List<Type>();
 
             jobCancellationTokenSources = new Dictionary<int, CancellationTokenSource>();
         }
