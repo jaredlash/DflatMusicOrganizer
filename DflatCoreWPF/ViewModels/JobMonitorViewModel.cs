@@ -55,6 +55,12 @@ namespace DflatCoreWPF.ViewModels
             LoadJobs();
         }
 
+        public override void OnClose()
+        {
+            JobInfoList.Clear();
+            SelectedJobInfo = null;
+        }
+
 
         #region Commands
 

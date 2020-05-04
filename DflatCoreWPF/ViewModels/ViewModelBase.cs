@@ -20,5 +20,9 @@ namespace DflatCoreWPF.ViewModels
             CloseAction?.Invoke(result);
         }
 
+        public virtual void OnClose()
+        {
+
+        }
     }
 }

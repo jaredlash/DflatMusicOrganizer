@@ -49,6 +49,7 @@ namespace DflatCoreWPF.WindowService
 
                 view.Closed += (o, args) =>
                 {
+                    viewModel.OnClose();
                     currentWindows.Remove(vmType);
                     viewModel.CloseAction = null;
                 };
@@ -81,6 +82,7 @@ namespace DflatCoreWPF.WindowService
 
             view.Closed += (o, args) =>
             {
+                viewModel.OnClose();
                 currentWindows.Remove(vmType);
                 viewModel.CloseAction = null;
             };
