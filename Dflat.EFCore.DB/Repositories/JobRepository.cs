@@ -176,11 +176,11 @@ namespace Dflat.EFCore.DB.Repositories
                 switch (jobType)
                 {
                     case JobType.FileSourceFolderScanJob:
-                        q = context.FileSourceFolderScanJobs;
+                        q = context.FileSourceFolderScanJobs.AsNoTracking();
                         break;
 
                     default:
-                        q = context.Jobs;
+                        q = context.Jobs.AsNoTracking();
                         break;
                 }
 
