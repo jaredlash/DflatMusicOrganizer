@@ -26,15 +26,17 @@ namespace Dflat.EFCore.DB.Repositories
             switch (job)
             {
                 case Application.Models.FileSourceFolderScanJob folderScanJob:
-                    Models.FileSourceFolderScanJob newJob = mapper.Map<Models.FileSourceFolderScanJob>(folderScanJob);
+                    
 
                     using (var context = new DataContext())
                     {
+                        Models.FileSourceFolderScanJob newJob = mapper.Map<Models.FileSourceFolderScanJob>(folderScanJob);
                         context.Add(newJob);
                         context.SaveChanges();
+                        folderScanJob.JobID = newJob.JobID;
                     }
 
-                    folderScanJob.JobID = newJob.JobID;
+                    
                     break;
 
                 default:
