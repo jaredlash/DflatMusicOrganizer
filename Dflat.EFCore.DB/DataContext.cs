@@ -11,24 +11,22 @@ namespace Dflat.Data.EFCore
 {
     public class DataContext : DbContext
     {
+        private readonly string connectionString;
+
         public DbSet<FileSourceFolder> FileSourceFolders { get; set; }
 
         public DbSet<Job> Jobs { get; set; }
         public DbSet<FileSourceFolderScanJob> FileSourceFolderScanJobs { get; set; }
 
 
-        public DataContext() { }
+        public DataContext(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
-
-            var config = builder.Build();
-
-            var connectionString = config.GetConnectionString("DflatMusicOrganizerDB");
-
             optionsBuilder.UseSqlServer(connectionString);
         }
 

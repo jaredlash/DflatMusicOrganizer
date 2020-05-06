@@ -4,19 +4,16 @@ using Dflat.Application.Repositories;
 using Dflat.Application.Services;
 using Dflat.Application.Services.JobServices;
 using Dflat.Application.Wrappers;
-using Dflat.Data.EFCore;
 using Dflat.Data.EFCore.Repositories;
 using DflatCoreWPF.Utilities;
 using DflatCoreWPF.ViewModels;
 using DflatCoreWPF.Views;
 using DflatCoreWPF.WindowService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 using System.Windows;
 using Unity;
+using Unity.Injection;
 
 namespace DflatCoreWPF
 {
@@ -57,12 +54,11 @@ namespace DflatCoreWPF
 
                 //cfg.CreateMap<FileSourceFolderEditorViewModel, FileSourceFolder>();
 
-                cfg.UseEntityFrameworkCoreModel<DataContext>();
-                cfg.CreateMap<Dflat.Data.EFCore.Models.FileSourceFolder, Dflat.Application.Models.FileSourceFolder>()
+                cfg.CreateMap<Dflat.Data.EFCore.Models.FileSourceFolder, FileSourceFolder>()
                     .ForMember(dest => dest.IsChanged, opt => opt.Ignore())
                     .ReverseMap();
-                cfg.CreateMap<Dflat.Data.EFCore.Models.ExcludePath, Dflat.Application.Models.ExcludePath>().ReverseMap();
-                cfg.CreateMap<Dflat.Data.EFCore.Models.FileSourceFolderScanJob, Dflat.Application.Models.FileSourceFolderScanJob>().ReverseMap();
+                cfg.CreateMap<Dflat.Data.EFCore.Models.ExcludePath, ExcludePath>().ReverseMap();
+                cfg.CreateMap<Dflat.Data.EFCore.Models.FileSourceFolderScanJob, FileSourceFolderScanJob>().ReverseMap();
                 cfg.CreateMap<FileResult, Dflat.Application.Models.File>()
                     .ForMember(dest => dest.FileID, opt => opt.Ignore())
                     .ForMember(dest => dest.Chromaprint, opt => opt.Ignore())
@@ -72,20 +68,33 @@ namespace DflatCoreWPF
 
             //automapconfig.AssertConfigurationIsValid();
 
+
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+
+            var config = builder.Build();
+
+            string connectionString = config.GetConnectionString("DflatMusicOrganizerDB");
+
+
             var mapper = automapconfig.CreateMapper();
             container.RegisterInstance(mapper);
 
             container.RegisterSingleton<IWindowService, WindowService.WindowService>()
-                .RegisterSingleton<IJobService<Dflat.Application.Models.FileSourceFolderScanJob>, FileSourceFolderScanService>()
+                .RegisterSingleton<IJobService<FileSourceFolderScanJob>, FileSourceFolderScanService>()
                 .RegisterSingleton<JobMonitor>()
                 .RegisterType<IFolderChooserDialog, FolderChooserDialog>()
-                .RegisterType<IFileSourceFolderRepository, FileSourceFolderRepository>()
-                .RegisterType<IFileRepository, FileRepository>()
                 .RegisterType<IFolderSearchService, FolderSearchService>()
                 .RegisterType<IFileCollectionCompare, FileCollectionCompare>()
-                .RegisterType<IJobRepository, JobRepository>()
-                .RegisterType<IBackgroundJobRunner<Dflat.Application.Models.FileSourceFolderScanJob>, BackgroundJobRunner<Dflat.Application.Models.FileSourceFolderScanJob>>()
+                .RegisterType<IBackgroundJobRunner<FileSourceFolderScanJob>, BackgroundJobRunner<FileSourceFolderScanJob>>()
                 .RegisterType<ISystemIOWrapper, SystemIOWrapper>();
+
+            container.RegisterInstance("connectionString", connectionString);
+
+
+            container.RegisterType<IJobRepository, JobRepository>(new InjectionConstructor(new ResolvedParameter<IMapper>(), new ResolvedParameter<string>("connectionString")))
+                .RegisterType<IFileSourceFolderRepository, FileSourceFolderRepository>(new InjectionConstructor(new ResolvedParameter<IMapper>(), new ResolvedParameter<string>("connectionString")))
+                .RegisterType<IFileRepository, FileRepository>(new InjectionConstructor(connectionString));
 
             // Register View and ViewModel mappings
             container.RegisterType<Window, AlertDialogView>(nameof(AlertDialogViewModel));

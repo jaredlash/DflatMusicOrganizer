@@ -12,17 +12,19 @@ namespace Dflat.Data.EFCore.Repositories
     public class FileSourceFolderRepository : IFileSourceFolderRepository
     {
         private readonly IMapper mapper;
+        private readonly string connectionString;
 
-        public FileSourceFolderRepository(IMapper mapper)
+        public FileSourceFolderRepository(IMapper mapper, string connectionString)
         {
             this.mapper = mapper;
+            this.connectionString = connectionString;
         }
 
         public async Task<IEnumerable<FileSourceFolder>> GetAllAsync()
         {
             var result = new List<FileSourceFolder>();
 
-            using (var context = new DataContext())
+            using (var context = new DataContext(connectionString))
             {
                 var fileSourceFolders = await context.FileSourceFolders.Include(f => f.ExcludePaths).ToListAsync();
 
@@ -40,7 +42,7 @@ namespace Dflat.Data.EFCore.Repositories
         {
             var result = new List<FileSourceFolder>();
 
-            using (var context = new DataContext())
+            using (var context = new DataContext(connectionString))
             {
                 var fileSourceFolders = context.FileSourceFolders.Include(f => f.ExcludePaths).ToList();
 
@@ -56,7 +58,7 @@ namespace Dflat.Data.EFCore.Repositories
 
         public async Task<bool> UpdateAllAsync(IEnumerable<FileSourceFolder> fileSourceFolders)
         {
-            using (var context = new DataContext())
+            using (var context = new DataContext(connectionString))
             {
 
                 // Remove any deleted fileSourceFolders and their exclude paths
@@ -152,7 +154,7 @@ namespace Dflat.Data.EFCore.Repositories
         {
             FileSourceFolder result = null;
 
-            using (var context = new DataContext())
+            using (var context = new DataContext(connectionString))
             {
                 var fileSourceFolder = context.FileSourceFolders
                     .Where((f) => f.FileSourceFolderID == fileSourceFolderID)

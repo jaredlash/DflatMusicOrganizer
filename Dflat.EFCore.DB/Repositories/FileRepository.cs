@@ -8,6 +8,13 @@ namespace Dflat.Data.EFCore.Repositories
 {
     public class FileRepository : IFileRepository
     {
+        private readonly string connectionString;
+
+        public FileRepository(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
         public void Add(File modifiedFile)
         {
             return;

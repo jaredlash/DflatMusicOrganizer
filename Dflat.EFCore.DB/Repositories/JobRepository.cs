@@ -13,10 +13,12 @@ namespace Dflat.Data.EFCore.Repositories
     public class JobRepository : IJobRepository
     {
         private readonly IMapper mapper;
+        private readonly string connectionString;
 
-        public JobRepository(IMapper mapper)
+        public JobRepository(IMapper mapper, string connectionString)
         {
             this.mapper = mapper;
+            this.connectionString = connectionString;
         }
 
         // Sets the ID of the passed in job
@@ -27,7 +29,7 @@ namespace Dflat.Data.EFCore.Repositories
                 case FileSourceFolderScanJob folderScanJob:
 
 
-                    using (var context = new DataContext())
+                    using (var context = new DataContext(connectionString))
                     {
                         Models.FileSourceFolderScanJob newJob = mapper.Map<Models.FileSourceFolderScanJob>(folderScanJob);
                         context.Add(newJob);
@@ -53,7 +55,7 @@ namespace Dflat.Data.EFCore.Repositories
                 case FileSourceFolderScanJob folderScanJob:
                     //Models.FileSourceFolderScanJob newJob = mapper.Map<Models.FileSourceFolderScanJob>(folderScanJob);
 
-                    using (var context = new DataContext())
+                    using (var context = new DataContext(connectionString))
                     {
                         Models.FileSourceFolderScanJob existingJob = context.FileSourceFolderScanJobs.Find(folderScanJob.JobID);
                         if (existingJob == null)
@@ -79,7 +81,7 @@ namespace Dflat.Data.EFCore.Repositories
 
         public bool RestartJob(int jobID)
         {
-            using var context = new DataContext();
+            using var context = new DataContext(connectionString);
 
             var job = context.Jobs.Find(jobID);
 
@@ -108,7 +110,7 @@ namespace Dflat.Data.EFCore.Repositories
 
         public bool CancelJob(int jobID)
         {
-            using var context = new DataContext();
+            using var context = new DataContext(connectionString);
 
             var job = context.Jobs.Find(jobID);
 
@@ -136,7 +138,7 @@ namespace Dflat.Data.EFCore.Repositories
             Type jobType = typeof(JobType);
 
 
-            using (var context = new DataContext())
+            using (var context = new DataContext(connectionString))
             {
                 if (jobType == typeof(FileSourceFolderScanJob))
                 {
@@ -167,7 +169,7 @@ namespace Dflat.Data.EFCore.Repositories
 
         public Job Get(int jobID)
         {
-            using var context = new DataContext();
+            using var context = new DataContext(connectionString);
 
             var job = context.Jobs.Find(jobID);
 
@@ -181,7 +183,7 @@ namespace Dflat.Data.EFCore.Repositories
 
         public JobInfo GetJobInfo(int jobID)
         {
-            using var context = new DataContext();
+            using var context = new DataContext(connectionString);
 
             var job = context.Jobs.Find(jobID);
             return new JobInfo
@@ -199,7 +201,7 @@ namespace Dflat.Data.EFCore.Repositories
         {
             List<JobInfo> result = new List<JobInfo>();
 
-            using (var context = new DataContext())
+            using (var context = new DataContext(connectionString))
             {
                 IQueryable<Models.Job> q;
 
