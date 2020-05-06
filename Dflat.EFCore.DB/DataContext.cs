@@ -1,4 +1,4 @@
-﻿using Dflat.EFCore.DB.Models;
+﻿using Dflat.Data.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -7,7 +7,7 @@ using System.Configuration;
 using System.IO;
 using System.Text;
 
-namespace Dflat.EFCore.DB
+namespace Dflat.Data.EFCore
 {
     public class DataContext : DbContext
     {
@@ -42,7 +42,7 @@ namespace Dflat.EFCore.DB
         private void buildFileSourceFolderModels(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ExcludePath>().ToTable("ExcludePaths").HasKey(table => table.ExcludePathID);
-            
+
             modelBuilder.Entity<ExcludePath>()
                 .Property(table => table.ExcludePathID).ValueGeneratedOnAdd();
             modelBuilder.Entity<ExcludePath>()

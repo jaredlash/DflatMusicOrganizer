@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dflat.EFCore.DB.Repositories
+namespace Dflat.Data.EFCore.Repositories
 {
     public class FileRepository : IFileRepository
     {

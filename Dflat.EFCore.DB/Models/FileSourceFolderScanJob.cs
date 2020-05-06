@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dflat.EFCore.DB.Models
+namespace Dflat.Data.EFCore.Models
 {
     public class FileSourceFolderScanJob : Job
     {

@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Organizer", "Organizer", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dflat.Application", "Dflat.Application\Dflat.Application.csproj", "{5A9B7F30-3550-4DEF-815D-7D10EE32F6C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dflat.EFCore.DB", "Dflat.EFCore.DB\Dflat.EFCore.DB.csproj", "{64EA13AB-B7CA-4372-8EE9-910366DFBCB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dflat.Data.EFCore", "Dflat.EFCore.DB\Dflat.Data.EFCore.csproj", "{64EA13AB-B7CA-4372-8EE9-910366DFBCB1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{96BC55DD-EE49-4AAD-8030-16E1A2E0AF4B}"
 EndProject

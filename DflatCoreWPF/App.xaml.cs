@@ -4,9 +4,8 @@ using Dflat.Application.Repositories;
 using Dflat.Application.Services;
 using Dflat.Application.Services.JobServices;
 using Dflat.Application.Wrappers;
-using Dflat.EFCore.DB;
-using Dflat.EFCore.DB.Models;
-using Dflat.EFCore.DB.Repositories;
+using Dflat.Data.EFCore;
+using Dflat.Data.EFCore.Repositories;
 using DflatCoreWPF.Utilities;
 using DflatCoreWPF.ViewModels;
 using DflatCoreWPF.Views;
@@ -59,11 +58,11 @@ namespace DflatCoreWPF
                 //cfg.CreateMap<FileSourceFolderEditorViewModel, FileSourceFolder>();
 
                 cfg.UseEntityFrameworkCoreModel<DataContext>();
-                cfg.CreateMap<Dflat.EFCore.DB.Models.FileSourceFolder, Dflat.Application.Models.FileSourceFolder>()
+                cfg.CreateMap<Dflat.Data.EFCore.Models.FileSourceFolder, Dflat.Application.Models.FileSourceFolder>()
                     .ForMember(dest => dest.IsChanged, opt => opt.Ignore())
                     .ReverseMap();
-                cfg.CreateMap<Dflat.EFCore.DB.Models.ExcludePath, Dflat.Application.Models.ExcludePath>().ReverseMap();
-                cfg.CreateMap<Dflat.EFCore.DB.Models.FileSourceFolderScanJob, Dflat.Application.Models.FileSourceFolderScanJob>().ReverseMap();
+                cfg.CreateMap<Dflat.Data.EFCore.Models.ExcludePath, Dflat.Application.Models.ExcludePath>().ReverseMap();
+                cfg.CreateMap<Dflat.Data.EFCore.Models.FileSourceFolderScanJob, Dflat.Application.Models.FileSourceFolderScanJob>().ReverseMap();
                 cfg.CreateMap<FileResult, Dflat.Application.Models.File>()
                     .ForMember(dest => dest.FileID, opt => opt.Ignore())
                     .ForMember(dest => dest.Chromaprint, opt => opt.Ignore())

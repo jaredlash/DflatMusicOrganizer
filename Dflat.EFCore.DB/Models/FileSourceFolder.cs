@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dflat.EFCore.DB.Models
+namespace Dflat.Data.EFCore.Models
 {
     public class FileSourceFolder
     {

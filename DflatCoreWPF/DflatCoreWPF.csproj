@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dflat.Application\Dflat.Application.csproj" />
-    <ProjectReference Include="..\Dflat.EFCore.DB\Dflat.EFCore.DB.csproj" />
+    <ProjectReference Include="..\Dflat.EFCore.DB\Dflat.Data.EFCore.csproj" />
   </ItemGroup>
 
 </Project>

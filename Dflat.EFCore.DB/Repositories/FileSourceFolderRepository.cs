@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Dflat.Application.Models;
 using Dflat.Application.Repositories;
-using Dflat.EFCore.DB.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dflat.EFCore.DB.Repositories
+namespace Dflat.Data.EFCore.Repositories
 {
     public class FileSourceFolderRepository : IFileSourceFolderRepository
     {
@@ -19,9 +18,9 @@ namespace Dflat.EFCore.DB.Repositories
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<Application.Models.FileSourceFolder>> GetAllAsync()
+        public async Task<IEnumerable<FileSourceFolder>> GetAllAsync()
         {
-            var result = new List<Application.Models.FileSourceFolder>();
+            var result = new List<FileSourceFolder>();
 
             using (var context = new DataContext())
             {
@@ -37,9 +36,9 @@ namespace Dflat.EFCore.DB.Repositories
         }
 
 
-        public IEnumerable<Application.Models.FileSourceFolder> GetAll()
+        public IEnumerable<FileSourceFolder> GetAll()
         {
-            var result = new List<Application.Models.FileSourceFolder>();
+            var result = new List<FileSourceFolder>();
 
             using (var context = new DataContext())
             {
@@ -55,7 +54,7 @@ namespace Dflat.EFCore.DB.Repositories
         }
 
 
-        public async Task<bool> UpdateAllAsync(IEnumerable<Application.Models.FileSourceFolder> fileSourceFolders)
+        public async Task<bool> UpdateAllAsync(IEnumerable<FileSourceFolder> fileSourceFolders)
         {
             using (var context = new DataContext())
             {
@@ -104,7 +103,7 @@ namespace Dflat.EFCore.DB.Repositories
                     }
                     else // Update
                     {
-                        var fileSourceFolder = context.FileSourceFolders.Where( f => f.FileSourceFolderID == source.FileSourceFolderID).Include(f => f.ExcludePaths).FirstOrDefault();
+                        var fileSourceFolder = context.FileSourceFolders.Where(f => f.FileSourceFolderID == source.FileSourceFolderID).Include(f => f.ExcludePaths).FirstOrDefault();
                         if (fileSourceFolder == null)
                             continue;
 
@@ -149,9 +148,9 @@ namespace Dflat.EFCore.DB.Repositories
             return true;
         }
 
-        public Application.Models.FileSourceFolder Get(int fileSourceFolderID)
+        public FileSourceFolder Get(int fileSourceFolderID)
         {
-            Application.Models.FileSourceFolder result = null;
+            FileSourceFolder result = null;
 
             using (var context = new DataContext())
             {
@@ -161,7 +160,7 @@ namespace Dflat.EFCore.DB.Repositories
                 if (fileSourceFolder == null)
                     return null;
 
-                result = mapper.Map<Application.Models.FileSourceFolder>(fileSourceFolder);
+                result = mapper.Map<FileSourceFolder>(fileSourceFolder);
             }
 
             if (result != null) result.IsChanged = false;

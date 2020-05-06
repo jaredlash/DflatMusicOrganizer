@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Dflat.Application.Models;
 using Dflat.Application.Repositories;
-using Dflat.EFCore.DB.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dflat.EFCore.DB.Repositories
+namespace Dflat.Data.EFCore.Repositories
 {
     public class JobRepository : IJobRepository
     {
@@ -21,12 +20,12 @@ namespace Dflat.EFCore.DB.Repositories
         }
 
         // Sets the ID of the passed in job
-        public void Add<JobType>(JobType job) where JobType : Application.Models.Job
+        public void Add<JobType>(JobType job) where JobType : Job
         {
             switch (job)
             {
-                case Application.Models.FileSourceFolderScanJob folderScanJob:
-                    
+                case FileSourceFolderScanJob folderScanJob:
+
 
                     using (var context = new DataContext())
                     {
@@ -36,7 +35,7 @@ namespace Dflat.EFCore.DB.Repositories
                         folderScanJob.JobID = newJob.JobID;
                     }
 
-                    
+
                     break;
 
                 default:
@@ -47,11 +46,11 @@ namespace Dflat.EFCore.DB.Repositories
 
         // TODO: Make this responsible for updating the status of any parent
         // jobs for which this job is a prerequisite
-        public void Update<JobType>(JobType job) where JobType : Application.Models.Job
+        public void Update<JobType>(JobType job) where JobType : Job
         {
             switch (job)
             {
-                case Application.Models.FileSourceFolderScanJob folderScanJob:
+                case FileSourceFolderScanJob folderScanJob:
                     //Models.FileSourceFolderScanJob newJob = mapper.Map<Models.FileSourceFolderScanJob>(folderScanJob);
 
                     using (var context = new DataContext())
@@ -132,14 +131,14 @@ namespace Dflat.EFCore.DB.Repositories
 
 
         // Sets the returned job to running statsu
-        public JobType GetNextAvailable<JobType>() where JobType : Application.Models.Job
+        public JobType GetNextAvailable<JobType>() where JobType : Job
         {
             Type jobType = typeof(JobType);
 
 
             using (var context = new DataContext())
             {
-                if (jobType == typeof(Application.Models.FileSourceFolderScanJob))
+                if (jobType == typeof(FileSourceFolderScanJob))
                 {
 
                     // First get the jobs that are currently running so that we can check that the job we pick which is queued is not equivalent
@@ -158,7 +157,7 @@ namespace Dflat.EFCore.DB.Repositories
                     nextJob.Status = JobStatus.Running;
                     context.SaveChanges();
 
-                    return mapper.Map<Application.Models.FileSourceFolderScanJob>(nextJob) as JobType;
+                    return mapper.Map<FileSourceFolderScanJob>(nextJob) as JobType;
                 }
                 else
                     throw new NotImplementedException();
@@ -166,7 +165,7 @@ namespace Dflat.EFCore.DB.Repositories
         }
 
 
-        public Application.Models.Job Get(int jobID)
+        public Job Get(int jobID)
         {
             using var context = new DataContext();
 
@@ -174,7 +173,7 @@ namespace Dflat.EFCore.DB.Repositories
 
             return job switch
             {
-                Models.FileSourceFolderScanJob j => mapper.Map<Application.Models.FileSourceFolderScanJob>(j),
+                Models.FileSourceFolderScanJob j => mapper.Map<FileSourceFolderScanJob>(j),
                 _ => null,
             };
         }
@@ -221,14 +220,14 @@ namespace Dflat.EFCore.DB.Repositories
                 q = q.OrderByDescending((j) => j.CreationTime);
 
                 result = q.Select((j) => new JobInfo
-                                  {
-                                      JobID = j.JobID,
-                                      JobType = JobTypeFromJobObject(j),
-                                      CreationTime = j.CreationTime,
-                                      Description = j.Description,
-                                      Status = j.Status,
-                                      IgnoreCache = j.IgnoreCache
-                                  }).ToList();
+                {
+                    JobID = j.JobID,
+                    JobType = JobTypeFromJobObject(j),
+                    CreationTime = j.CreationTime,
+                    Description = j.Description,
+                    Status = j.Status,
+                    IgnoreCache = j.IgnoreCache
+                }).ToList();
             }
 
             return result;
