@@ -92,8 +92,8 @@ namespace DflatCoreWPF
             container.RegisterInstance("connectionString", connectionString);
 
 
-            container.RegisterType<IJobRepository, JobRepository>(new InjectionConstructor(new ResolvedParameter<IMapper>(), new ResolvedParameter<string>("connectionString")))
-                .RegisterType<IFileSourceFolderRepository, FileSourceFolderRepository>(new InjectionConstructor(new ResolvedParameter<IMapper>(), new ResolvedParameter<string>("connectionString")))
+            container.RegisterType<IJobRepository, Dflat.Data.Dapper.Repositories.JobRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
+            container.RegisterType<IFileSourceFolderRepository, FileSourceFolderRepository>(new InjectionConstructor(new ResolvedParameter<IMapper>(), new ResolvedParameter<string>("connectionString")))
                 .RegisterType<IFileRepository, FileRepository>(new InjectionConstructor(connectionString));
 
             // Register View and ViewModel mappings
