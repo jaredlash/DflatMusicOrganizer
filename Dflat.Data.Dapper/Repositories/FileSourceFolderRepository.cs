@@ -199,12 +199,11 @@ namespace Dflat.Data.Dapper.Repositories
             var model = new DynamicParameters(fileSourceFolder);
             model.RemoveUnused = true;
 
-            int newFolderID = await transaction.QuerySingleAsync<int>(addFileSourceFolderSql, model);
-            fileSourceFolder.FileSourceFolderID = newFolderID;
+            fileSourceFolder.FileSourceFolderID = await transaction.QuerySingleAsync<int>(addFileSourceFolderSql, model);
 
             foreach (var excludePath in fileSourceFolder.ExcludePaths)
             {
-                await AddExcludePathAsync(transaction, newFolderID, excludePath);
+                await AddExcludePathAsync(transaction, fileSourceFolder.FileSourceFolderID, excludePath);
             }
         }
 
@@ -222,8 +221,7 @@ namespace Dflat.Data.Dapper.Repositories
             model.Add("@FileSourceFolderID", fileSourceFolderID);
             model.RemoveUnused = true;
 
-            int newExcludePathID = await transaction.QuerySingleAsync<int>(addExcludePathSql, model);
-            excludePath.ExcludePathID = newExcludePathID;
+            excludePath.ExcludePathID = await transaction.QuerySingleAsync<int>(addExcludePathSql, model);
         }
 
 

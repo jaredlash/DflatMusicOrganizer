@@ -58,9 +58,7 @@ namespace Dflat.Data.Dapper.Repositories
 
             using (IDbConnection conn = new SqlConnection(connectionString))
             {
-                int newID = conn.Query<int>(sql, model).Single();
-
-                job.JobID = newID;
+                job.JobID = conn.QuerySingle<int>(sql, model);
             }
         }
 
