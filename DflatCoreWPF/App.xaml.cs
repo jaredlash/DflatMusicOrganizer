@@ -93,8 +93,8 @@ namespace DflatCoreWPF
 
 
             container.RegisterType<IJobRepository, Dflat.Data.Dapper.Repositories.JobRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
-            container.RegisterType<IFileSourceFolderRepository, FileSourceFolderRepository>(new InjectionConstructor(new ResolvedParameter<IMapper>(), new ResolvedParameter<string>("connectionString")))
-                .RegisterType<IFileRepository, FileRepository>(new InjectionConstructor(connectionString));
+            container.RegisterType<IFileSourceFolderRepository, Dflat.Data.Dapper.Repositories.FileSourceFolderRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
+            container.RegisterType<IFileRepository, FileRepository>(new InjectionConstructor(connectionString));
 
             // Register View and ViewModel mappings
             container.RegisterType<Window, AlertDialogView>(nameof(AlertDialogViewModel));
