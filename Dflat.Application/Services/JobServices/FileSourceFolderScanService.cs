@@ -48,11 +48,6 @@ namespace Dflat.Application.Services.JobServices
         }
 
 
-        public override void SetupJob(FileSourceFolderScanJob job)
-        {
-            // This job type does not need setup
-        }
-
         public override void DoWork(FileSourceFolderScanJob job, CancellationToken cancellationToken)
         {
             var fileSourceFolder = fileSourceFolderRepository.Get(job.FileSourceFolderID);

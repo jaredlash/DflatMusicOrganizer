@@ -34,6 +34,36 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
 
         #endregion
 
+        #region SetupJob
+
+
+        [TestMethod]
+        // Covers the case when the FileSourceFolderID in the Job request is not valid/not found in FileSourcefolderRepository
+        public void SetupJob_ClearsOutputAndErrors_WhenCalled()
+        {
+            var repo = CreateMockJobRepository();
+            repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => null);
+            var runner = CreateBackgroundJobRunner();
+            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object)
+            {
+                CallBase = true
+            };
+            var jobService = jobServiceMock.Object;
+            var job = new TestJob()
+            {
+                Status = JobStatus.Ready,
+                Output = "Not Empty",
+                Errors = "Not Empty"
+            };
+
+            jobService.SetupJob(job);
+
+            Assert.IsTrue(string.IsNullOrEmpty(job.Output));
+            Assert.IsTrue(string.IsNullOrEmpty(job.Errors));
+        }
+
+        #endregion
+
         #region RunJobs
         [TestMethod]
         public void RunJobs_Exits_WhenNoJobsAvailable()

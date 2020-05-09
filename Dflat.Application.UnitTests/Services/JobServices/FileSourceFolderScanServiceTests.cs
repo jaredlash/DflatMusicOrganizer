@@ -58,6 +58,26 @@ namespace Dflat.Application.Services.JobServices.Tests
 
         [TestMethod]
         // Covers the case when the FileSourceFolderID in the Job request is not valid/not found in FileSourcefolderRepository
+        public void SetupJob_ClearsOutputAndErrors_WhenCalled()
+        {
+            var job = new FileSourceFolderScanJob()
+            {
+                FileSourceFolderID = 1,
+                Status = JobStatus.Ready,
+                Output = "Not Empty",
+                Errors = "Not Empty"
+            };
+            var scanService = CreateFileSourceFolderScanService();
+
+
+            scanService.SetupJob(job);
+
+            Assert.IsTrue(string.IsNullOrEmpty(job.Output));
+            Assert.IsTrue(string.IsNullOrEmpty(job.Errors));
+        }
+
+        [TestMethod]
+        // Covers the case when the FileSourceFolderID in the Job request is not valid/not found in FileSourcefolderRepository
         public void DoWork_ResultsInError_WhenFileSourceFolderNotFoundInRepo()
         {
             fileSourceFolderRepositoryMock.Setup(r => r.Get(It.IsAny<int>())).Returns<FileSourceFolder>(null);

@@ -104,7 +104,11 @@ namespace Dflat.Application.Services.JobServices
         /// Override to indicate steps the service must do for setup.  This happens on calling thread.
         /// </summary>
         /// <param name="job"></param>
-        public abstract void SetupJob(JobType job);
+        public virtual void SetupJob(JobType job)
+        {
+            job.Output = "";
+            job.Errors = "";
+        }
 
         /// <summary>
         /// Override to indicate the actual work for the job which must be done on a background thread.
