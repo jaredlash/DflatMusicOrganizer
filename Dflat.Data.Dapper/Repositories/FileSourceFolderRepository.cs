@@ -23,18 +23,18 @@ namespace Dflat.Data.Dapper.Repositories
 
         public FileSourceFolder Get(int fileSourceFolderID)
         {
-            string sql = @"SELECT f.FileSourceFolderID
-                                 ,f.Name
-                                 ,f.Path
-                                 ,f.IsTemporaryMedia
-                                 ,f.LastScanStart
-                           	     ,e.ExcludePathID
-                                 ,e.Path
-                                 ,e.FileSourceFolderID
-                             FROM dbo.FileSourceFolders f
-                  LEFT OUTER JOIN dbo.ExcludePaths e
-                               ON e.FileSourceFolderID = f.FileSourceFolderID
-                            WHERE f.FileSourceFolderID = @FileSourceFolderID;";
+            const string sql = @"SELECT f.FileSourceFolderID
+                                       ,f.Name
+                                       ,f.Path
+                                       ,f.IsTemporaryMedia
+                                       ,f.LastScanStart
+                                 	   ,e.ExcludePathID
+                                       ,e.Path
+                                       ,e.FileSourceFolderID
+                                   FROM dbo.FileSourceFolders f
+                        LEFT OUTER JOIN dbo.ExcludePaths e
+                                     ON e.FileSourceFolderID = f.FileSourceFolderID
+                                  WHERE f.FileSourceFolderID = @FileSourceFolderID;";
 
             using IDbConnection conn = new SqlConnection(connectionString);
 
@@ -68,17 +68,17 @@ namespace Dflat.Data.Dapper.Repositories
 
         public IEnumerable<FileSourceFolder> GetAll()
         {
-            string sql = @"SELECT f.FileSourceFolderID
-                                 ,f.Name
-                                 ,f.Path
-                                 ,f.IsTemporaryMedia
-                                 ,f.LastScanStart
-                           	     ,e.ExcludePathID
-                                 ,e.Path
-                                 ,e.FileSourceFolderID
-                             FROM dbo.FileSourceFolders f
-                  LEFT OUTER JOIN dbo.ExcludePaths e
-                               ON e.FileSourceFolderID = f.FileSourceFolderID;";
+            const string sql = @"SELECT f.FileSourceFolderID
+                                       ,f.Name
+                                       ,f.Path
+                                       ,f.IsTemporaryMedia
+                                       ,f.LastScanStart
+                                 	   ,e.ExcludePathID
+                                       ,e.Path
+                                       ,e.FileSourceFolderID
+                                   FROM dbo.FileSourceFolders f
+                        LEFT OUTER JOIN dbo.ExcludePaths e
+                                     ON e.FileSourceFolderID = f.FileSourceFolderID;";
 
             using IDbConnection conn = new SqlConnection(connectionString);
 
@@ -96,7 +96,7 @@ namespace Dflat.Data.Dapper.Repositories
                     fileSourceFolder.ExcludePaths.Add(e);
 
                 return fileSourceFolder;
-            }, splitOn: "ExcludePathID");
+            }, splitOn: "ExcludePathID").Distinct();
 
             foreach (var result in results)
                 result.IsChanged = false;

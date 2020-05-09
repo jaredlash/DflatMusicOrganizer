@@ -23,25 +23,25 @@ namespace Dflat.Data.Dapper.Repositories
 
         public void Add<JobType>(JobType job) where JobType : Job
         {
-            string sql = @"INSERT INTO [dbo].[Jobs]
-                                      ([CreationTime]
-                                      ,[Description]
-                                      ,[IgnoreCache]
-                                      ,[Status]
-                                      ,[Output]
-                                      ,[Errors]
-                                      ,[JobType]
-                                      ,[FileSourceFolderID])
-                                VALUES
-                                      (@CreationTime
-                                      ,@Description
-                                      ,@IgnoreCache
-                                      ,@Status
-                                      ,@Output
-                                      ,@Errors
-                                      ,@JobType
-                                      ,@FileSourceFolderID);
-                           SELECT CAST(SCOPE_IDENTITY() as int);";
+            const string sql = @"INSERT INTO [dbo].[Jobs]
+                                            ([CreationTime]
+                                            ,[Description]
+                                            ,[IgnoreCache]
+                                            ,[Status]
+                                            ,[Output]
+                                            ,[Errors]
+                                            ,[JobType]
+                                            ,[FileSourceFolderID])
+                                      VALUES
+                                            (@CreationTime
+                                            ,@Description
+                                            ,@IgnoreCache
+                                            ,@Status
+                                            ,@Output
+                                            ,@Errors
+                                            ,@JobType
+                                            ,@FileSourceFolderID);
+                                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
             var model = new DynamicParameters(job);
             model.RemoveUnused = true; // Remove JobID
@@ -64,10 +64,10 @@ namespace Dflat.Data.Dapper.Repositories
 
         public bool CancelJob(int jobID)
         {
-            string sql = @"UPDATE [dbo].[Jobs]
-                              SET [Status] = @Status
-                            WHERE JobID = @JobID
-                              AND [Status] NOT IN @InvalidCancelStatuses";
+            const string sql = @"UPDATE [dbo].[Jobs]
+                                    SET [Status] = @Status
+                                  WHERE JobID = @JobID
+                                    AND [Status] NOT IN @InvalidCancelStatuses";
 
             var model = new
             {
@@ -91,7 +91,7 @@ namespace Dflat.Data.Dapper.Repositories
         {
             Job result;
 
-            string sql = @"SELECT * FROM Jobs WHERE JobID = @JobID";
+            const string sql = @"SELECT * FROM Jobs WHERE JobID = @JobID";
 
             using (IDbConnection conn = new SqlConnection(connectionString))
             using (var reader = conn.ExecuteReader(sql, new { JobID = jobID }))
@@ -120,14 +120,14 @@ namespace Dflat.Data.Dapper.Repositories
 
         public JobInfo GetJobInfo(int jobID)
         {
-            string sql = @"SELECT [JobID]
-                                 ,[CreationTime]
-                                 ,[Description]
-                                 ,[IgnoreCache]
-                                 ,[Status]
-                                 ,[JobType]
-                             FROM [DflatMusicOrganizer].[dbo].[Jobs]
-                            WHERE [JobID] = @JobID";
+            const string sql = @"SELECT [JobID]
+                                       ,[CreationTime]
+                                       ,[Description]
+                                       ,[IgnoreCache]
+                                       ,[Status]
+                                       ,[JobType]
+                                   FROM [dbo].[Jobs]
+                                  WHERE [JobID] = @JobID";
 
             using IDbConnection conn = new SqlConnection(connectionString);
             return conn.QuerySingleOrDefault<JobInfo>(sql, new { JobID = jobID });
@@ -141,7 +141,7 @@ namespace Dflat.Data.Dapper.Repositories
                                  ,[IgnoreCache]
                                  ,[Status]
                                  ,[JobType]
-                             FROM [DflatMusicOrganizer].[dbo].[Jobs]";
+                             FROM [dbo].[Jobs]";
 
             var whereCriteria = new DynamicParameters();
             List<string> whereClauses = new List<string>();
@@ -172,11 +172,11 @@ namespace Dflat.Data.Dapper.Repositories
         {
             Job nextJob;
 
-            string findSql = @"SELECT * FROM Jobs WHERE JobType = @JobType AND Status IN @JobStatuses";
+            const string findSql = @"SELECT * FROM Jobs WHERE JobType = @JobType AND Status IN @JobStatuses";
 
-            string updateSql = @"UPDATE [dbo].[Jobs]
-                                    SET [Status] = @Status
-                                  WHERE JobID = @JobID";
+            const string updateSql = @"UPDATE [dbo].[Jobs]
+                                          SET [Status] = @Status
+                                        WHERE JobID = @JobID";
 
             // Set up our query parameters
             var queryParams = new DynamicParameters();
@@ -238,10 +238,10 @@ namespace Dflat.Data.Dapper.Repositories
 
         public bool RestartJob(int jobID)
         {
-            string sql = @"UPDATE [dbo].[Jobs]
-                              SET [Status] = @Status
-                            WHERE JobID = @JobID
-                              AND [Status] NOT IN @InvalidRestartStatuses";
+            const string sql = @"UPDATE [dbo].[Jobs]
+                                    SET [Status] = @Status
+                                  WHERE JobID = @JobID
+                                    AND [Status] NOT IN @InvalidRestartStatuses";
 
             var model = new DynamicParameters();
             model.Add("@JobID", jobID);
@@ -261,15 +261,15 @@ namespace Dflat.Data.Dapper.Repositories
 
         public void Update<JobType>(JobType job) where JobType : Job
         {
-            string sql = @"UPDATE [dbo].[Jobs]
-                              SET [Description] = @Description
-                                 ,[IgnoreCache] = @IgnoreCache
-                                 ,[Status] = @Status
-                                 ,[Output] = @Output
-                                 ,[Errors] = @Errors
-                                 ,[JobType] = @JobType
-                                 ,[FileSourceFolderID] = @FileSourceFolderID
-                            WHERE JobID = @JobID";
+            const string sql = @"UPDATE [dbo].[Jobs]
+                                    SET [Description] = @Description
+                                       ,[IgnoreCache] = @IgnoreCache
+                                       ,[Status] = @Status
+                                       ,[Output] = @Output
+                                       ,[Errors] = @Errors
+                                       ,[JobType] = @JobType
+                                       ,[FileSourceFolderID] = @FileSourceFolderID
+                                  WHERE JobID = @JobID";
 
             var model = new DynamicParameters(job);
 
