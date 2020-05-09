@@ -41,8 +41,7 @@ namespace Dflat.Data.Dapper.Repositories
             var lookup = new Dictionary<int, FileSourceFolder>();
             var results = conn.Query<FileSourceFolder, ExcludePath, FileSourceFolder>(sql, (f, e) =>
             {
-                FileSourceFolder fileSourceFolder;
-                if (!lookup.TryGetValue(f.FileSourceFolderID, out fileSourceFolder))
+                if (!lookup.TryGetValue(f.FileSourceFolderID, out FileSourceFolder fileSourceFolder))
                 {
                     lookup.Add(f.FileSourceFolderID, f);
                     fileSourceFolder = f;
@@ -85,8 +84,7 @@ namespace Dflat.Data.Dapper.Repositories
             var lookup = new Dictionary<int, FileSourceFolder>();
             var results = conn.Query<FileSourceFolder, ExcludePath, FileSourceFolder>(sql, (f, e) =>
             {
-                FileSourceFolder fileSourceFolder;
-                if (!lookup.TryGetValue(f.FileSourceFolderID, out fileSourceFolder))
+                if (!lookup.TryGetValue(f.FileSourceFolderID, out FileSourceFolder fileSourceFolder))
                 {
                     lookup.Add(f.FileSourceFolderID, f);
                     fileSourceFolder = f;
@@ -196,8 +194,10 @@ namespace Dflat.Data.Dapper.Repositories
                                                                ,@LastScanStart);
                                                     SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            var model = new DynamicParameters(fileSourceFolder);
-            model.RemoveUnused = true;
+            var model = new DynamicParameters(fileSourceFolder)
+            {
+                RemoveUnused = true
+            };
 
             fileSourceFolder.FileSourceFolderID = await transaction.QuerySingleAsync<int>(addFileSourceFolderSql, model);
 

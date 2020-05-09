@@ -138,32 +138,30 @@ namespace Dflat.Data.EFCore.Repositories
             Type jobType = typeof(JobType);
 
 
-            using (var context = new DataContext(connectionString))
+            using var context = new DataContext(connectionString);
+            if (jobType == typeof(FileSourceFolderScanJob))
             {
-                if (jobType == typeof(FileSourceFolderScanJob))
-                {
 
-                    // First get the jobs that are currently running so that we can check that the job we pick which is queued is not equivalent
-                    // to one that is currently running.
-                    var runningJobs = context.FileSourceFolderScanJobs.Where((j) => j.Status == JobStatus.Running).ToList();
+                // First get the jobs that are currently running so that we can check that the job we pick which is queued is not equivalent
+                // to one that is currently running.
+                var runningJobs = context.FileSourceFolderScanJobs.Where((j) => j.Status == JobStatus.Running).ToList();
 
-                    // Now get the jobs that are ready to be run
-                    var readyJobs = context.FileSourceFolderScanJobs.Where((j) => j.Status == JobStatus.Ready).ToList();
+                // Now get the jobs that are ready to be run
+                var readyJobs = context.FileSourceFolderScanJobs.Where((j) => j.Status == JobStatus.Ready).ToList();
 
-                    var nextJob = readyJobs.Where((j) => runningJobs.Any((r) => r.SameRequestAs(j)) == false).FirstOrDefault();
+                var nextJob = readyJobs.Where((j) => runningJobs.Any((r) => r.SameRequestAs(j)) == false).FirstOrDefault();
 
-                    if (nextJob == null)
-                        return null;
+                if (nextJob == null)
+                    return null;
 
-                    // Update job to running
-                    nextJob.Status = JobStatus.Running;
-                    context.SaveChanges();
+                // Update job to running
+                nextJob.Status = JobStatus.Running;
+                context.SaveChanges();
 
-                    return mapper.Map<FileSourceFolderScanJob>(nextJob) as JobType;
-                }
-                else
-                    throw new NotImplementedException();
+                return mapper.Map<FileSourceFolderScanJob>(nextJob) as JobType;
             }
+            else
+                throw new NotImplementedException();
         }
 
 
@@ -203,19 +201,11 @@ namespace Dflat.Data.EFCore.Repositories
 
             using (var context = new DataContext(connectionString))
             {
-                IQueryable<Models.Job> q;
-
-                switch (jobType)
+                IQueryable<Models.Job> q = jobType switch
                 {
-                    case JobType.FileSourceFolderScanJob:
-                        q = context.FileSourceFolderScanJobs.AsNoTracking();
-                        break;
-
-                    default:
-                        q = context.Jobs.AsNoTracking();
-                        break;
-                }
-
+                    JobType.FileSourceFolderScanJob => context.FileSourceFolderScanJobs.AsNoTracking(),
+                    _ => context.Jobs.AsNoTracking(),
+                };
                 if (status != JobStatus.None)
                     q = q.Where((j) => j.Status == status);
 

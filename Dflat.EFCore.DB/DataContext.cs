@@ -32,12 +32,12 @@ namespace Dflat.Data.EFCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            buildFileSourceFolderModels(modelBuilder);
+            BuildFileSourceFolderModels(modelBuilder);
 
         }
 
 
-        private void buildFileSourceFolderModels(ModelBuilder modelBuilder)
+        private void BuildFileSourceFolderModels(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ExcludePath>().ToTable("ExcludePaths").HasKey(table => table.ExcludePathID);
 

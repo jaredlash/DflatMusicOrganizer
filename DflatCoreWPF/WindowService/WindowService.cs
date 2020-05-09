@@ -34,10 +34,9 @@ namespace DflatCoreWPF.WindowService
         /// <param name="viewModel">viewModel for which this is being created.</param>
         public void ShowWindow<TViewModel>(TViewModel viewModel) where TViewModel : ViewModelBase
         {
-            Window view;
             Type vmType = typeof(TViewModel);
 
-            if (currentWindows.TryGetValue(vmType, out view) == false)
+            if (currentWindows.TryGetValue(vmType, out Window view) == false)
             {
                 view = iocContainer.Resolve<Window>(vmType.Name);
 

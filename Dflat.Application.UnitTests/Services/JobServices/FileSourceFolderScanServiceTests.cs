@@ -18,13 +18,13 @@ namespace Dflat.Application.Services.JobServices.Tests
     public class FileSourceFolderScanServiceTests
     {
         #region Constructor mocks
-        Mock<IFileSourceFolderRepository> fileSourceFolderRepositoryMock = new Mock<IFileSourceFolderRepository>();
-        Mock<IFileRepository> fileRepositoryMock = new Mock<IFileRepository>();
-        Mock<IFolderSearchService> folderScannerMock = new Mock<IFolderSearchService>();
-        Mock<IMapper> mapperMock = new Mock<IMapper>();
-        Mock<IFileCollectionCompare> comparerMock = new Mock<IFileCollectionCompare>();
-        Mock<IJobRepository> jobRepositoryMock = new Mock<IJobRepository>();
-        Mock<IBackgroundJobRunner<FileSourceFolderScanJob>> jobRunnerMock = new Mock<IBackgroundJobRunner<FileSourceFolderScanJob>>();
+        readonly Mock<IFileSourceFolderRepository> fileSourceFolderRepositoryMock = new Mock<IFileSourceFolderRepository>();
+        readonly Mock<IFileRepository> fileRepositoryMock = new Mock<IFileRepository>();
+        readonly Mock<IFolderSearchService> folderScannerMock = new Mock<IFolderSearchService>();
+        readonly Mock<IMapper> mapperMock = new Mock<IMapper>();
+        readonly Mock<IFileCollectionCompare> comparerMock = new Mock<IFileCollectionCompare>();
+        readonly Mock<IJobRepository> jobRepositoryMock = new Mock<IJobRepository>();
+        readonly Mock<IBackgroundJobRunner<FileSourceFolderScanJob>> jobRunnerMock = new Mock<IBackgroundJobRunner<FileSourceFolderScanJob>>();
         #endregion
 
         [TestInitialize]

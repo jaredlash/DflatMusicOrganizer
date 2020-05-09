@@ -4,6 +4,7 @@ using Dflat.Application.Repositories;
 using Dflat.Application.Services;
 using Dflat.Application.Services.JobServices;
 using Dflat.Application.Wrappers;
+using Dflat.Data.Dapper.Repositories;
 using DflatCoreWPF.Utilities;
 using DflatCoreWPF.ViewModels;
 using DflatCoreWPF.Views;
@@ -34,9 +35,10 @@ namespace DflatCoreWPF
 
             var viewModel = container.Resolve<MainWindowViewModel>();
 
-            var view = new MainWindowView();
-
-            view.DataContext = viewModel;
+            var view = new MainWindowView
+            {
+                DataContext = viewModel
+            };
 
             view.Show();
         }
@@ -93,9 +95,9 @@ namespace DflatCoreWPF
             container.RegisterInstance("connectionString", connectionString);
 
 
-            container.RegisterType<IJobRepository, Dflat.Data.Dapper.Repositories.JobRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
-            container.RegisterType<IFileSourceFolderRepository, Dflat.Data.Dapper.Repositories.FileSourceFolderRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
-            //container.RegisterType<IFileRepository, FileRepository>(new InjectionConstructor(connectionString));
+            container.RegisterType<IJobRepository, JobRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
+            container.RegisterType<IFileSourceFolderRepository, FileSourceFolderRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
+            container.RegisterType<IFileRepository, FileRepository>(new InjectionConstructor(new ResolvedParameter<string>("connectionString")));
 
             // Register View and ViewModel mappings
             container.RegisterType<Window, AlertDialogView>(nameof(AlertDialogViewModel));

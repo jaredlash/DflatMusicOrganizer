@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dflat.Data.EFCore.Repositories
+namespace Dflat.Data.Dapper.Repositories
 {
     public class FileRepository : IFileRepository
     {
@@ -19,22 +19,22 @@ namespace Dflat.Data.EFCore.Repositories
 
         public void Add(File modifiedFile)
         {
-            return;
+            throw new NotImplementedException();
         }
 
         public IEnumerable<File> GetFromPath(string path, bool recurse = true)
         {
-            return new List<File>();
+            throw new NotImplementedException();
         }
 
         public void MarkRemoved(int fileID)
         {
-            return;
+            throw new NotImplementedException();
         }
 
         public void Update(File modifiedFile)
         {
-            return;
+            throw new NotImplementedException();
         }
     }
 }

@@ -43,12 +43,14 @@ namespace Dflat.Data.Dapper.Repositories
                                             ,@FileSourceFolderID);
                                  SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            var model = new DynamicParameters(job);
-            model.RemoveUnused = true; // Remove JobID
+            var model = new DynamicParameters(job)
+            {
+                RemoveUnused = true // Remove JobID
+            };
 
             switch (job)
             {
-                case FileSourceFolderScanJob j:
+                case FileSourceFolderScanJob _:
                     model.Add("@JobType", Application.Models.JobType.FileSourceFolderScanJob);
                     break;
 
@@ -56,10 +58,8 @@ namespace Dflat.Data.Dapper.Repositories
                     throw new NotImplementedException();
             }
 
-            using (IDbConnection conn = new SqlConnection(connectionString))
-            {
-                job.JobID = conn.QuerySingle<int>(sql, model);
-            }
+            using IDbConnection conn = new SqlConnection(connectionString);
+            job.JobID = conn.QuerySingle<int>(sql, model);
         }
 
         public bool CancelJob(int jobID)
@@ -100,16 +100,11 @@ namespace Dflat.Data.Dapper.Repositories
                 if (reader.Read())
                 {
                     var discriminator = (JobType)reader.GetInt32(reader.GetOrdinal(nameof(JobType)));
-                    switch (discriminator)
+                    result = discriminator switch
                     {
-                        case JobType.FileSourceFolderScanJob:
-                            result = fileSourceFolderScanJobParser(reader);
-                            break;
-
-                        default:
-                            result = null;
-                            break;
-                    }
+                        JobType.FileSourceFolderScanJob => fileSourceFolderScanJobParser(reader),
+                        _ => null,
+                    };
                 }
                 else
                     return null;
@@ -201,19 +196,12 @@ namespace Dflat.Data.Dapper.Repositories
                     var fileSourceFolderScanJobParser = reader.GetRowParser<FileSourceFolderScanJob>();
                     while (reader.Read())
                     {
-                        Job foundJob;
-
                         var discriminator = (Application.Models.JobType)reader.GetInt32(reader.GetOrdinal(nameof(Application.Models.JobType)));
-                        switch (discriminator)
+                        Job foundJob = discriminator switch
                         {
-                            case Application.Models.JobType.FileSourceFolderScanJob:
-                                foundJob = fileSourceFolderScanJobParser(reader);
-                                break;
-
-                            default:
-                                throw new NotImplementedException();
-                        }
-
+                            Application.Models.JobType.FileSourceFolderScanJob => fileSourceFolderScanJobParser(reader),
+                            _ => throw new NotImplementedException(),
+                        };
                         if (foundJob.Status == JobStatus.Running)
                             runningJobs.Add(foundJob);
                         else
@@ -275,7 +263,7 @@ namespace Dflat.Data.Dapper.Repositories
 
             switch (job)
             {
-                case FileSourceFolderScanJob folderScanJob:
+                case FileSourceFolderScanJob _:
                     model.Add("JobType", Application.Models.JobType.FileSourceFolderScanJob);
                     break;
 
@@ -283,13 +271,11 @@ namespace Dflat.Data.Dapper.Repositories
                     throw new NotImplementedException();
             }
 
-            using (IDbConnection conn = new SqlConnection(connectionString))
-            {
-                int rowsAffected = conn.Execute(sql, (object)model);
+            using IDbConnection conn = new SqlConnection(connectionString);
+            int rowsAffected = conn.Execute(sql, (object)model);
 
-                if (rowsAffected == 0)
-                    throw new Exception($"Job = {job.JobID} not found");
-            }
+            if (rowsAffected == 0)
+                throw new Exception($"Job = {job.JobID} not found");
         }
     }
 }
