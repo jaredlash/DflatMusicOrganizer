@@ -19,22 +19,19 @@ namespace Dflat.Data.Dapper.Repositories
 
         public void Add(File newFile)
         {
-            throw new NotImplementedException();
         }
 
         public IEnumerable<File> GetFromPath(string path, bool recurse = true)
         {
-            throw new NotImplementedException();
+            return new List<File>();
         }
 
         public void MarkRemoved(int fileID)
         {
-            throw new NotImplementedException();
         }
 
         public void Update(File modifiedFile)
         {
-            throw new NotImplementedException();
         }
     }
 }
