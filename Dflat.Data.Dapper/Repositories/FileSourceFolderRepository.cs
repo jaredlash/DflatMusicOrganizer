@@ -153,6 +153,19 @@ namespace Dflat.Data.Dapper.Repositories
         }
 
 
+        public Task UpdateLastScanTimeAsync(int fileSourceFolderID)
+        {
+            const string updateFileSourceFolderSql = @"UPDATE [dbo].[FileSourceFolders]
+                                                          SET [LastScanStart] = @LastScanStart
+                                                        WHERE FileSourceFolderID = @FileSourceFolderID";
+            using IDbConnection connection = new SqlConnection(connectionString);
+            
+            return connection.ExecuteAsync(updateFileSourceFolderSql, new { LastScanStart = DateTime.Now, FileSourceFolderID = fileSourceFolderID });
+        }
+
+
+        #region Private methods
+
         // Removes any FileSourceFolders and their exclude paths that are not found in the provided set
         private async Task RemoveSourceFoldersNotInListAsync(IDbTransaction transaction, IEnumerable<FileSourceFolder> fileSourceFoldersToKeep)
         {
@@ -274,5 +287,6 @@ namespace Dflat.Data.Dapper.Repositories
                 await transaction.ExecuteAsync(removeExcludePathSql, new { ExcludePathID = excludePathID });
             }
         }
+        #endregion
     }
 }

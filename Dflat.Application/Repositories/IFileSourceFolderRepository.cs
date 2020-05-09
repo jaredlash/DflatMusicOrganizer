@@ -15,5 +15,11 @@ namespace Dflat.Application.Repositories
         Task<bool> UpdateAllAsync(IEnumerable<FileSourceFolder> fileSourceFolders);
 
         FileSourceFolder Get(int fileSourceFolderID);
+
+        /// <summary>
+        /// Sets LastScanTime to the current time
+        /// </summary>
+        /// <param name="fileSourceFolderID"></param>
+        Task UpdateLastScanTimeAsync(int fileSourceFolderID);
     }
 }

@@ -60,7 +60,7 @@ namespace Dflat.Application.Services.JobServices
             }
 
             var excludeFolders = new HashSet<string>(fileSourceFolder.ExcludePaths.Select((p) => p.Path));
-
+            fileSourceFolderRepository.UpdateLastScanTimeAsync(fileSourceFolder.FileSourceFolderID);
 
             FolderSearchServiceResult result;
             try
