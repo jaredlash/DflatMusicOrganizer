@@ -57,5 +57,26 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             Assert.IsNotNull(finishThread);
             Assert.AreEqual(startingThread.ManagedThreadId, finishThread.ManagedThreadId);
         }
+
+        [TestMethod]
+        public void Run_CatchesExeptions_WhenExceptionsThrownInBackgroundWork()
+        {
+            var job = new TestJob();
+            var runner = new BackgroundJobRunner<TestJob>();
+            bool finishWorkIsCalled = false;
+
+            runner.BackgroundWork = (n, t) => { throw new System.Exception(); };
+            runner.FinishWork = (n, t) => { finishWorkIsCalled = true; };
+
+            AsyncContext.Run(async () =>
+            {
+                await runner.Run(job, new CancellationToken());
+            }
+            );
+
+            Assert.IsTrue(finishWorkIsCalled);
+            Assert.IsFalse(string.IsNullOrEmpty(job.Errors));
+            Assert.AreEqual(JobStatus.Error, job.Status);
+        }
     }
 }
