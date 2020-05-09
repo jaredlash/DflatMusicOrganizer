@@ -10,6 +10,7 @@ using DflatCoreWPF.ViewModels;
 using DflatCoreWPF.Views;
 using DflatCoreWPF.WindowService;
 using Microsoft.Extensions.Configuration;
+using System.Configuration;
 using System.IO;
 using System.Windows;
 using Unity;
@@ -74,7 +75,8 @@ namespace DflatCoreWPF
 
             var config = builder.Build();
 
-            string connectionString = config.GetConnectionString("DflatMusicOrganizerDB");
+            //string connectionString = config.GetConnectionString("DflatMusicOrganizerDB");
+            string connectionString = config.GetConnectionString("DflatDB");
 
 
             var mapper = automapconfig.CreateMapper();
