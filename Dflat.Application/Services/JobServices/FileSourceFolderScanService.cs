@@ -66,12 +66,12 @@ namespace Dflat.Application.Services.JobServices
             try
             {
                 result = folderScanner.FindFiles(fileSourceFolder.Path, excludeFolders, MusicFilter, cancellationToken);
-                job.Errors = string.Join("\n", result.ErrorLog);
                 if (result.ErrorLog.Count > 0 && result.FoundFiles.Count == 0)
                 {
                     job.Status = cancellationToken.IsCancellationRequested ? JobStatus.Cancelled : JobStatus.Error;
                     return;
                 }
+                job.Errors = string.Join("\n", result.ErrorLog);
             }
             catch (DirectoryNotFoundException e)
             {
