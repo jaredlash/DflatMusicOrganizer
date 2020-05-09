@@ -10,7 +10,7 @@ namespace Dflat.Application.Repositories
         IEnumerable<File> GetFromPath(string path, bool recurse = true);
         
         // Sets FileID on the added file
-        void Add(File modifiedFile);
+        void Add(File newFile);
         void Update(File modifiedFile);
 
         void MarkRemoved(int fileID);

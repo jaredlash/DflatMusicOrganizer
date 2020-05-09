@@ -17,7 +17,7 @@ namespace Dflat.Data.Dapper.Repositories
             this.connectionString = connectionString;
         }
 
-        public void Add(File modifiedFile)
+        public void Add(File newFile)
         {
             throw new NotImplementedException();
         }
