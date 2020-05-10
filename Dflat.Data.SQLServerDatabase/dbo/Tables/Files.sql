@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[Files]
+(
+	[FileID] INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
+	[Filename] NVARCHAR(MAX) NOT NULL,
+	[Extension] NVARCHAR(30) NOT NULL,
+	[Directory] NVARCHAR(MAX) NOT NULL, 
+    [Size] INT NOT NULL,
+	[LastModifiedTime] DATETIME2 NOT NULL,
+	[MarkedAsRemoved] BIT NOT NULL DEFAULT(0),
+	[MD5Sum] NVARCHAR(32) NOT NULL
+)

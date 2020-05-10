@@ -67,6 +67,7 @@
     <Build Include="dbo\Tables\FileSourceFolders.sql" />
     <Build Include="dbo\Tables\ExcludePaths.sql" />
     <Build Include="dbo\Tables\Jobs.sql" />
+    <Build Include="dbo\Tables\Files.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Dflat.Data.SQLServerDatabase.refactorlog" />
