@@ -43,6 +43,7 @@ namespace Dflat.Application.Services.JobServices
             AcceptedRequestTypes = new List<Type>();
 
             jobCancellationTokenSources = new Dictionary<int, CancellationTokenSource>();
+            enableRunningJobs = false; // Default to disabled
         }
 
 
