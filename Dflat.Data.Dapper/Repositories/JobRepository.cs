@@ -31,7 +31,8 @@ namespace Dflat.Data.Dapper.Repositories
                                             ,[Output]
                                             ,[Errors]
                                             ,[JobType]
-                                            ,[FileSourceFolderID])
+                                            ,[FileSourceFolderID]
+                                            ,[FileID])
                                       VALUES
                                             (@CreationTime
                                             ,@Description
@@ -40,7 +41,8 @@ namespace Dflat.Data.Dapper.Repositories
                                             ,@Output
                                             ,@Errors
                                             ,@JobType
-                                            ,@FileSourceFolderID);
+                                            ,@FileSourceFolderID
+                                            ,@FileID);
                                  SELECT CAST(SCOPE_IDENTITY() as int);";
 
             var model = new DynamicParameters(job)
@@ -283,6 +285,7 @@ namespace Dflat.Data.Dapper.Repositories
                                        ,[Errors] = @Errors
                                        ,[JobType] = @JobType
                                        ,[FileSourceFolderID] = @FileSourceFolderID
+                                       ,[FileID] = @FileID
                                   WHERE JobID = @JobID";
 
             var model = new DynamicParameters(job);
