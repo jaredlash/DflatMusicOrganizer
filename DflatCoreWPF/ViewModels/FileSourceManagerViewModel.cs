@@ -31,7 +31,7 @@ namespace DflatCoreWPF.ViewModels
 
         private readonly List<FileSourceFolder> removedFolders;
 
-        private readonly HashSet<FileSourceFolder> addedOrUpdatedFolders;
+        private readonly HashSet<FileSourceFolder> changedFoldersToScan;
         #endregion
 
 
@@ -47,7 +47,7 @@ namespace DflatCoreWPF.ViewModels
         {
             this.FileSourceFolders = new BindingList<FileSourceFolder>();
             this.removedFolders = new List<FileSourceFolder>();
-            this.addedOrUpdatedFolders = new HashSet<FileSourceFolder>();
+            this.changedFoldersToScan = new HashSet<FileSourceFolder>();
             this.fileSourceFolderRepository = fileSourceFolderRepository;
             this.fileSourceFolderScanService = fileSourceFolderScanService;
             this.mapper = mapper;
@@ -67,7 +67,7 @@ namespace DflatCoreWPF.ViewModels
         {
             FileSourceFolders.Clear();
             removedFolders.Clear();
-            addedOrUpdatedFolders.Clear();
+            changedFoldersToScan.Clear();
             SelectedFileSourceFolder = null;
 
 
@@ -163,7 +163,7 @@ namespace DflatCoreWPF.ViewModels
 
         public ICommand RemoveCommand { get => new RelayCommand(() => Remove(), CanRemove); }
 
-        public ICommand QueueFolderScanCommand { get => new RelayCommand(() => QueueFolderScan()); }
+        public ICommand QueueFolderScanCommand { get => new RelayCommand(async () => await QueueFolderScan()); }
 
         public ICommand SaveCommand { get => new RelayCommand(async () => await Save(), CanSave); }
 
@@ -233,13 +233,21 @@ namespace DflatCoreWPF.ViewModels
             RaisePropertyChanged(() => Count);
         }
 
-        private void QueueFolderScan()
+        private async Task QueueFolderScan()
         {
             var currentFolder = SelectedFileSourceFolder;
             if (currentFolder == null)
                 return;
 
+            if (currentFolder.IsChanged)
+            {
+                if (PromptUnsavedScanSelected() == true)
+                    await SaveSelected();
+                else
+                    return;
+            }
             SubmitFolderScanJobRequest(currentFolder);
+            changedFoldersToScan.Remove(currentFolder); // Do not queue a job again unless we make additional changes
         }
 
         private async Task Save()
@@ -250,7 +258,7 @@ namespace DflatCoreWPF.ViewModels
                 foreach (var folder in FileSourceFolders)
                 {
                     if (folder.IsChanged)
-                        addedOrUpdatedFolders.Add(folder);
+                        changedFoldersToScan.Add(folder);
                 }
                 await fileSourceFolderRepository.UpdateAllAsync(FileSourceFolders);
                 removedFolders.Clear();
@@ -285,6 +293,7 @@ namespace DflatCoreWPF.ViewModels
                 alertDialogViewModel.Message = $"Problem saving changes: {ex.Message}";
                 windowService.ShowDialog(alertDialogViewModel);
             }
+            changedFoldersToScan.Add(folder);  // Individually saved folders should be scanned at the end too
             RaisePropertyChanged(() => CanSave);
             RaisePropertyChanged(() => CanSaveSelected);
             RaisePropertyChanged(() => CancelButtonText);
@@ -303,11 +312,11 @@ namespace DflatCoreWPF.ViewModels
                 }
             }
 
-            if (addedOrUpdatedFolders.Count > 0)
+            if (changedFoldersToScan.Count > 0)
             {
                 if (PromptToScanFolders() == true)
                 {
-                    foreach (var folder in addedOrUpdatedFolders)
+                    foreach (var folder in changedFoldersToScan)
                         SubmitFolderScanJobRequest(folder);
                 }
             }
@@ -324,6 +333,15 @@ namespace DflatCoreWPF.ViewModels
             return result;
         }
 
+        private bool? PromptUnsavedScanSelected()
+        {
+            confirmDialogViewModel.Title = "Save changes to File Source Folder to scan";
+            confirmDialogViewModel.Message = "There are unsaved changes to this File Source Folder. Save changes and continue?";
+            confirmDialogViewModel.NoText = "Cancel";
+            confirmDialogViewModel.YesText = "Save";
+            var result = windowService.ShowDialog(confirmDialogViewModel);
+            return result;
+        }
 
         private bool? PromptToScanFolders()
         {
