@@ -57,6 +57,8 @@
                                 <ListBox.Resources>
                                     <ContextMenu x:Key="FileSourceFolderContextMenu" DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
                                         <MenuItem Header="Queue Folder Scan" Command="{Binding QueueFolderScanCommand}" />
+                                        <Separator />
+                                        <MenuItem Header="Save" Command="{Binding SaveSelectedCommand}" IsEnabled="{Binding CanSaveSelected}"/>
                                     </ContextMenu>
                                 </ListBox.Resources>
                                 <ListBox.ItemContainerStyle>
