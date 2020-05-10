@@ -12,11 +12,18 @@ namespace DflatCoreWPF.ViewModels
 {
     public class ConfirmShutdownViewModel : ViewModelBase
     {
+        private enum ShutdownChoice
+        {
+            None,
+            FinishJobs,
+            CancelJobs
+        }
 
         private string jobsDescription;
         private string title;
         private string status;
         private bool buttonsEnabled;
+        private ShutdownChoice shutdownChoice;
         private readonly JobMonitor jobMonitor;
 
         public ConfirmShutdownViewModel(JobMonitor jobMonitor)
@@ -28,6 +35,7 @@ namespace DflatCoreWPF.ViewModels
             JobsDescription = "";
             Status = "";
             ButtonsEnabled = true;
+            shutdownChoice = ShutdownChoice.None;
         }
 
 
@@ -72,19 +80,32 @@ namespace DflatCoreWPF.ViewModels
         }
 
 
-        public ICommand FinishCommand { get => new RelayCommand(async () => await Finish()); }
-        public ICommand CancelRunningCommand { get => new RelayCommand(async () => await CancelRunning()); }
+        public ICommand FinishCommand { get => new RelayCommand(() => Finish()); }
+        public ICommand CancelRunningCommand { get => new RelayCommand(() => CancelRunning()); }
         public ICommand ContinueRunningCommand { get => new RelayCommand(() => ContinueRunning()); }
 
-        private async Task Finish()
+        private void Finish()
         {
             ButtonsEnabled = false;
-            await Task.Delay(2000);
-            TryClose(true); // Temporary to allow the program cleanly shutdown
+            Status = "Status: Stopping job processing. Waiting for running jobs to finish.";
+            shutdownChoice = ShutdownChoice.FinishJobs;
+            jobMonitor.StopAllProcessing(cancelRunningJobs: false);
+
+            // Close if no more jobs are running after stopping all processing.
+            if (jobMonitor.RunningJobCount == 0)
+                TryClose(true);
         }
 
-        private async Task CancelRunning()
+        private void CancelRunning()
         {
+            ButtonsEnabled = false;
+            Status = "Status:  Stopping job processing. Cancelling running jobs.";
+            shutdownChoice = ShutdownChoice.CancelJobs;
+            jobMonitor.StopAllProcessing(cancelRunningJobs: true);
+
+            // Close if no more jobs are running after stopping all processing.
+            if (jobMonitor.RunningJobCount == 0)
+                TryClose(true);
         }
 
 
@@ -97,6 +118,13 @@ namespace DflatCoreWPF.ViewModels
 
         private void JobMonitor_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            // Close if we're shutting down and we're no longer running jobs
+            if (shutdownChoice != ShutdownChoice.None &&
+                e.PropertyName == "RunningJobCount" &&
+                jobMonitor.RunningJobCount == 0)
+                TryClose(true);
+
+
             if (e.PropertyName == "QueuedJobCount" || e.PropertyName == "RunningJobCount" || e.PropertyName == "FinishedJobCount")
             {
                 var titleDescription = new List<string>();

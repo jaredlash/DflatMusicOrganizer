@@ -12,7 +12,6 @@ namespace Dflat.Application.Services
     public class JobMonitor : INotifyPropertyChanged
     {
         private readonly IJobRepository jobRepository;
-
         private readonly ICollection<IJobService> jobServices;
 
         public JobMonitor(IJobRepository jobRepository, IJobService<FileSourceFolderScanJob> folderScanService)
@@ -68,6 +67,18 @@ namespace Dflat.Application.Services
                 }
             }
         }
+
+        /// <summary>
+        /// Stops all job processing in the Job Services.
+        /// 
+        /// No queued jobs will be run.
+        /// </summary>
+        /// <param name="cancelRunningJobs">True if running jobs should be cancelled and not finished.</param>
+        public void StopAllProcessing(bool cancelRunningJobs = false)
+        {
+
+        }
+
 
         #endregion
 
