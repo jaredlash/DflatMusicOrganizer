@@ -95,6 +95,8 @@ namespace DflatCoreWPF.ViewModels
 
             foreach (var fileSourceFolder in sources)
                 FileSourceFolders.Add(fileSourceFolder);
+
+            RaisePropertyChanged(() => Count);
         }
 
         #endregion
@@ -184,6 +186,7 @@ namespace DflatCoreWPF.ViewModels
             RaisePropertyChanged(() => CanSave);
             (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
             RaisePropertyChanged(() => CancelButtonText);
+            RaisePropertyChanged(() => Count);
         }
 
         private void Edit()
@@ -217,6 +220,7 @@ namespace DflatCoreWPF.ViewModels
             (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
             RaisePropertyChanged(() => CancelButtonText);
             RaisePropertyChanged(() => HasChanges);
+            RaisePropertyChanged(() => Count);
         }
 
 
