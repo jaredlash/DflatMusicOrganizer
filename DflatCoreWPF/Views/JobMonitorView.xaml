@@ -81,11 +81,11 @@
                           >
                     <DataGrid.Resources>
                         <ContextMenu x:Key="JobContextMenu"  DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
-                        <MenuItem Header="Restart Jobs" Command="{Binding RestartSelectedJobsCommand}" IsEnabled="{Binding CanRestartSelectedJobs}"/>
+                            <MenuItem Header="Restart Jobs" Command="{Binding RestartSelectedJobsCommand}" IsEnabled="{Binding CanRestartSelectedJobs}"/>
                             <MenuItem Header="Cancel Jobs" Command="{Binding CancelSelectedJobsCommand}" IsEnabled="{Binding CanCancelSelectedJobs}"/>
-                        <Separator />
-                        <MenuItem Header="Remove Jobs" Command="{Binding RemoveSelectedJobsCommand}"/>
-                    </ContextMenu>
+                            <Separator />
+                            <MenuItem Header="Remove Jobs" Command="{Binding RemoveSelectedJobsCommand}"/>
+                        </ContextMenu>
                     </DataGrid.Resources>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
@@ -97,7 +97,7 @@
                         <MouseBinding Gesture="LeftDoubleClick"
                                       Command="{Binding ViewJobDetailsCommand}"
                             />
-                         
+
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Job ID" Binding="{Binding JobID}"/>
