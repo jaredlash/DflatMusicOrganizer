@@ -17,6 +17,8 @@ namespace Dflat.Application.Services.JobServices
         List<Task> RunJobs();
 
         bool TryCancelJob(int jobID);
+
+        void CancelRunningJobs();
     }
 
     public interface IJobService<JobType> : IJobService where JobType : Job

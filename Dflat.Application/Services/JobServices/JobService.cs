@@ -185,6 +185,13 @@ namespace Dflat.Application.Services.JobServices
         }
 
 
+        public void CancelRunningJobs()
+        {
+            foreach (var cancellationTokenSource in jobCancellationTokenSources.Values)
+                cancellationTokenSource.Cancel();
+        }
+
+
         public event EventHandler<JobChangeEventArgs> JobChanged;
     }
 }

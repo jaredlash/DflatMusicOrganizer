@@ -79,8 +79,8 @@ namespace Dflat.Application.Services
             foreach (var jobService in jobServices)
             {
                 jobService.EnableRunningJobs = false;
-                //if (cancelRunningJobs)
-                //    jobService.CancelRunningJobs();
+                if (cancelRunningJobs)
+                    jobService.CancelRunningJobs();
             }
         }
 
