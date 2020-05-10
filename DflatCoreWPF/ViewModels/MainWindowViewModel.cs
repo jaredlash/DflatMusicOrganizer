@@ -124,6 +124,8 @@ namespace DflatCoreWPF.ViewModels
         #region Public overrides
         public override void OnClose()
         {
+            // Try to close any windows that might be open
+
             jobMonitorViewModel.TryClose();
         }
 
