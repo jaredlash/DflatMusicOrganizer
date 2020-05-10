@@ -59,7 +59,9 @@ namespace Dflat.Application.Services
                 // Modified file found
                 if (afterFileIndex >= 0)
                 {
-                    result.Modified.Add(beforeFile);
+                    var afterFile = afterFiles[afterFileIndex];
+                    afterFile.FileID = beforeFile.FileID;
+                    result.Modified.Add(afterFile);
                     afterFiles.RemoveAt(afterFileIndex);
                 }
                 else // Otherwise, it wasn't found as modified, so it must be counted as removed
