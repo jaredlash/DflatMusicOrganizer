@@ -155,15 +155,17 @@ namespace DflatCoreWPF.ViewModels
         public ICommand InitializeCommand { get => new RelayCommand(() => Initialize()); }
 
         public ICommand AddCommand { get => new RelayCommand(() => Add()); }
-        
+
         public ICommand EditCommand { get => new RelayCommand(() => Edit(), CanEdit); }
-        
+
         public ICommand RemoveCommand { get => new RelayCommand(() => Remove(), CanRemove); }
-        
+
+        public ICommand QueueFolderScanCommand { get => new RelayCommand(() => QueueFolderScan()); }
+
         public ICommand SaveCommand { get => new RelayCommand(async () => await Save(), CanSave); }
 
         public ICommand ClosingCommand { get => new RelayCommand<CancelEventArgs>((e) => OnClosing(e)); }
-       
+
         public ICommand CancelCommand { get => new RelayCommand(() => Cancel()); }
 
         #endregion
@@ -223,7 +225,14 @@ namespace DflatCoreWPF.ViewModels
             RaisePropertyChanged(() => Count);
         }
 
+        private void QueueFolderScan()
+        {
+            var currentFolder = SelectedFileSourceFolder;
+            if (currentFolder == null)
+                return;
 
+            SubmitFolderScanJobRequest(currentFolder);
+        }
 
         private async Task Save()
         {
@@ -268,14 +277,7 @@ namespace DflatCoreWPF.ViewModels
                 if (PromptToScanFolders() == true)
                 {
                     foreach (var folder in addedOrUpdatedFolders)
-                    {
-                        fileSourceFolderScanService.SubmitJobRequest(
-                            new FileSourceFolderScanJob
-                            {
-                                FileSourceFolderID = folder.FileSourceFolderID,
-                                Description = $"Scan of '{folder.Name}' {folder.Path}"
-                            });
-                    }
+                        SubmitFolderScanJobRequest(folder);
                 }
             }
             args.Cancel = false;
@@ -308,6 +310,16 @@ namespace DflatCoreWPF.ViewModels
         }
 
         private bool HasChanges => removedFolders.Count > 0 || FileSourceFolders.Any(f => f.IsChanged);
+
+        private void SubmitFolderScanJobRequest(FileSourceFolder folder)
+        {
+            fileSourceFolderScanService.SubmitJobRequest(
+                new FileSourceFolderScanJob
+                {
+                    FileSourceFolderID = folder.FileSourceFolderID,
+                    Description = $"Scan of '{folder.Name}' {folder.Path}"
+                });
+        }
         #endregion
     }
 }
