@@ -26,7 +26,7 @@ namespace Dflat.Application.Services
             // Register listeners
             foreach (var jobService in jobServices)
             {
-                jobService.JobChanged += ChildJobChanged;
+                jobService.JobChanged += HandleJobChanged;
             }
         }
 
@@ -39,7 +39,7 @@ namespace Dflat.Application.Services
             // Tell the appropriate JobService to run ready jobs now that we've made the job ready
             if (success)
             {
-                JobChanged?.Invoke(this, new JobChangeEventArgs { JobID = jobID, ChangeType = JobChangeEventArgs.JobChangeType.Updated });
+                HandleJobChanged(this, new JobChangeEventArgs { JobID = jobID, ChangeType = JobChangeEventArgs.JobChangeType.Updated });
                 var job = jobRepository.Get(jobID);
 
                 foreach (var jobService in jobServices)
@@ -62,8 +62,7 @@ namespace Dflat.Application.Services
                 var success = jobRepository.CancelJob(jobID);
                 if (success)
                 {
-                    JobChanged?.Invoke(this, new JobChangeEventArgs { JobID = jobID, ChangeType = JobChangeEventArgs.JobChangeType.Cancelled });
-                    QueuedJobCount--;
+                    HandleJobChanged(this, new JobChangeEventArgs { JobID = jobID, ChangeType = JobChangeEventArgs.JobChangeType.Cancelled });
                 }
             }
         }
@@ -88,6 +87,8 @@ namespace Dflat.Application.Services
         public void StartProcessing()
         {
             ProcessingIsEnabled = true;
+            QueuedJobCount = jobRepository.GetQueuedJobCount();
+            RunningJobCount = jobRepository.GetRunningJobCount();
             foreach (var jobService in jobServices)
             {
                 jobService.EnableRunningJobs = true;
@@ -152,26 +153,27 @@ namespace Dflat.Application.Services
 
         #region Private methods
 
-        private void ChildJobChanged(object sender, JobChangeEventArgs e)
+        private void HandleJobChanged(object sender, JobChangeEventArgs e)
         {
             switch (e.ChangeType)
             {
                 case JobChangeEventArgs.JobChangeType.Submitted:
-                    QueuedJobCount++;
+                case JobChangeEventArgs.JobChangeType.Updated:
+                    QueuedJobCount = jobRepository.GetQueuedJobCount();
                     break;
 
                 case JobChangeEventArgs.JobChangeType.Started:
-                    RunningJobCount++;
-                    QueuedJobCount--;
+                    RunningJobCount = jobRepository.GetRunningJobCount();
+                    QueuedJobCount = jobRepository.GetQueuedJobCount();
                     break;
 
                 case JobChangeEventArgs.JobChangeType.Finished:
-                    RunningJobCount--;
+                    RunningJobCount = jobRepository.GetRunningJobCount();
                     FinishedJobCount++;
                     break;
 
                 case JobChangeEventArgs.JobChangeType.Cancelled:
-                    RunningJobCount--;
+                    RunningJobCount = jobRepository.GetRunningJobCount();
                     CancelledJobCount++;
                     break;
             }
