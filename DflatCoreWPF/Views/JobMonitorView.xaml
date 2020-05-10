@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:s="clr-namespace:System;assembly=System.Runtime"
         xmlns:local="clr-namespace:DflatCoreWPF.Views"
         mc:Ignorable="d"
         xmlns:viewModels="clr-namespace:DflatCoreWPF.ViewModels"
@@ -13,6 +14,8 @@
         Title="Job Monitor" Height="600" Width="1000">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+        <s:Boolean x:Key="True">True</s:Boolean>
+        <s:Boolean x:Key="False">False</s:Boolean>
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -42,6 +45,10 @@
                     <MenuItem Header="Errored"                Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Error}" IsChecked="{Binding DisplayErroredJobs, Mode=OneWay}" />
                     <MenuItem Header="Cancelled"              Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Cancelled}" IsChecked="{Binding DisplayCancelledJobs, Mode=OneWay}" />
                 </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Processing">
+                <MenuItem Header="Start Processing" Command="{Binding ChangeProcessingStatusCommand}" CommandParameter="{StaticResource True}" IsChecked="{Binding ProcessingIsEnabled, Mode=OneWay}" />
+                <MenuItem Header="Stop Processing"  Command="{Binding ChangeProcessingStatusCommand}" CommandParameter="{StaticResource False}" IsChecked="{Binding ProcessingIsStopped, Mode=OneWay}" />
             </MenuItem>
 
         </Menu>

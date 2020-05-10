@@ -75,6 +75,8 @@ namespace DflatCoreWPF.ViewModels
         public ICommand RestartSelectedJobsCommand { get => new RelayCommand(() => RestartSelectedJobs()); }
         public ICommand CancelSelectedJobsCommand { get => new RelayCommand(() => CancelSelectedJobs()); }
         public ICommand RemoveSelectedJobsCommand { get => new RelayCommand(() => RemoveSelectedJobs()); }
+
+        public ICommand ChangeProcessingStatusCommand { get => new RelayCommand<bool>((enable) => ChangeProcessingStatus(enable)); }
         #endregion
 
 
@@ -131,8 +133,9 @@ namespace DflatCoreWPF.ViewModels
         public bool DisplaySuccessWithErrorJobs { get => displayedJobStatus == JobStatus.SuccessWithErrors; }
         public bool DisplayErroredJobs { get => displayedJobStatus == JobStatus.Error; }
         public bool DisplayCancelledJobs { get => displayedJobStatus == JobStatus.Cancelled; }
-
-
+        
+        public bool ProcessingIsEnabled { get => jobMonitor.ProcessingIsEnabled; }
+        public bool ProcessingIsStopped { get => jobMonitor.ProcessingIsEnabled == false; }
         #endregion
 
         #region Private methods
@@ -214,6 +217,15 @@ namespace DflatCoreWPF.ViewModels
             windowService.ShowDialog(alertDialogViewModel);
         }
 
+        private void ChangeProcessingStatus(bool enable)
+        {
+            if (enable)
+                jobMonitor.StartProcessing();
+            else
+                jobMonitor.StopProcessing();
+            RaisePropertyChanged(() => ProcessingIsEnabled);
+            RaisePropertyChanged(() => ProcessingIsStopped);
+        }
 
         private void JobMonitor_JobStatusChange(object sender, JobChangeEventArgs e)
         {
