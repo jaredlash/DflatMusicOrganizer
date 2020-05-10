@@ -59,8 +59,7 @@ namespace DflatCoreWPF
                 //cfg.CreateMap<Dflat.Data.EFCore.Models.FileSourceFolderScanJob, FileSourceFolderScanJob>().ReverseMap();
                 cfg.CreateMap<FileResult, Dflat.Application.Models.File>()
                     .ForMember(dest => dest.FileID, opt => opt.Ignore())
-                    .ForMember(dest => dest.Chromaprint, opt => opt.Ignore())
-                    .ForMember(dest => dest.MD5Sum, opt => opt.Ignore());
+                    .ForMember(dest => dest.MD5Sum, opt => opt.MapFrom((src) => string.Empty));
 
             });
 
