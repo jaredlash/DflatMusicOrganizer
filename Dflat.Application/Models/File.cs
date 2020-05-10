@@ -30,10 +30,7 @@ namespace Dflat.Application.Models
         public long Size { get; set; }
         public DateTime LastModifiedTime { get; set; }
 
-
-
-
         public string MD5Sum { get; set; }
-        public string Chromaprint { get; set; }
+        // TODO: Put this in a FileAudio model: public string Chromaprint { get; set; }
     }
 }
