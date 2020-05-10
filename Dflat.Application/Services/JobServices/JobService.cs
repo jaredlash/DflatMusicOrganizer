@@ -15,20 +15,10 @@ namespace Dflat.Application.Services.JobServices
         private readonly IBackgroundJobRunner<JobType> jobRunner;
 
         private readonly Dictionary<int, CancellationTokenSource> jobCancellationTokenSources;
-        private bool enableRunningJobs;
 
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
-        public bool EnableRunningJobs
-        {
-            get => enableRunningJobs;
-            set
-            {
-                enableRunningJobs = value;
-                if (enableRunningJobs)
-                    RunJobs();
-            }
-        }
+        public bool EnableRunningJobs { get; set; }
         public ICollection<Type> AcceptedRequestTypes { get; private set; }
 
         public JobService(IJobRepository jobRepository, IBackgroundJobRunner<JobType> jobRunner)
@@ -43,7 +33,7 @@ namespace Dflat.Application.Services.JobServices
             AcceptedRequestTypes = new List<Type>();
 
             jobCancellationTokenSources = new Dictionary<int, CancellationTokenSource>();
-            enableRunningJobs = false; // Default to disabled
+            EnableRunningJobs = false; // Default to disabled
         }
 
 
