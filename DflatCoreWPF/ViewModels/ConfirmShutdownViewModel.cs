@@ -141,7 +141,10 @@ namespace DflatCoreWPF.ViewModels
                 }
 
                 Title = "Shutdown: " + string.Join(", ", titleDescription);
-                JobsDescription = string.Join("\n", longDescription);
+                if (longDescription.Count > 0)
+                    JobsDescription = string.Join("\n", longDescription);
+                else
+                    JobsDescription = "All jobs have finished and no jobs are queued.";
             }
         }
     }
