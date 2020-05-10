@@ -33,14 +33,10 @@ namespace DflatCoreWPF
             Configure();
             
 
-            var viewModel = container.Resolve<MainWindowViewModel>();
+            var mainWindowViewModel = container.Resolve<MainWindowViewModel>();
+            var windowService = container.Resolve<IWindowService>();
 
-            var view = new MainWindowView
-            {
-                DataContext = viewModel
-            };
-
-            view.Show();
+            windowService.ShowWindow(mainWindowViewModel);
         }
 
 
@@ -102,6 +98,7 @@ namespace DflatCoreWPF
             // Register View and ViewModel mappings
             container.RegisterType<Window, AlertDialogView>(nameof(AlertDialogViewModel));
             container.RegisterType<Window, ConfirmDialogView>(nameof(ConfirmDialogViewModel));
+            container.RegisterType<Window, ConfirmShutdownView>(nameof(ConfirmShutdownViewModel));
             container.RegisterType<Window, FileSourceFolderEditorView>(nameof(FileSourceFolderEditorViewModel));
             container.RegisterType<Window, FileSourceManagerView>(nameof(FileSourceManagerViewModel));
             container.RegisterType<Window, JobMonitorView>(nameof(JobMonitorViewModel));

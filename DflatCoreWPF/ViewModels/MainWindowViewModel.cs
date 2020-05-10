@@ -14,6 +14,7 @@ namespace DflatCoreWPF.ViewModels
         private readonly IWindowService windowService;
         private readonly FileSourceManagerViewModel fileSourceManagerViewModel;
         private readonly JobMonitorViewModel jobMonitorViewModel;
+        private readonly ConfirmShutdownViewModel confirmShutdownViewModel;
         private readonly JobMonitor jobMonitor;
 
         #endregion
@@ -23,11 +24,13 @@ namespace DflatCoreWPF.ViewModels
         public MainWindowViewModel(IWindowService windowService,
                                    FileSourceManagerViewModel fileSourceManagerViewModel,
                                    JobMonitorViewModel jobMonitorViewModel,
+                                   ConfirmShutdownViewModel confirmShutdownViewModel,
                                    JobMonitor jobMonitor)
         {
             this.windowService = windowService;
             this.fileSourceManagerViewModel = fileSourceManagerViewModel;
             this.jobMonitorViewModel = jobMonitorViewModel;
+            this.confirmShutdownViewModel = confirmShutdownViewModel;
             this.jobMonitor = jobMonitor;
 
             this.jobMonitor.PropertyChanged += JobMonitor_PropertyChanged;
@@ -64,7 +67,7 @@ namespace DflatCoreWPF.ViewModels
             get => new RelayCommand(() => OpenJobsView());
         }
 
-
+        public ICommand ClosingCommand { get => new RelayCommand<CancelEventArgs>((e) => OnClosing(e)); }
 
         #endregion
 
@@ -79,6 +82,20 @@ namespace DflatCoreWPF.ViewModels
         private void OpenJobsView()
         {
             windowService.ShowWindow(jobMonitorViewModel);
+        }
+
+
+        private void OnClosing(CancelEventArgs args)
+        {
+            var result = windowService.ShowDialog(confirmShutdownViewModel);
+
+            if (result != true)
+            {
+                args.Cancel = true;
+                return;
+            }
+            
+            args.Cancel = false;
         }
         #endregion
 
@@ -104,5 +121,12 @@ namespace DflatCoreWPF.ViewModels
 
         #endregion
 
+        #region Public overrides
+        public override void OnClose()
+        {
+            jobMonitorViewModel.TryClose();
+        }
+
+        #endregion
     }
 }
