@@ -23,7 +23,7 @@
                 <!-- Buttons -->
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" FontSize="20">There are jobs currently in progress.</TextBlock>
+            <TextBlock Grid.Row="0" FontSize="20" Text="{Binding Heading, Mode=OneWay}" />
             <Separator Grid.Row="1" />
             <TextBlock Grid.Row="2" FontSize="16" Padding="20 0 0 0" TextWrapping="Wrap" Text="{Binding JobsDescription, Mode=OneWay}"/>
             <TextBlock Grid.Row="3" Margin="0 20" Text="{Binding Status, Mode=OneWay}" />

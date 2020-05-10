@@ -21,6 +21,7 @@ namespace DflatCoreWPF.ViewModels
 
         private string jobsDescription;
         private string title;
+        private string heading;
         private string status;
         private bool buttonsEnabled;
         private ShutdownChoice shutdownChoice;
@@ -32,6 +33,7 @@ namespace DflatCoreWPF.ViewModels
 
             this.jobMonitor.PropertyChanged += JobMonitor_PropertyChanged;
             Title = "";
+            Heading = "";
             JobsDescription = "";
             Status = "";
             ButtonsEnabled = true;
@@ -45,6 +47,16 @@ namespace DflatCoreWPF.ViewModels
             set
             {
                 title = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string Heading
+        {
+            get => heading;
+            set
+            {
+                heading = value;
                 RaisePropertyChanged();
             }
         }
@@ -142,9 +154,15 @@ namespace DflatCoreWPF.ViewModels
 
                 Title = "Shutdown: " + string.Join(", ", titleDescription);
                 if (longDescription.Count > 0)
+                {
+                    Heading = "There are jobs currently in progress.";
                     JobsDescription = string.Join("\n", longDescription);
+                }
                 else
-                    JobsDescription = "All jobs have finished and no jobs are queued.";
+                {
+                    Heading = "All jobs have finished and no jobs are queued.";
+                    JobsDescription = string.Empty;
+                }
             }
         }
     }
