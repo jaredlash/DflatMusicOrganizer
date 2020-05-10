@@ -54,6 +54,10 @@ namespace Dflat.Data.Dapper.Repositories
                     model.Add("@JobType", Application.Models.JobType.FileSourceFolderScanJob);
                     break;
 
+                case MD5Job _:
+                    model.Add("@JobType", Application.Models.JobType.MD5Job);
+                    break;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -97,12 +101,14 @@ namespace Dflat.Data.Dapper.Repositories
             using (var reader = conn.ExecuteReader(sql, new { JobID = jobID }))
             {
                 var fileSourceFolderScanJobParser = reader.GetRowParser<FileSourceFolderScanJob>();
+                var md5JobParser = reader.GetRowParser<MD5Job>();
                 if (reader.Read())
                 {
                     var discriminator = (JobType)reader.GetInt32(reader.GetOrdinal(nameof(JobType)));
                     result = discriminator switch
                     {
                         JobType.FileSourceFolderScanJob => fileSourceFolderScanJobParser(reader),
+                        JobType.MD5Job => md5JobParser(reader),
                         _ => null,
                     };
                 }
@@ -178,6 +184,8 @@ namespace Dflat.Data.Dapper.Repositories
 
             if (typeof(JobType) == typeof(FileSourceFolderScanJob))
                 queryParams.Add("@JobType", Application.Models.JobType.FileSourceFolderScanJob);
+            else if (typeof(JobType) == typeof(MD5Job))
+                queryParams.Add("@JobType", Application.Models.JobType.MD5Job);
             else
                 queryParams.Add("@JobType", Application.Models.JobType.None);
 
@@ -194,12 +202,14 @@ namespace Dflat.Data.Dapper.Repositories
                 using (var reader = conn.ExecuteReader(findSql, queryParams))
                 {
                     var fileSourceFolderScanJobParser = reader.GetRowParser<FileSourceFolderScanJob>();
+                    var md5JobParser = reader.GetRowParser<MD5Job>();
                     while (reader.Read())
                     {
                         var discriminator = (Application.Models.JobType)reader.GetInt32(reader.GetOrdinal(nameof(Application.Models.JobType)));
                         Job foundJob = discriminator switch
                         {
                             Application.Models.JobType.FileSourceFolderScanJob => fileSourceFolderScanJobParser(reader),
+                            Application.Models.JobType.MD5Job => md5JobParser(reader),
                             _ => throw new NotImplementedException(),
                         };
                         if (foundJob.Status == JobStatus.Running)
@@ -280,7 +290,11 @@ namespace Dflat.Data.Dapper.Repositories
             switch (job)
             {
                 case FileSourceFolderScanJob _:
-                    model.Add("JobType", Application.Models.JobType.FileSourceFolderScanJob);
+                    model.Add("@JobType", Application.Models.JobType.FileSourceFolderScanJob);
+                    break;
+
+                case MD5Job _:
+                    model.Add("@JobType", Application.Models.JobType.MD5Job);
                     break;
 
                 default:
