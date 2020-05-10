@@ -16,6 +16,7 @@ namespace DflatCoreWPF.ViewModels
         private string jobsDescription;
         private string title;
         private string status;
+        private bool buttonsEnabled;
         private readonly JobMonitor jobMonitor;
 
         public ConfirmShutdownViewModel(JobMonitor jobMonitor)
@@ -26,6 +27,7 @@ namespace DflatCoreWPF.ViewModels
             Title = "";
             JobsDescription = "";
             Status = "";
+            ButtonsEnabled = true;
         }
 
 
@@ -59,6 +61,16 @@ namespace DflatCoreWPF.ViewModels
             }
         }
 
+        public bool ButtonsEnabled
+        {
+            get => buttonsEnabled;
+            set
+            {
+                buttonsEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         public ICommand FinishCommand { get => new RelayCommand(async () => await Finish()); }
         public ICommand CancelRunningCommand { get => new RelayCommand(async () => await CancelRunning()); }
@@ -66,6 +78,8 @@ namespace DflatCoreWPF.ViewModels
 
         private async Task Finish()
         {
+            ButtonsEnabled = false;
+            await Task.Delay(2000);
             TryClose(true); // Temporary to allow the program cleanly shutdown
         }
 
