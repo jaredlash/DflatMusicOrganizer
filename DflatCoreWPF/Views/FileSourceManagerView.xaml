@@ -14,7 +14,7 @@
         Width="600"
         MinHeight="300"
         MinWidth="600"
-        x:Name="FileSourceManagerWindow">
+        Name="FileSourceManagerWindow">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
     </Window.Resources>
@@ -54,9 +54,24 @@
                         <!-- List of Folders -->
                         <Border Grid.Row="1" Grid.Column="0">
                             <ListBox ItemsSource="{Binding FileSourceFolders}" SelectedItem="{Binding SelectedFileSourceFolder}">
+                                <ListBox.Resources>
+                                    <ContextMenu x:Key="FileSourceFolderContextMenu" DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                                        <MenuItem Header="Queue Folder Scan" Command="{Binding QueueFolderScanCommand}" />
+                                    </ContextMenu>
+                                </ListBox.Resources>
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Tag" Value="{Binding ElementName=FileSourceManagerWindow, Path=DataContext}" />
+                                        <Setter Property="ContextMenu" Value="{StaticResource FileSourceFolderContextMenu}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsChanged}" Value="True">
+                                                <Setter Property="FontStyle" Value="Italic" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsChanged}" Value="False">
+                                                <Setter Property="FontStyle" Value="Normal" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
                                     </Style>
                                 </ListBox.ItemContainerStyle>
                                 <ListBox.ItemTemplate>
@@ -67,15 +82,13 @@
                                             </Grid.InputBindings>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Margin="0 0 10 0" Text="{Binding Name}" />
-                                            <TextBlock Grid.Column="2" Text="(" />
-                                            <TextBlock Grid.Column="3" Text="{Binding Path}" />
-                                            <TextBlock Grid.Column="4" Margin="0 0 10 0" Text=")" />
+                                            <TextBlock Grid.Column="0" Text="*" Visibility="{Binding IsChanged, Converter={StaticResource VisibilityConverter}}" />
+                                            <TextBlock Grid.Column="1" Margin="0 0 10 0" Text="{Binding Name}" />
+                                            <TextBlock Grid.Column="3" Margin="0 0 10 0">(<Run Text="{Binding Path}" />)</TextBlock>
                                         </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
