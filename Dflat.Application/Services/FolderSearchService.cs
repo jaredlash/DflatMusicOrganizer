@@ -100,7 +100,7 @@ namespace Dflat.Application.Services
 												fileInfo.DirectoryName,
 												fileInfo.Extension,
 												fileInfo.Length,
-												fileInfo.LastWriteTime));
+												TruncateSeconds(fileInfo.LastWriteTime)));
 							}
 						}
 						catch (Exception e)
@@ -131,6 +131,11 @@ namespace Dflat.Application.Services
 		public FolderSearchServiceResult FindFiles(string sourceDirectory, CancellationToken cancellationToken)
 		{
 			return FindFiles(sourceDirectory, new HashSet<string>(), _searchFilter, cancellationToken);
+		}
+
+		private DateTime TruncateSeconds(DateTime dateTime)
+		{
+			return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind);
 		}
 	}
 }
