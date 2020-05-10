@@ -10,7 +10,10 @@ namespace Dflat.Application.Models
     {
         public File()
         {
-
+            Filename = string.Empty;
+            Extension = string.Empty;
+            Directory = string.Empty;
+            MD5Sum = string.Empty;
         }
 
         public File(string filename, string extension, string directory, long size, DateTime lastModifiedTime)
