@@ -11,9 +11,9 @@
         d:DataContext="{d:DesignInstance viewModels:FileSourceManagerViewModel}"
         Title="File Source Manager"
         Height="300"
-        Width="500"
+        Width="600"
         MinHeight="300"
-        MinWidth="500"
+        MinWidth="600"
         x:Name="FileSourceManagerWindow">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
@@ -83,7 +83,7 @@
                         </Border>
 
                         <!-- Edit Controls -->
-                        <Border Grid.Row="1" Grid.Column="1" Padding="10 0 0 0">
+                        <Border Grid.Row="1" Grid.Column="1" Padding="10 0 0 0" MinWidth="225">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
