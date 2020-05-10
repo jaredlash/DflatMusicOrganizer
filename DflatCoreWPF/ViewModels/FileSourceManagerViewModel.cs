@@ -159,13 +159,13 @@ namespace DflatCoreWPF.ViewModels
 
         public ICommand AddCommand { get => new RelayCommand(() => Add()); }
 
-        public ICommand EditCommand { get => new RelayCommand(() => Edit(), CanEdit); }
+        public ICommand EditCommand { get => new RelayCommand(() => Edit()); }
 
-        public ICommand RemoveCommand { get => new RelayCommand(() => Remove(), CanRemove); }
+        public ICommand RemoveCommand { get => new RelayCommand(() => Remove()); }
 
         public ICommand QueueFolderScanCommand { get => new RelayCommand(async () => await QueueFolderScan()); }
 
-        public ICommand SaveCommand { get => new RelayCommand(async () => await Save(), CanSave); }
+        public ICommand SaveCommand { get => new RelayCommand(async () => await Save()); }
 
         public ICommand SaveSelectedCommand { get => new RelayCommand(async () => await SaveSelected()); }
 
@@ -192,7 +192,6 @@ namespace DflatCoreWPF.ViewModels
             RaisePropertyChanged(() => HasChanges);
             RaisePropertyChanged(() => CanSave);
             RaisePropertyChanged(() => CanSaveSelected);
-            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
             RaisePropertyChanged(() => CancelButtonText);
             RaisePropertyChanged(() => Count);
         }
@@ -211,11 +210,9 @@ namespace DflatCoreWPF.ViewModels
             RaisePropertyChanged(() => HasChanges);
             RaisePropertyChanged(() => CanSave);
             RaisePropertyChanged(() => CanSaveSelected);
-            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
             RaisePropertyChanged(() => CancelButtonText);
         }
 
-        private bool CanRemove => SelectedFileSourceFolder != null;
         private void Remove()
         {
             var currentFolder = SelectedFileSourceFolder;
@@ -227,7 +224,6 @@ namespace DflatCoreWPF.ViewModels
             FileSourceFolders.Remove(currentFolder);
             RaisePropertyChanged(() => CanSave);
             RaisePropertyChanged(() => CanSaveSelected);
-            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
             RaisePropertyChanged(() => CancelButtonText);
             RaisePropertyChanged(() => HasChanges);
             RaisePropertyChanged(() => Count);
@@ -270,8 +266,6 @@ namespace DflatCoreWPF.ViewModels
                 windowService.ShowDialog(alertDialogViewModel);
             }
             RaisePropertyChanged(() => CanSave);
-            
-            (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
             RaisePropertyChanged(() => CancelButtonText);
 
             EnableOverlay = false;
