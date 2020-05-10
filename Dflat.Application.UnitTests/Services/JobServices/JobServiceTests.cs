@@ -121,6 +121,27 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             jobServiceMock.Verify(m => m.SetupJob(It.IsAny<TestJob>()), Times.Exactly(2));
             runner.Verify(m => m.Run(It.IsAny<TestJob>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
         }
+
+        [TestMethod]
+        public void RunJobs_Exits_WhenEnableRunningJobsIsFalse()
+        {
+            var repo = CreateMockJobRepository();
+            var jobs = new List<TestJob> { new TestJob { JobID = 1 }, new TestJob { JobID = 2 }, new TestJob { JobID = 3 } }; // Set up with 3 jobs
+            var iter = jobs.GetEnumerator();
+            repo.Setup(r => r.GetNextAvailable<TestJob>()).Returns(() => { iter.MoveNext(); return iter.Current; });
+            var runner = CreateBackgroundJobRunner();
+            var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
+            var jobService = jobServiceMock.Object;
+            jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = false;
+
+            // Test
+            jobService.RunJobs();
+
+            // Verify
+            jobServiceMock.Verify(m => m.SetupJob(It.IsAny<TestJob>()), Times.Never);
+            runner.Verify(m => m.Run(It.IsAny<TestJob>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
         #endregion
 
         #region SubmitJobRequest

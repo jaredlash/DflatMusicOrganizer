@@ -15,9 +15,20 @@ namespace Dflat.Application.Services.JobServices
         private readonly IBackgroundJobRunner<JobType> jobRunner;
 
         private readonly Dictionary<int, CancellationTokenSource> jobCancellationTokenSources;
+        private bool enableRunningJobs;
 
         public int MaxConcurrentJobs { get; set; }
         public int RunningJobCount { get; private set; }
+        public bool EnableRunningJobs
+        {
+            get => enableRunningJobs;
+            set
+            {
+                enableRunningJobs = value;
+                if (enableRunningJobs)
+                    RunJobs();
+            }
+        }
         public ICollection<Type> AcceptedRequestTypes { get; private set; }
 
         public JobService(IJobRepository jobRepository, IBackgroundJobRunner<JobType> jobRunner)
@@ -44,6 +55,11 @@ namespace Dflat.Application.Services.JobServices
                 // Subclassed JobServices which need to make throttled HTTP connections, should
                 // use a custom HttpClient which performs the throttling to ensure APIs that are rate-limited
                 // don't get over-used (such as AcoustID and MusicBrainz)
+
+                // Run jobs only if enabled
+                if (EnableRunningJobs == false)
+                    return taskList;
+
 
                 // Limit number of concurrent jobs
                 if (RunningJobCount == MaxConcurrentJobs)
