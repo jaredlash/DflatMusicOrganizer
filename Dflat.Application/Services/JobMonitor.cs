@@ -76,6 +76,7 @@ namespace Dflat.Application.Services
         /// <param name="cancelRunningJobs">True if running jobs should be cancelled and not finished.</param>
         public void StopProcessing(bool cancelRunningJobs = false)
         {
+            ProcessingIsEnabled = false;
             foreach (var jobService in jobServices)
             {
                 jobService.EnableRunningJobs = false;
@@ -86,6 +87,7 @@ namespace Dflat.Application.Services
 
         public void StartProcessing()
         {
+            ProcessingIsEnabled = true;
             foreach (var jobService in jobServices)
             {
                 jobService.EnableRunningJobs = true;
@@ -142,6 +144,9 @@ namespace Dflat.Application.Services
                 CallPropertyChanged(nameof(CancelledJobCount));
             }
         }
+
+        public bool ProcessingIsEnabled { get; private set; }
+
 
         #endregion
 

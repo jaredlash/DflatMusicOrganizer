@@ -83,12 +83,16 @@ namespace DflatCoreWPF.ViewModels
 
         private void OnClosing(CancelEventArgs args)
         {
-            var result = windowService.ShowDialog(confirmShutdownViewModel);
-
-            if (result != true)
+            if (jobMonitor.RunningJobCount > 0 ||
+                (jobMonitor.ProcessingIsEnabled && jobMonitor.QueuedJobCount > 0))
             {
-                args.Cancel = true;
-                return;
+                var result = windowService.ShowDialog(confirmShutdownViewModel);
+
+                if (result != true)
+                {
+                    args.Cancel = true;
+                    return;
+                }
             }
             
             args.Cancel = false;
