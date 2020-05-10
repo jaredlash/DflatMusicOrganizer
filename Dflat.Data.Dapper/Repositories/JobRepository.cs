@@ -224,6 +224,22 @@ namespace Dflat.Data.Dapper.Repositories
             return nextJob as JobType;
         }
 
+        public int GetQueuedJobCount()
+        {
+            const string sql = @"SELECT COUNT(*) FROM Jobs WHERE Status IN @JobStatuses";
+            using IDbConnection connection = new SqlConnection(connectionString);
+
+            return connection.QuerySingle<int>(sql, new { JobStatuses = new[] { JobStatus.Ready, JobStatus.Queued } });
+        }
+
+        public int GetRunningJobCount()
+        {
+            const string sql = @"SELECT COUNT(*) FROM Jobs WHERE Status = @JobStatus";
+            using IDbConnection connection = new SqlConnection(connectionString);
+
+            return connection.QuerySingle<int>(sql, new { JobStatus = JobStatus.Running });
+        }
+
         public bool RestartJob(int jobID)
         {
             const string sql = @"UPDATE [dbo].[Jobs]
