@@ -74,6 +74,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = true;
 
             // Test
             jobService.RunJobs();
@@ -93,6 +94,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = true;
 
             // Test
             jobService.RunJobs();
@@ -113,6 +115,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 2;  // Allow a maximum of two to run.
+            jobService.EnableRunningJobs = true;
 
             // Test
             jobService.RunJobs();
@@ -154,6 +157,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             var runner = CreateBackgroundJobRunner();
             var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
             var jobService = jobServiceMock.Object;
+            jobService.EnableRunningJobs = true;
 
             // Test
             jobService.SubmitJobRequest(job);
@@ -171,6 +175,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             var runner = CreateBackgroundJobRunner();
             var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
             var jobService = jobServiceMock.Object;
+            jobService.EnableRunningJobs = true;
 
             // Test
             jobService.SubmitJobRequest(job);
@@ -209,6 +214,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             var runner = CreateBackgroundJobRunner();
             var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner.Object);
             var jobService = jobServiceMock.Object;
+            jobService.EnableRunningJobs = true;
 
             // Test
             jobService.SubmitJobRequest(job);
@@ -251,6 +257,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             var jobServiceMock = new Mock<JobService<TestJob>>(repo.Object, runner);
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = true;
 
             // Test
             AsyncContext.Run(async () =>
@@ -280,6 +287,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             };
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = true;
 
             // Test
             AsyncContext.Run(async () =>
@@ -308,6 +316,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             };
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = true;
 
             int timesCalled = 0;
             jobService.JobChanged += (o, e) => { if (e.ChangeType == JobChangeEventArgs.JobChangeType.Submitted) timesCalled++; };
@@ -339,6 +348,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             };
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = true;
 
             int timesCalled = 0;
             jobService.JobChanged += (o, e) => { if (e.ChangeType == JobChangeEventArgs.JobChangeType.Started) timesCalled++; };
@@ -372,6 +382,7 @@ namespace Dflat.Application.UnitTests.Services.JobServices.Tests
             };
             var jobService = jobServiceMock.Object;
             jobService.MaxConcurrentJobs = 5;
+            jobService.EnableRunningJobs = true;
 
             int timesCalled = 0;
             jobService.JobChanged += (o, e) => { if (e.ChangeType == JobChangeEventArgs.JobChangeType.Finished) timesCalled++; };

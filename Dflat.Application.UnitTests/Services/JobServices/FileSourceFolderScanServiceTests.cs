@@ -43,7 +43,12 @@ namespace Dflat.Application.Services.JobServices.Tests
             var jobRepository = jobRepositoryMock.Object;
             var jobRunner = jobRunnerMock.Object;
 
-            return new FileSourceFolderScanService(fileSourceFolderRepository, fileRepository, folderScanner, mapper, comparer, jobRepository, jobRunner);
+            var service = new FileSourceFolderScanService(fileSourceFolderRepository, fileRepository, folderScanner, mapper, comparer, jobRepository, jobRunner)
+            {
+                EnableRunningJobs = true
+            };
+
+            return service;
         }
 
 
