@@ -152,6 +152,36 @@ namespace Dflat.Data.Dapper.Repositories
             return true;
         }
 
+        public async Task AddOrUpdateAsync(FileSourceFolder fileSourceFolder)
+        {
+            using IDbConnection connection = new SqlConnection(connectionString);
+
+            connection.Open();
+
+            using (IDbTransaction transaction = connection.BeginTransaction())
+            {
+                try
+                {
+                    // Add new folders (ID == 0)
+                    if (fileSourceFolder.FileSourceFolderID == 0)
+                    {
+                        await AddFileSourceFolderAsync(transaction, fileSourceFolder);
+                    }
+                    else // Otherwise, update folder
+                    {
+                        await UpdateFileSourceFolderAsync(transaction, fileSourceFolder);
+                    }
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
+            fileSourceFolder.IsChanged = false;
+        }
 
         public Task UpdateLastScanTimeAsync(int fileSourceFolderID)
         {
