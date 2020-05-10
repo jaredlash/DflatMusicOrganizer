@@ -74,12 +74,23 @@ namespace Dflat.Application.Services
         /// No queued jobs will be run.
         /// </summary>
         /// <param name="cancelRunningJobs">True if running jobs should be cancelled and not finished.</param>
-        public void StopAllProcessing(bool cancelRunningJobs = false)
+        public void StopProcessing(bool cancelRunningJobs = false)
         {
-
+            foreach (var jobService in jobServices)
+            {
+                jobService.EnableRunningJobs = false;
+                //if (cancelRunningJobs)
+                //    jobService.CancelRunningJobs();
+            }
         }
 
-
+        public void StartProcessing()
+        {
+            foreach (var jobService in jobServices)
+            {
+                jobService.EnableRunningJobs = true;
+            }
+        }
         #endregion
 
         #region Public events

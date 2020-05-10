@@ -89,7 +89,7 @@ namespace DflatCoreWPF.ViewModels
             ButtonsEnabled = false;
             Status = "Status: Stopping job processing. Waiting for running jobs to finish.";
             shutdownChoice = ShutdownChoice.FinishJobs;
-            jobMonitor.StopAllProcessing(cancelRunningJobs: false);
+            jobMonitor.StopProcessing(cancelRunningJobs: false);
 
             // Close if no more jobs are running after stopping all processing.
             if (jobMonitor.RunningJobCount == 0)
@@ -101,7 +101,7 @@ namespace DflatCoreWPF.ViewModels
             ButtonsEnabled = false;
             Status = "Status:  Stopping job processing. Cancelling running jobs.";
             shutdownChoice = ShutdownChoice.CancelJobs;
-            jobMonitor.StopAllProcessing(cancelRunningJobs: true);
+            jobMonitor.StopProcessing(cancelRunningJobs: true);
 
             // Close if no more jobs are running after stopping all processing.
             if (jobMonitor.RunningJobCount == 0)
