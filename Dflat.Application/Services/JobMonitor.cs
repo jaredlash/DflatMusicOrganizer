@@ -89,6 +89,7 @@ namespace Dflat.Application.Services
             foreach (var jobService in jobServices)
             {
                 jobService.EnableRunningJobs = true;
+                jobService.RunJobs();
             }
         }
         #endregion

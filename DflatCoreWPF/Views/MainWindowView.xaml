@@ -10,6 +10,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding InitializeCommand}" />
+        </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding ClosingCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>

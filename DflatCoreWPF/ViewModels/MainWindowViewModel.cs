@@ -56,23 +56,19 @@ namespace DflatCoreWPF.ViewModels
 
 
         #region Public Commands
-        public ICommand OpenFileSourceManagerCommand
-        {
-            get => new RelayCommand(() => OpenFileSourceManager());
-        }
-
-
-        public ICommand OpenJobsViewCommand
-        {
-            get => new RelayCommand(() => OpenJobsView());
-        }
-
+        public ICommand InitializeCommand { get => new RelayCommand(() => Initialize()); }
+        public ICommand OpenFileSourceManagerCommand { get => new RelayCommand(() => OpenFileSourceManager()); }
+        public ICommand OpenJobsViewCommand { get => new RelayCommand(() => OpenJobsView()); }
         public ICommand ClosingCommand { get => new RelayCommand<CancelEventArgs>((e) => OnClosing(e)); }
 
         #endregion
 
 
         #region Private command methods
+        private void Initialize()
+        {
+            jobMonitor.StartProcessing();
+        }
 
         private void OpenFileSourceManager()
         {
