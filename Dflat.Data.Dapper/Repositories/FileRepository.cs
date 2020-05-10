@@ -99,6 +99,23 @@ namespace Dflat.Data.Dapper.Repositories
                 throw new Exception($"File = {modifiedFile.FileID} not found");
         }
 
+
+        public void UpdateMD5(int fileID, string md5)
+        {
+            const string sql = @"UPDATE [dbo].[Files]
+                                    SET [MD5Sum] = @MD5Sum
+                                  WHERE [FileID] = @FileID";
+
+            if (md5 == null)
+                throw new Exception($"Attempted to set a null MD5 value for File = {fileID}");
+
+            using IDbConnection connection = new SqlConnection(connectionString);
+            int rowsAffected = connection.Execute(sql, new { MD5Sum = md5, FileID = fileID });
+
+            if (rowsAffected == 0)
+                throw new Exception($"File = {fileID} not found");
+        }
+
         private string EncodeForLike(string input) => input.Replace("[", "[[]").Replace("%", "[%]");
     }
 }

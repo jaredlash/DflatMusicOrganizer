@@ -13,6 +13,8 @@ namespace Dflat.Application.Repositories
         void Add(File newFile);
         void Update(File modifiedFile);
 
+        void UpdateMD5(int fileID, string md5);
+
         void MarkRemoved(int fileID);
     }
 }
