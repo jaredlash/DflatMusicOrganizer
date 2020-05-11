@@ -7,6 +7,8 @@ namespace Dflat.Application.Repositories
 {
     public interface IFileRepository
     {
+        File Get(int fileID);
+
         IEnumerable<File> GetFromPath(string path, bool recurse = true);
         
         // Sets FileID on the added file

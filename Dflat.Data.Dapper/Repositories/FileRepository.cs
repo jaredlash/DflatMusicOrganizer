@@ -42,6 +42,23 @@ namespace Dflat.Data.Dapper.Repositories
             newFile.FileID = connection.QuerySingle<int>(sql, newFile);
         }
 
+        public File Get(int fileID)
+        {
+            const string sql = @"SELECT [FileID]
+                                       ,[Filename]
+                                       ,[Extension]
+                                       ,[Directory]
+                                       ,[Size]
+                                       ,[LastModifiedTime]
+                                       ,[MarkedAsRemoved]
+                                       ,[MD5Sum]
+                                   FROM [dbo].[Files]
+                                  WHERE [FileID] = @FileID";
+            
+            using IDbConnection connection = new SqlConnection(connectionString);
+            return connection.QuerySingle<File>(sql, new { FileID = fileID });
+        }
+
         public IEnumerable<File> GetFromPath(string path, bool recurse = true)
         {
             string sql = @"SELECT [FileID]
