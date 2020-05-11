@@ -27,7 +27,7 @@ namespace Dflat.Application.Services.JobServices
                     job.Errors += $"Error running job: {ex.GetType()}: {ex.Message}";
                 }
                 context.Post((o) => FinishWork(job, cancellationToken), null);
-            }, TaskCreationOptions.LongRunning);
+            });
 
             backgroundTask.Start();
 

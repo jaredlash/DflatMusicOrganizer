@@ -17,7 +17,7 @@ namespace Dflat.Application.Services.JobServices
         {
             this.fileRepository = fileRepository;
 
-            MaxConcurrentJobs = 10;
+            MaxConcurrentJobs = 20;
             AcceptedRequestTypes.Add(typeof(MD5Job));
         }
 
