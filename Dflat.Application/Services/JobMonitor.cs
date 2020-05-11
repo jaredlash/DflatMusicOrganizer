@@ -164,22 +164,28 @@ namespace Dflat.Application.Services
                     break;
 
                 case JobChangeEventArgs.JobChangeType.Started:
-                    RunningJobCount = jobRepository.GetRunningJobCount();
+                    RunningJobCount = GetRunningJobCountFromServices();
                     QueuedJobCount = jobRepository.GetQueuedJobCount();
                     break;
 
                 case JobChangeEventArgs.JobChangeType.Finished:
-                    RunningJobCount = jobRepository.GetRunningJobCount();
+                    RunningJobCount = GetRunningJobCountFromServices();
                     FinishedJobCount++;
                     break;
 
                 case JobChangeEventArgs.JobChangeType.Cancelled:
-                    RunningJobCount = jobRepository.GetRunningJobCount();
+                    RunningJobCount = GetRunningJobCountFromServices();
                     CancelledJobCount++;
                     break;
             }
 
             JobChanged?.Invoke(sender, e);
+        }
+
+
+        private int GetRunningJobCountFromServices()
+        {
+            return jobServices.Sum((i) => i.RunningJobCount);
         }
 
         #endregion
