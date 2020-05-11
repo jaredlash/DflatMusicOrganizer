@@ -9,7 +9,14 @@ namespace Dflat.Application.Repositories
     {
         File Get(int fileID);
 
-        IEnumerable<File> GetFromPath(string path, bool recurse = true);
+        /// <summary>
+        /// Returns all files from the specified path
+        /// </summary>
+        /// <param name="path">Path to search</param>
+        /// <param name="excludePaths">Any sub-directories to exclude from results. Only valid with recurse = true</param>
+        /// <param name="recurse">Whether to include files in sub-directories</param>
+        /// <returns></returns>
+        IEnumerable<File> GetFromPath(string path, IEnumerable<string> excludePaths = null, bool recurse = true);
         
         // Sets FileID on the added file
         void Add(File newFile);

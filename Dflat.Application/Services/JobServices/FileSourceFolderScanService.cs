@@ -85,7 +85,7 @@ namespace Dflat.Application.Services.JobServices
             }
 
 
-            job.Output = ProcessFoundFiles(job, fileSourceFolder.Path, result, cancellationToken);
+            job.Output = ProcessFoundFiles(job, fileSourceFolder.Path, excludeFolders, result, cancellationToken);
 
             if (result.ErrorLog.Count > 0)
                 job.Status = JobStatus.SuccessWithErrors;
@@ -109,14 +109,18 @@ namespace Dflat.Application.Services.JobServices
             base.FinishJob(job, cancellationToken); 
         }
 
-        private string ProcessFoundFiles(FileSourceFolderScanJob job, string path, FolderSearchServiceResult result, CancellationToken cancellationToken)
+        private string ProcessFoundFiles(FileSourceFolderScanJob job,
+                                         string path,
+                                         IEnumerable<string> excludeFolders,
+                                         FolderSearchServiceResult result,
+                                         CancellationToken cancellationToken)
         {
             StringBuilder output = new StringBuilder();
 
             try
             {
                 // Set up our collections to compare
-                var beforeSearch = fileRepository.GetFromPath(path);        // "before" collection
+                var beforeSearch = fileRepository.GetFromPath(path, excludeFolders);        // "before" collection
                 List<Models.File> foundFiles = new List<Models.File>();     // "after" collection
 
                 foreach (var fileResult in result.FoundFiles)

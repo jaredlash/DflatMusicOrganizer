@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 
 namespace Dflat.Data.Dapper.Repositories
@@ -59,7 +60,7 @@ namespace Dflat.Data.Dapper.Repositories
             return connection.QuerySingle<File>(sql, new { FileID = fileID });
         }
 
-        public IEnumerable<File> GetFromPath(string path, bool recurse = true)
+        public IEnumerable<File> GetFromPath(string path, IEnumerable<string> excludePaths = null, bool recurse = true)
         {
             string sql = @"SELECT [FileID]
                                  ,[Filename]
@@ -76,9 +77,19 @@ namespace Dflat.Data.Dapper.Repositories
             {
                 queryParams.Add("@Directory", EncodeForLike(path));
                 sql += " AND Directory LIKE @Directory + '%'";
+
+                int i = 0;
+                foreach(var excludePath in excludePaths)
+                {
+                    queryParams.Add($"@ExcludeDir{i}", EncodeForLike(excludePath));
+                    sql += $" AND Directory NOT LIKE @ExcludeDir{i} + '%'";
+                    i++;
+                }
             }
             else
             {
+                // Only search on specified directory
+                // Exclude paths are not valid unless search includes sub-directories
                 queryParams.Add("@Directory", path);
                 sql += " AND Directory = @Directory";
             }
