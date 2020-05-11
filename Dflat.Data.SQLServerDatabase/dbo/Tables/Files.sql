@@ -9,3 +9,7 @@
 	[MarkedAsRemoved] BIT NOT NULL DEFAULT(0),
 	[MD5Sum] NVARCHAR(32) NOT NULL
 )
+
+GO
+
+CREATE INDEX [IX_Files_MD5Sum] ON [dbo].[Files] ([MD5Sum])

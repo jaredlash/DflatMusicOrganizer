@@ -14,3 +14,15 @@
 	[JobID] ASC
 )
 )
+GO
+
+CREATE INDEX [IX_Jobs_JobType] ON [dbo].[Jobs] ([JobType])
+
+GO
+
+CREATE INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status])
+
+GO
+
+
+CREATE INDEX [IX_Jobs_CreationTime] ON [dbo].[Jobs] ([CreationTime])
