@@ -54,10 +54,12 @@ namespace Dflat.Data.Dapper.Repositories
             {
                 case FileSourceFolderScanJob _:
                     model.Add("@JobType", Application.Models.JobType.FileSourceFolderScanJob);
+                    model.Add("@FileID", null);
                     break;
 
                 case MD5Job _:
                     model.Add("@JobType", Application.Models.JobType.MD5Job);
+                    model.Add("@FileSourceFolderID", null);
                     break;
 
                 default:
@@ -294,10 +296,12 @@ namespace Dflat.Data.Dapper.Repositories
             {
                 case FileSourceFolderScanJob _:
                     model.Add("@JobType", Application.Models.JobType.FileSourceFolderScanJob);
+                    model.Add("@FileID", null);
                     break;
 
                 case MD5Job _:
                     model.Add("@JobType", Application.Models.JobType.MD5Job);
+                    model.Add("@FileSourceFolderID", null);
                     break;
 
                 default:
