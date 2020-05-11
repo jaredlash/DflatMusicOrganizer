@@ -17,6 +17,7 @@ namespace Dflat.Application.Services.JobServices
         private readonly IFolderSearchService folderScanner;
         private readonly IMapper mapper;
         private readonly IFileCollectionCompare comparer;
+        private readonly IJobService<MD5Job> md5Service;
         private readonly HashSet<string> validExtensions;
 
         public FileSourceFolderScanService(IFileSourceFolderRepository fileSourceFolderRepository,
@@ -24,6 +25,7 @@ namespace Dflat.Application.Services.JobServices
                                            IFolderSearchService folderScanner,
                                            IMapper mapper,
                                            IFileCollectionCompare comparer,
+                                           IJobService<MD5Job> md5Service,
                                            IJobRepository jobRepository,
                                            IBackgroundJobRunner<FileSourceFolderScanJob> jobRunner)
             : base(jobRepository, jobRunner)
@@ -34,6 +36,7 @@ namespace Dflat.Application.Services.JobServices
             this.folderScanner = folderScanner;
             this.mapper = mapper;
             this.comparer = comparer;
+            this.md5Service = md5Service;
             validExtensions = new HashSet<string>() { ".aiff", ".flac", ".m4a", ".mp2", ".mp3", ".ogg", ".wav", ".wma" };
 
 
@@ -82,7 +85,7 @@ namespace Dflat.Application.Services.JobServices
             }
 
 
-            job.Output = ProcessFoundFiles(fileSourceFolder.Path, result, cancellationToken);
+            job.Output = ProcessFoundFiles(job, fileSourceFolder.Path, result, cancellationToken);
 
             if (result.ErrorLog.Count > 0)
                 job.Status = JobStatus.SuccessWithErrors;
@@ -90,7 +93,23 @@ namespace Dflat.Application.Services.JobServices
                 job.Status = JobStatus.Success;
         }
 
-        private string ProcessFoundFiles(string path, FolderSearchServiceResult result, CancellationToken cancellationToken)
+        public override void FinishJob(FileSourceFolderScanJob job, CancellationToken cancellationToken)
+        {
+            //Queue a MD5 and Chromaprint requests
+            foreach (var file in job.AddedOrUpdatedFiles)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var fullFilePath = string.Join(Path.DirectorySeparatorChar, file.Directory, file.Filename);
+
+                //fileChromaprintService.SubmitJobRequest(new FileChromaprintJob { FileID = file.FileID, Description = "Chromaprint: " + fullFilePath });
+                md5Service.SubmitJobRequest(new MD5Job { FileID = file.FileID, Description = "MD5: " + fullFilePath });
+            }
+
+            base.FinishJob(job, cancellationToken); 
+        }
+
+        private string ProcessFoundFiles(FileSourceFolderScanJob job, string path, FolderSearchServiceResult result, CancellationToken cancellationToken)
         {
             StringBuilder output = new StringBuilder();
 
@@ -138,18 +157,10 @@ namespace Dflat.Application.Services.JobServices
                     fileRepository.Add(addedFile); // Sets the FileID of the added file
                 }
 
-                //Queue a MD5 and Chromaprint requests
                 foreach (var file in compareResult.Added.Concat(compareResult.Modified))
-                {
-                    var separator = new string(Path.DirectorySeparatorChar, 1);
-                    cancellationToken.ThrowIfCancellationRequested();
+                    job.AddedOrUpdatedFiles.Add(file);
 
-                    var fullFilePath = string.Join(separator, file.Directory, file.Filename);
-
-
-                    //fileChromaprintService.SubmitJobRequest(new FileChromaprintJob { FileID = file.FileID, Description = "Chromaprint: " + fullFilePath });
-                    //fileMD5Service.SubmitJobRequest(new FileMD5Job { FileID = fileID, Description = "MD5: " + fullFilePath });
-                }
+                
 
                 output.AppendLine("-----------------------------");
                 output.AppendLine($"Added: {compareResult.Added.Count} files");

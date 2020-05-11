@@ -14,13 +14,14 @@ namespace Dflat.Application.Services
         private readonly IJobRepository jobRepository;
         private readonly ICollection<IJobService> jobServices;
 
-        public JobMonitor(IJobRepository jobRepository, IJobService<FileSourceFolderScanJob> folderScanService)
+        public JobMonitor(IJobRepository jobRepository, IJobService<FileSourceFolderScanJob> folderScanService, IJobService<MD5Job> md5Service)
         {
             this.jobRepository = jobRepository;
 
             jobServices = new List<IJobService>
             {
-                folderScanService
+                folderScanService,
+                md5Service
             };
 
             // Register listeners

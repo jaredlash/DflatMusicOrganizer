@@ -73,11 +73,13 @@ namespace DflatCoreWPF
 
             container.RegisterSingleton<IWindowService, WindowService.WindowService>()
                 .RegisterSingleton<IJobService<FileSourceFolderScanJob>, FileSourceFolderScanService>()
+                .RegisterSingleton<IJobService<MD5Job>, MD5Service>()
                 .RegisterSingleton<JobMonitor>()
                 .RegisterType<IFolderChooserDialog, FolderChooserDialog>()
                 .RegisterType<IFolderSearchService, FolderSearchService>()
                 .RegisterType<IFileCollectionCompare, FileCollectionCompare>()
                 .RegisterType<IBackgroundJobRunner<FileSourceFolderScanJob>, BackgroundJobRunner<FileSourceFolderScanJob>>()
+                .RegisterType<IBackgroundJobRunner<MD5Job>, BackgroundJobRunner<MD5Job>>()
                 .RegisterType<ISystemIOWrapper, SystemIOWrapper>();
 
             container.RegisterInstance("connectionString", connectionString);
