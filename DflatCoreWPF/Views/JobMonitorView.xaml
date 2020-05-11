@@ -33,6 +33,7 @@
                     <MenuItem Header="All job types" Command="{Binding DisplayJobTypeCommand}"  CommandParameter="{x:Static models:JobType.None}" IsChecked="{Binding DisplayAllTypes, Mode=OneWay}"/>
                     <Separator />
                     <MenuItem Header="File Source Folder Scans" Command="{Binding DisplayJobTypeCommand}" CommandParameter="{x:Static models:JobType.FileSourceFolderScanJob}" IsChecked="{Binding DisplayFileSourceFolderScanJob, Mode=OneWay}"/>
+                    <MenuItem Header="MD5 Jobs" Command="{Binding DisplayJobTypeCommand}" CommandParameter="{x:Static models:JobType.MD5Job}" IsChecked="{Binding DisplayMD5Job, Mode=OneWay}"/>
                 </MenuItem>
                 <MenuItem Header="Show only status">
                     <MenuItem Header="All statuses"           Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.None}" IsChecked="{Binding DisplayAllStatuses, Mode=OneWay}" />

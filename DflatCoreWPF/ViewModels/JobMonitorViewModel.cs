@@ -123,6 +123,7 @@ namespace DflatCoreWPF.ViewModels
 
         public bool DisplayAllTypes { get =>  displayedJobType == JobType.None; }
         public bool DisplayFileSourceFolderScanJob { get => displayedJobType == JobType.FileSourceFolderScanJob; }
+        public bool DisplayMD5Job { get => displayedJobType == JobType.MD5Job; }
 
 
         public bool DisplayAllStatuses { get => displayedJobStatus == JobStatus.None; }
@@ -177,6 +178,7 @@ namespace DflatCoreWPF.ViewModels
 
             RaisePropertyChanged(() => DisplayAllTypes);
             RaisePropertyChanged(() => DisplayFileSourceFolderScanJob);
+            RaisePropertyChanged(() => DisplayMD5Job);
         }
 
         private void DisplayJobStatus(JobStatus status)
