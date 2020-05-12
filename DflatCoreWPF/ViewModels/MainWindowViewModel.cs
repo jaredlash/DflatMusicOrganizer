@@ -107,15 +107,7 @@ namespace DflatCoreWPF.ViewModels
         {
             if (e.PropertyName == "QueuedJobCount" || e.PropertyName == "RunningJobCount" || e.PropertyName == "FinishedJobCount")
             {
-                var status = new List<string>();
-                if (jobMonitor.QueuedJobCount > 0)
-                    status.Add($"{jobMonitor.QueuedJobCount} queued");
-                if (jobMonitor.RunningJobCount > 0)
-                    status.Add($"{jobMonitor.RunningJobCount} running");
-                if (jobMonitor.FinishedJobCount > 0)
-                    status.Add($"{jobMonitor.FinishedJobCount} finished");
-
-                JobStatus = "Jobs: " + string.Join(", ", status);
+                JobStatus = $"Jobs: {jobMonitor.QueuedJobCount} queued, {jobMonitor.RunningJobCount} running, {jobMonitor.FinishedJobCount} finished";
             }
         }
 
