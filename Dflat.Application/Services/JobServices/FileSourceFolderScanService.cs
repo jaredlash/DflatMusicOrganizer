@@ -96,7 +96,7 @@ namespace Dflat.Application.Services.JobServices
         public override void FinishJob(FileSourceFolderScanJob job, CancellationToken cancellationToken)
         {
             //Queue a MD5 and Chromaprint requests
-            foreach (var file in job.AddedOrUpdatedFiles)
+            foreach (var file in job.FilesNeedingMD5s)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -121,7 +121,12 @@ namespace Dflat.Application.Services.JobServices
             {
                 // Set up our collections to compare
                 var beforeSearch = fileRepository.GetFromPath(path, excludeFolders);        // "before" collection
-                List<Models.File> foundFiles = new List<Models.File>();     // "after" collection
+                
+                // Default to assuming the found files are the same size as the before files set, or 1000, whichever is greater.
+                int foundFilesInitialCapacity = beforeSearch.Count();
+                foundFilesInitialCapacity = (foundFilesInitialCapacity > 1000) ? foundFilesInitialCapacity : 1000;
+
+                List<Models.File> foundFiles = new List<Models.File>(foundFilesInitialCapacity);     // "after" collection
 
                 foreach (var fileResult in result.FoundFiles)
                 {
@@ -161,8 +166,14 @@ namespace Dflat.Application.Services.JobServices
                     fileRepository.Add(addedFile); // Sets the FileID of the added file
                 }
 
-                foreach (var file in compareResult.Added.Concat(compareResult.Modified))
-                    job.AddedOrUpdatedFiles.Add(file);
+                // Determine which files need MD5s
+                foreach (var file in fileRepository.GetFromPath(path, excludeFolders))
+                {
+                    if (string.IsNullOrEmpty(file.MD5Sum))
+                    {
+                        job.FilesNeedingMD5s.Add(file);
+                    }
+                }
 
                 
 

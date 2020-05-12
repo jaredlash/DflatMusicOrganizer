@@ -10,7 +10,7 @@ namespace Dflat.Application.Models
     {
         public int FileSourceFolderID { get; set; }
 
-        public IList<File> AddedOrUpdatedFiles { get; set; } = new List<File>();
+        public IList<File> FilesNeedingMD5s { get; set; } = new List<File>();
 
         public FileSourceFolderScanJob()
         {
