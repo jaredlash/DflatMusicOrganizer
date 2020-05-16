@@ -47,12 +47,12 @@ namespace DflatCoreWPF.ViewModels
         }
 
 
-        private void Initialize()
+        private async Task Initialize()
         {
             displayedJobType = JobType.None;
             displayedJobStatus = JobStatus.None;
 
-            LoadJobs();
+            await LoadJobs();
         }
 
         public override void OnClose()
@@ -64,13 +64,13 @@ namespace DflatCoreWPF.ViewModels
 
         #region Commands
 
-        public ICommand InitializeCommand { get => new RelayCommand(() => Initialize()); }
+        public ICommand InitializeCommand { get => new RelayCommand(async () => await Initialize()); }
 
         public ICommand ViewJobDetailsCommand { get => new RelayCommand(() => ViewJobDetails()); }
 
-        public ICommand DisplayJobTypeCommand { get => new RelayCommand<JobType>((jobType) => DisplayJobType(jobType)); }
+        public ICommand DisplayJobTypeCommand { get => new RelayCommand<JobType>(async (jobType) => await DisplayJobType(jobType)); }
 
-        public ICommand DisplayJobStatusCommand { get => new RelayCommand<JobStatus>((jobStatus) => DisplayJobStatus(jobStatus)); }
+        public ICommand DisplayJobStatusCommand { get => new RelayCommand<JobStatus>(async (jobStatus) => await DisplayJobStatus(jobStatus)); }
 
         public ICommand RestartSelectedJobsCommand { get => new RelayCommand(() => RestartSelectedJobs()); }
         public ICommand CancelSelectedJobsCommand { get => new RelayCommand(() => CancelSelectedJobs()); }
@@ -140,13 +140,13 @@ namespace DflatCoreWPF.ViewModels
         #endregion
 
         #region Private methods
-        private void LoadJobs()
+        private async Task LoadJobs()
         {
             JobInfoList.Clear();
 
             try
             {
-                IEnumerable<JobInfo> jobList = jobRepository.GetJobInfoByCriteria(displayedJobType, displayedJobStatus);
+                IEnumerable<JobInfo> jobList = await jobRepository.GetJobInfoByCriteriaAsync(displayedJobType, displayedJobStatus);
 
                 foreach (JobInfo jobInfo in jobList)
                     JobInfoList.Add(jobInfo);
@@ -171,20 +171,20 @@ namespace DflatCoreWPF.ViewModels
  
 
 
-        private void DisplayJobType(JobType jobType)
+        private async Task DisplayJobType(JobType jobType)
         {
             displayedJobType = jobType;
-            LoadJobs();
+            await LoadJobs();
 
             RaisePropertyChanged(() => DisplayAllTypes);
             RaisePropertyChanged(() => DisplayFileSourceFolderScanJob);
             RaisePropertyChanged(() => DisplayMD5Job);
         }
 
-        private void DisplayJobStatus(JobStatus status)
+        private async Task DisplayJobStatus(JobStatus status)
         {
             displayedJobStatus = status;
-            LoadJobs();
+            await LoadJobs();
 
             RaisePropertyChanged(() => DisplayAllStatuses);
             RaisePropertyChanged(() => DisplayQueuedJobs);

@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Dflat.Data.Dapper.Repositories
 {
@@ -172,6 +173,43 @@ namespace Dflat.Data.Dapper.Repositories
             using IDbConnection conn = new SqlConnection(connectionString);
             return conn.Query<JobInfo>(sql, (object)whereCriteria);
         }
+
+
+        public async Task<IEnumerable<JobInfo>> GetJobInfoByCriteriaAsync(JobType jobType = JobType.None, JobStatus status = JobStatus.None)
+        {
+            string sql = @"SELECT [JobID]
+                                 ,[CreationTime]
+                                 ,[Description]
+                                 ,[IgnoreCache]
+                                 ,[Status]
+                                 ,[JobType]
+                             FROM [dbo].[Jobs]";
+
+            var whereCriteria = new DynamicParameters();
+            List<string> whereClauses = new List<string>();
+
+            if (jobType != JobType.None)
+            {
+                whereClauses.Add("JobType = @JobType");
+                whereCriteria.Add("@JobType", (int)jobType);
+            }
+
+            if (status != JobStatus.None)
+            {
+                whereClauses.Add("Status = @Status");
+                whereCriteria.Add("@Status", (int)status);
+            }
+
+            if (whereClauses.Count > 0)
+            {
+                sql += " WHERE " + string.Join(" AND ", whereClauses);
+            }
+            sql += " ORDER BY CreationTime DESC";
+
+            using IDbConnection conn = new SqlConnection(connectionString);
+            return await conn.QueryAsync<JobInfo>(sql, (object)whereCriteria);
+        }
+
 
         public JobType GetNextAvailable<JobType>() where JobType : Job
         {

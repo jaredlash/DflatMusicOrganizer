@@ -27,6 +27,8 @@ namespace Dflat.Application.Repositories
 
         IEnumerable<JobInfo> GetJobInfoByCriteria(JobType jobType = JobType.None, JobStatus status = JobStatus.None);
 
+        Task<IEnumerable<JobInfo>> GetJobInfoByCriteriaAsync(JobType jobType = JobType.None, JobStatus status = JobStatus.None);
+
         JobInfo GetJobInfo(int jobID);
 
         int GetQueuedJobCount();
