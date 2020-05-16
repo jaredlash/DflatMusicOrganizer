@@ -18,7 +18,7 @@
         <s:Boolean x:Key="False">False</s:Boolean>
     </Window.Resources>
     <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
+        <i:EventTrigger EventName="ContentRendered">
             <i:InvokeCommandAction Command="{Binding InitializeCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
