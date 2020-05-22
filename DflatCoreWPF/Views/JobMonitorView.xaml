@@ -16,6 +16,20 @@
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
         <s:Boolean x:Key="True">True</s:Boolean>
         <s:Boolean x:Key="False">False</s:Boolean>
+        <ControlTemplate x:Key="HyperlinkLikeButtonTemplate" TargetType="{x:Type Button}">
+            <TextBlock x:Name="innerText" Foreground="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}" Cursor="Hand" >
+                <ContentPresenter />
+            </TextBlock>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsMouseOver" Value="true">
+                    <Setter TargetName="innerText" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                    <Setter TargetName="innerText" Property="TextDecorations" Value="Underline" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="HyperlinkLikeButton" TargetType="{x:Type Button}">
+            <Setter Property="Template" Value="{StaticResource HyperlinkLikeButtonTemplate}" />
+        </Style>
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="ContentRendered">
@@ -24,7 +38,9 @@
     </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
+            <!-- Menu -->
             <RowDefinition Height="Auto" />
+            <!-- Content -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Menu>
@@ -61,6 +77,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <DataGrid Grid.Row="0"
@@ -109,8 +126,47 @@
                     </DataGrid.Columns>
 
                 </DataGrid>
+                
+                <!-- Side panel -->
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" MinWidth="100" />
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0 10">
+                    <TextBlock Margin="10 0 0 0" Grid.Row="0" Grid.Column="0" Text="Jobs" FontWeight="Bold" />
+                    <Separator Margin="10 0 10 5" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+                    <TextBlock Margin="20 0 0 5"  Grid.Row="2" Grid.Column="0" Text="Queued:" />
+                    <TextBlock Margin="20 0 0 5"  Grid.Row="3" Grid.Column="0" Text="Ready:" />
+                    <TextBlock Margin="20 0 0 5"  Grid.Row="4" Grid.Column="0" Text="Running:" />
+                    <TextBlock Margin="20 0 0 0"  Grid.Row="5" Grid.Column="0" Text="Successful:" />
+                    <TextBlock Margin="20 0 0 5"  Grid.Row="6" Grid.Column="0" Text="(w/ errors):" />
+                    <TextBlock Margin="20 0 0 5"  Grid.Row="7" Grid.Column="0" Text="Ended in error:" />
+                    <TextBlock Margin="20 0 0 5"  Grid.Row="8" Grid.Column="0" Text="Cancelled:" />
+
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="0" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.None}" />
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="2" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Queued}" />
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="3" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Ready}"  />
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="4" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Running}"  />
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="5" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Success}"  />
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="6" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.SuccessWithErrors}" />
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="7" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Error}"  />
+                    <Button Style="{StaticResource HyperlinkLikeButton}" Margin="20 0 10 0"  Grid.Row="8" Grid.Column="1" Content="0" Command="{Binding DisplayJobStatusCommand}" CommandParameter="{x:Static models:JobStatus.Cancelled}"  />
+                </Grid>
+
+                <!-- Bottom row buttons -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 10">
                     <Button Content="Clear Successful Jobs" />
                 </StackPanel>
             </Grid>
