@@ -1,0 +1,36 @@
+﻿<Window x:Class="DflatCoreWPF.Views.AlertDialogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DflatCoreWPF.Views"
+        mc:Ignorable="d"
+        d:DataContext="dialog:AlertDialogViewModel"
+        Title="{Binding Title}" Height="200" Width="400" ResizeMode="CanResize" WindowStyle="ToolWindow">
+    <Border Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding Message}"/>
+            <Separator Grid.Row="1"/>
+            <!-- Status row and OK buttons -->
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="60" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Ok button -->
+                <Button Grid.Column="2" Margin="5 10 0 0" Command="{Binding OkayCommand}" Content="OK" />
+            </Grid>
+
+        </Grid>
+
+
+    </Border>
+</Window>

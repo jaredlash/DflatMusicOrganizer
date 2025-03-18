@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="dae9f82a-c7a6-4897-b4ee-7fe59e0bb1db" ChangeDateTime="05/09/2020 01:17:13">
+    <Property Name="ElementName" Value="[dbo].[FileSourceFolders].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FileSourceFolders]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FilesSourceFolderID" />
+  </Operation>
+</Operations>

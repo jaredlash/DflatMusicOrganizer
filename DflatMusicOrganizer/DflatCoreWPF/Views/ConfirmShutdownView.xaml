@@ -1,0 +1,57 @@
+﻿<Window x:Class="DflatCoreWPF.Views.ConfirmShutdownView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DflatCoreWPF.Views"
+        mc:Ignorable="d"
+        d:DataContext="dialog:ConfirmShutdownViewModel"
+        Title="{Binding Title, Mode=OneWay}" Height="350" Width="700" ResizeMode="NoResize" WindowStyle="ToolWindow">
+    <Border Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- In progress label -->
+                <RowDefinition Height="Auto" />
+                <!-- Separator -->
+                <RowDefinition Height="Auto" />
+                <!-- Jobs Description -->
+                <RowDefinition Height="*" />
+                <!-- Status message -->
+                <RowDefinition Height="Auto" />
+                <!-- Separator -->
+                <RowDefinition Height="Auto" />
+                <!-- Buttons -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" FontSize="20" Text="{Binding Heading, Mode=OneWay}" />
+            <Separator Grid.Row="1" />
+            <TextBlock Grid.Row="2" FontSize="16" Padding="20 0 0 0" TextWrapping="Wrap" Text="{Binding JobsDescription, Mode=OneWay}"/>
+            <TextBlock Grid.Row="3" Margin="0 20" Text="{Binding Status, Mode=OneWay}" />
+            <Separator Grid.Row="4"/>
+            <!-- Button row -->
+
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="190" />
+                    <ColumnDefinition Width="190" />
+                </Grid.ColumnDefinitions>
+
+                <!-- buttons -->
+                <Button Grid.Column="0" Margin="0 10 0 0"
+                        Command="{Binding ContinueRunningCommand}"
+                        IsEnabled="{Binding ButtonsEnabled, Mode=OneWay}"
+                        Content="Continue Running" />
+                <Button Grid.Column="2" Margin="0 10 10 0"
+                        Command="{Binding CancelRunningCommand}"
+                        IsEnabled="{Binding ButtonsEnabled, Mode=OneWay}"
+                        Content="Cancel In Progress Jobs and Exit" />
+                <Button Grid.Column="3" Margin="0 10 0 0"
+                        Command="{Binding FinishCommand}"
+                        IsEnabled="{Binding ButtonsEnabled, Mode=OneWay}"
+                        Content="Finish Running Jobs and Exit" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

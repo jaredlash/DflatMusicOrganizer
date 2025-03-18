@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DflatFileSourceScanner": {
+      "commandName": "Project",
+      "commandLineArgs": "Z:\\ Z:\\audiobooks Z:\\from_tim Z:\\lectures Z:\\videos"
+    }
+  }
+}
