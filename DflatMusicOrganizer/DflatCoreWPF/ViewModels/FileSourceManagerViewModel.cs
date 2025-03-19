@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Dflat.Application.Models;
+﻿using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using Dflat.Application.Services.JobServices;
 using DflatCoreWPF.WindowService;
@@ -8,10 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Xml;
 
 namespace DflatCoreWPF.ViewModels
 {
@@ -23,7 +20,6 @@ namespace DflatCoreWPF.ViewModels
         private bool enableOverlay;
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
         private readonly IJobService<FileSourceFolderScanJob> fileSourceFolderScanService;
-        private readonly IMapper mapper;
         private readonly IWindowService windowService;
         private readonly ConfirmDialogViewModel confirmDialogViewModel;
         private readonly AlertDialogViewModel alertDialogViewModel;
@@ -39,7 +35,6 @@ namespace DflatCoreWPF.ViewModels
 
         public FileSourceManagerViewModel(IFileSourceFolderRepository fileSourceFolderRepository,
                                           IJobService<FileSourceFolderScanJob> fileSourceFolderScanService,
-                                          IMapper mapper,
                                           IWindowService windowService,
                                           ConfirmDialogViewModel confirmDialogViewModel,
                                           AlertDialogViewModel alertDialogViewModel,
@@ -50,7 +45,6 @@ namespace DflatCoreWPF.ViewModels
             this.changedFoldersToScan = new HashSet<FileSourceFolder>();
             this.fileSourceFolderRepository = fileSourceFolderRepository;
             this.fileSourceFolderScanService = fileSourceFolderScanService;
-            this.mapper = mapper;
             this.windowService = windowService;
             this.confirmDialogViewModel = confirmDialogViewModel;
             this.alertDialogViewModel = alertDialogViewModel;
@@ -181,12 +175,11 @@ namespace DflatCoreWPF.ViewModels
         {
             var currentFolder = new FileSourceFolder();
 
-            mapper.Map<FileSourceFolder, FileSourceFolderEditorViewModel>(currentFolder, sourceFolderEditorViewModel);
-            sourceFolderEditorViewModel.IsChanged = currentFolder.IsChanged;
+            sourceFolderEditorViewModel.UseFileSourceFolder(currentFolder);
             bool? acceptChanges = windowService.ShowDialog(sourceFolderEditorViewModel);
             if (acceptChanges == true)
             {
-                mapper.Map<FileSourceFolderEditorViewModel, FileSourceFolder>(sourceFolderEditorViewModel, currentFolder);
+                currentFolder.SetFromViewModel(sourceFolderEditorViewModel);
                 FileSourceFolders.Add(currentFolder);
             }
             RaisePropertyChanged(() => HasChanges);
@@ -200,12 +193,11 @@ namespace DflatCoreWPF.ViewModels
         {
             var currentFolder = SelectedFileSourceFolder;
 
-            mapper.Map<FileSourceFolder, FileSourceFolderEditorViewModel>(currentFolder, sourceFolderEditorViewModel);
-            sourceFolderEditorViewModel.IsChanged = currentFolder.IsChanged;
+            sourceFolderEditorViewModel.UseFileSourceFolder(currentFolder);
             bool? acceptChanges = windowService.ShowDialog(sourceFolderEditorViewModel);
             if (acceptChanges == true)
             {
-                mapper.Map<FileSourceFolderEditorViewModel, FileSourceFolder>(sourceFolderEditorViewModel, currentFolder);
+                currentFolder.SetFromViewModel(sourceFolderEditorViewModel);
             }
             RaisePropertyChanged(() => HasChanges);
             RaisePropertyChanged(() => CanSave);
