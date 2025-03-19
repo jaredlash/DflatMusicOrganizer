@@ -22,7 +22,8 @@ namespace Dflat.Data.Dapper.Repositories
         public void Add(File newFile)
         {
             const string sql = @"INSERT INTO [dbo].[Files]
-                                            ([Filename]
+                                            ([FileID]
+                                            ,[Filename]
                                             ,[Extension]
                                             ,[Directory]
                                             ,[Size]
@@ -30,20 +31,20 @@ namespace Dflat.Data.Dapper.Repositories
                                             ,[MarkedAsRemoved]
                                             ,[MD5Sum])
                                       VALUES
-                                            (@Filename
+                                            (@FileID
+                                            ,@Filename
                                             ,@Extension
                                             ,@Directory
                                             ,@Size
                                             ,@LastModifiedTime
                                             ,0
-                                            ,@MD5Sum);
-                                 SELECT CAST(SCOPE_IDENTITY() as int);";
+                                            ,@MD5Sum);";
 
             using IDbConnection connection = new SqlConnection(connectionString);
-            newFile.FileID = connection.QuerySingle<int>(sql, newFile);
+            connection.Execute(sql, newFile);
         }
 
-        public File Get(int fileID)
+        public File Get(Guid fileID)
         {
             const string sql = @"SELECT [FileID]
                                        ,[Filename]
@@ -98,7 +99,7 @@ namespace Dflat.Data.Dapper.Repositories
             return connection.Query<File>(sql, queryParams);
         }
 
-        public void MarkRemoved(int fileID)
+        public void MarkRemoved(Guid fileID)
         {
             const string sql = @"UPDATE [dbo].[Files]
                                     SET [MarkedAsRemoved] = 1
@@ -128,7 +129,7 @@ namespace Dflat.Data.Dapper.Repositories
         }
 
 
-        public void UpdateMD5(int fileID, string md5)
+        public void UpdateMD5(Guid fileID, string md5)
         {
             const string sql = @"UPDATE [dbo].[Files]
                                     SET [MD5Sum] = @MD5Sum

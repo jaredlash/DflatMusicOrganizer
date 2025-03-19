@@ -6,7 +6,7 @@ namespace Dflat.Application.Models
 {
     public class MD5Job : Job
     {
-        public int FileID { get; set; }
+        public Guid FileID { get; set; }
 
         public override bool SameRequestAs(Job otherJob)
         {

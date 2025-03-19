@@ -8,7 +8,7 @@
 	[Errors] [nvarchar](max) NOT NULL,
 	[JobType] [int] NOT NULL,
 	[FileSourceFolderID] [int] NULL,
-    [FileID] INT NULL, 
+    [FileID] UNIQUEIDENTIFIER NULL, 
     CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED 
 (
 	[JobID] ASC

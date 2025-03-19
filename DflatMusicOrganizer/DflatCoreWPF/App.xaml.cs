@@ -10,6 +10,7 @@ using DflatCoreWPF.ViewModels;
 using DflatCoreWPF.Views;
 using DflatCoreWPF.WindowService;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Configuration;
 using System.IO;
 using System.Windows;
@@ -51,7 +52,7 @@ namespace DflatCoreWPF
                     .DisableCtorValidation();
 
                 cfg.CreateMap<FileResult, Dflat.Application.Models.File>()
-                    .ForMember(dest => dest.FileID, opt => opt.Ignore())
+                    .ForMember(dest => dest.FileID, opt => opt.MapFrom((src) => Guid.Empty))
                     .ForMember(dest => dest.MD5Sum, opt => opt.MapFrom((src) => string.Empty));
 
             });
