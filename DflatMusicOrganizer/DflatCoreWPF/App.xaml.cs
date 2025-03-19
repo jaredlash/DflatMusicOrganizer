@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Dflat.Application.Models;
+﻿using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using Dflat.Application.Services;
 using Dflat.Application.Services.JobServices;
@@ -11,7 +10,6 @@ using DflatCoreWPF.Views;
 using DflatCoreWPF.WindowService;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Windows;
 using Unity;
@@ -43,34 +41,13 @@ namespace DflatCoreWPF
 
         private void Configure()
         {
-            var automapconfig = new MapperConfiguration(cfg =>
-            {
-
-                cfg.CreateMap<Dflat.Application.Models.FileSourceFolder, FileSourceFolderEditorViewModel>()
-                    .ForMember(dest => dest.SelectedExcludePath, opt => opt.Ignore())
-                    .ReverseMap()
-                    .DisableCtorValidation();
-
-                cfg.CreateMap<FileResult, Dflat.Application.Models.File>()
-                    .ForMember(dest => dest.FileID, opt => opt.MapFrom((src) => Guid.Empty))
-                    .ForMember(dest => dest.MD5Sum, opt => opt.MapFrom((src) => string.Empty));
-
-            });
-
-            //automapconfig.AssertConfigurationIsValid();
-
-
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
             var config = builder.Build();
 
-            //string connectionString = config.GetConnectionString("DflatMusicOrganizerDB");
             string connectionString = config.GetConnectionString("DflatDB");
 
-
-            var mapper = automapconfig.CreateMapper();
-            container.RegisterInstance(mapper);
 
             container.RegisterSingleton<IWindowService, WindowService.WindowService>()
                 .RegisterSingleton<IJobService<FileSourceFolderScanJob>, FileSourceFolderScanService>()

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Dflat.Application.Models;
+﻿using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ namespace Dflat.Application.Services.JobServices
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
         private readonly IFileRepository fileRepository;
         private readonly IFolderSearchService folderScanner;
-        private readonly IMapper mapper;
         private readonly IFileCollectionCompare comparer;
         private readonly IJobService<MD5Job> md5Service;
         private readonly HashSet<string> validExtensions;
@@ -23,7 +21,6 @@ namespace Dflat.Application.Services.JobServices
         public FileSourceFolderScanService(IFileSourceFolderRepository fileSourceFolderRepository,
                                            IFileRepository fileRepository,
                                            IFolderSearchService folderScanner,
-                                           IMapper mapper,
                                            IFileCollectionCompare comparer,
                                            IJobService<MD5Job> md5Service,
                                            IJobRepository jobRepository,
@@ -34,7 +31,6 @@ namespace Dflat.Application.Services.JobServices
             this.fileSourceFolderRepository = fileSourceFolderRepository;
             this.fileRepository = fileRepository;
             this.folderScanner = folderScanner;
-            this.mapper = mapper;
             this.comparer = comparer;
             this.md5Service = md5Service;
             validExtensions = new HashSet<string>() { ".aiff", ".flac", ".m4a", ".mp2", ".mp3", ".ogg", ".wav", ".wma" };
@@ -130,8 +126,7 @@ namespace Dflat.Application.Services.JobServices
 
                 foreach (var fileResult in result.FoundFiles)
                 {
-                    Models.File newFile = mapper.Map<Models.File>(fileResult);
-                    newFile.FileID = Guid.NewGuid();
+                    Models.File newFile = fileResult.ToNewFile();
 
                     foundFiles.Add(newFile);
                 }

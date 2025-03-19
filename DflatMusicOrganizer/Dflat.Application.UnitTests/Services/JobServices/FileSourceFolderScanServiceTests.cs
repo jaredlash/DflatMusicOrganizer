@@ -1,10 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Dflat.Application.Services.JobServices;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Dflat.Application.Repositories;
-using AutoMapper;
 using Dflat.Application.Models;
 using Moq;
 using System.Text.RegularExpressions;
@@ -27,21 +24,6 @@ namespace Dflat.Application.Services.JobServices.Tests
         private readonly Mock<IBackgroundJobRunner<FileSourceFolderScanJob>> _jobRunnerMock = new Mock<IBackgroundJobRunner<FileSourceFolderScanJob>>();
         #endregion
 
-        #region Constructor-set private fields
-        private readonly IMapper _mapper;
-        #endregion
-
-        public FileSourceFolderScanServiceTests()
-        {
-            var automapconfig = new MapperConfiguration(cfg =>
-            {
-
-                cfg.CreateMap<FileResult, Models.File>()
-                    .ForMember(dest => dest.FileID, opt => opt.MapFrom((src) => Guid.Empty))
-                    .ForMember(dest => dest.MD5Sum, opt => opt.MapFrom((src) => string.Empty));
-            });
-            _mapper = automapconfig.CreateMapper();
-        }
 
         [TestInitialize]
         public void Initialize()
@@ -59,7 +41,7 @@ namespace Dflat.Application.Services.JobServices.Tests
             var jobRepository = _jobRepositoryMock.Object;
             var jobRunner = _jobRunnerMock.Object;
 
-            var service = new FileSourceFolderScanService(fileSourceFolderRepository, fileRepository, folderScanner, _mapper, comparer, md5service, jobRepository, jobRunner)
+            var service = new FileSourceFolderScanService(fileSourceFolderRepository, fileRepository, folderScanner, comparer, md5service, jobRepository, jobRunner)
             {
                 EnableRunningJobs = true
             };

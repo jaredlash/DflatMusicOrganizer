@@ -19,7 +19,17 @@ namespace DflatCoreWPF.ViewModels
             this.folderChooserDialog = folderChooserDialog;
         }
 
-
+        public void UseFileSourceFolder(FileSourceFolder fileSourceFolder)
+        {
+            FileSourceFolderID = fileSourceFolder.FileSourceFolderID;
+            Name = fileSourceFolder.Name;
+            Path = fileSourceFolder.Path;
+            IsTemporaryMedia = fileSourceFolder.IsTemporaryMedia;
+            LastScanStart = fileSourceFolder.LastScanStart;
+            IsChanged = fileSourceFolder.IsChanged;
+            // Copy exclude paths
+            ExcludePaths = new ObservableCollection<ExcludePath>(fileSourceFolder.ExcludePaths);
+        }
 
         #region Bindable properties
 
