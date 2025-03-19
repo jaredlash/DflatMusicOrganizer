@@ -1,0 +1,52 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="Windows Debug" />
+    <BuildType Name="Windows Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Databases/">
+    <Project Path="Dflat.Data.Dapper/Dflat.Data.Dapper.csproj">
+      <BuildType Solution="Windows Debug|*" Project="Debug" />
+      <BuildType Solution="Windows Release|*" Project="Release" />
+    </Project>
+    <Project Path="Dflat.Data.SQLServerDatabase/Dflat.Data.SQLServerDatabase.sqlproj" Id="cdd9be9b-baaa-4436-94ce-f0b4edba98f9">
+      <BuildType Solution="Windows Debug|*" Project="Debug" />
+      <BuildType Solution="Windows Release|*" Project="Release" />
+      <Platform Project="AnyCPU" />
+      <Build />
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Organizer/">
+    <Project Path="Dflat.Application/Dflat.Application.csproj">
+      <BuildType Solution="Windows Debug|*" Project="Debug" />
+      <BuildType Solution="Windows Release|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Unit Tests/">
+    <Project Path="Dflat.Application.UnitTests/Dflat.Application.UnitTests.csproj">
+      <BuildType Solution="Windows Debug|*" Project="Debug" />
+      <BuildType Solution="Windows Release|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Utilities/">
+    <Project Path="DflatFileSourceScanner/DflatFileSourceScanner.csproj">
+      <BuildType Solution="Windows Debug|*" Project="Debug" />
+      <BuildType Solution="Windows Release|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/WPFUI/">
+    <Project Path="DflatCoreWPF/DflatCoreWPF.csproj">
+      <BuildType Solution="Windows Debug|*" Project="Debug" />
+      <BuildType Solution="Windows Release|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Properties Name="MonoDevelopProperties">
+    <Property Name="StartupItem" Value="DflatFileSourceScanner\DflatFileSourceScanner.csproj" />
+  </Properties>
+</Solution>

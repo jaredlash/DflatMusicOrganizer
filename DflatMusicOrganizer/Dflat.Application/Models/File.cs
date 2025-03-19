@@ -16,8 +16,9 @@ namespace Dflat.Application.Models
             MD5Sum = string.Empty;
         }
 
-        public File(string filename, string extension, string directory, long size, DateTime lastModifiedTime)
+        public File(Guid id, string filename, string extension, string directory, long size, DateTime lastModifiedTime)
         {
+            FileID = id;
             Filename = filename;
             Extension = extension;
             Directory = directory;
@@ -26,7 +27,7 @@ namespace Dflat.Application.Models
         }
 
 
-        public int FileID { get; set; }
+        public Guid FileID { get; set; }
         public string Filename { get; set; }
         public string Extension { get; set; }
         public string Directory { get; set; }

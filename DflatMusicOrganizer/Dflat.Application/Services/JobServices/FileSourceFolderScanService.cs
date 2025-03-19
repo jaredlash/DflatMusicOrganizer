@@ -131,6 +131,7 @@ namespace Dflat.Application.Services.JobServices
                 foreach (var fileResult in result.FoundFiles)
                 {
                     Models.File newFile = mapper.Map<Models.File>(fileResult);
+                    newFile.FileID = Guid.NewGuid();
 
                     foundFiles.Add(newFile);
                 }
@@ -163,7 +164,7 @@ namespace Dflat.Application.Services.JobServices
                     cancellationToken.ThrowIfCancellationRequested();
 
                     output.AppendLine($"Added: {addedFile.Directory}{Path.DirectorySeparatorChar}{addedFile.Filename}");
-                    fileRepository.Add(addedFile); // Sets the FileID of the added file
+                    fileRepository.Add(addedFile);
                 }
 
                 // Determine which files need MD5s

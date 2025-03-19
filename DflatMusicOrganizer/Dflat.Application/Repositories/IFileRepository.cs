@@ -7,7 +7,7 @@ namespace Dflat.Application.Repositories
 {
     public interface IFileRepository
     {
-        File Get(int fileID);
+        File Get(Guid fileID);
 
         /// <summary>
         /// Returns all files from the specified path
@@ -22,8 +22,8 @@ namespace Dflat.Application.Repositories
         void Add(File newFile);
         void Update(File modifiedFile);
 
-        void UpdateMD5(int fileID, string md5);
+        void UpdateMD5(Guid fileID, string md5);
 
-        void MarkRemoved(int fileID);
+        void MarkRemoved(Guid fileID);
     }
 }
