@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dflat.Application.Models;
 using System.Linq;
 using System.Text;
 
@@ -9,69 +10,91 @@ namespace Dflat.Application.Services
     {
         public class CompareResult
         {
-            //A collection of files that are new(the remaining files in the Staged files collection)
-            public List<Models.File> Added { get; set; } = new List<Models.File>();
+            // A collection of files that are new
+            public List<File> Added { get; set; } = [];
 
-            //A collection of files that have been removed(the Removed files collection)
-            public List<Models.File> Removed { get; set; } = new List<Models.File>();
+            // A collection of files that have been removed
+            public List<File> Removed { get; set; } = [];
 
-            //A collection of files that have been replaced/modified(the Modified files collection)
-            public List<Models.File> Modified { get; set; } = new List<Models.File>();
+            // A collection of files that have been replaced/modified
+            public List<File> Modified { get; set; } = [];
 
         }
 
-        // TODO: This could stand to have some optimization on looking up and removing values from the "after" collection
-        // First make it work, then make it faster.
-        public CompareResult Compare(IEnumerable<Models.File> beforeFiles, IEnumerable<Models.File> after)
+        public CompareResult Compare(IEnumerable<File> beforeFiles, IEnumerable<File> afterFiles)
         {
             CompareResult result = new CompareResult();
 
-            // Copy after collection it can be modified without modifying original
-            var afterFiles = new List<Models.File>(after);
 
-            var modifiedOrRemoved = new List<Models.File>();
-
-            // Find unchanged files and remove them from consideration
-            foreach (var beforeFile in beforeFiles)
+            if (!beforeFiles.Any() && !afterFiles.Any())
             {
-                int afterFileIndex = afterFiles.FindIndex(f => f.Filename == beforeFile.Filename
-                    && f.Directory == beforeFile.Directory
-                    && f.Size == beforeFile.Size
-                    && f.LastModifiedTime == beforeFile.LastModifiedTime);
-
-                // If found, remove from further consideration
-                if (afterFileIndex >= 0)
-                {
-                    afterFiles.RemoveAt(afterFileIndex);
-                }
-                else // Otherwise, this file is changed or removed
-                {
-                    modifiedOrRemoved.Add(beforeFile);
-                }
+                return result; // Nothing to compare
+            }
+            if (!beforeFiles.Any())
+            {
+                result.Added.AddRange(afterFiles);
+                return result; // Only new files
+            }
+            if (!afterFiles.Any())
+            {
+                result.Removed.AddRange(beforeFiles);
+                return result; // Only removed files
             }
 
-            // Now separate out removed versus modified files
-            foreach (var beforeFile in modifiedOrRemoved)
-            {
-                // Modified files are not matched on Size or LastModifiedTime, only Filename and Directory
-                int afterFileIndex = afterFiles.FindIndex(f => f.Filename == beforeFile.Filename && f.Directory == beforeFile.Directory);
+            // Sort by default comparison, which is by Directory, Filename, LastModifiedTime, and Size
+            var sortedBeforeFiles = beforeFiles.OrderBy(f => f);
+            var sortedAfterFiles = afterFiles.OrderBy(f => f);
 
-                // Modified file found
-                if (afterFileIndex >= 0)
+            var beforeEnumerator = sortedBeforeFiles.GetEnumerator();
+            var afterEnumerator = sortedAfterFiles.GetEnumerator();
+
+            bool beforeHasNext = beforeEnumerator.MoveNext();
+            bool afterHasNext = afterEnumerator.MoveNext();
+
+            while (beforeHasNext && afterHasNext)
+            {
+                var beforeFile = beforeEnumerator.Current;
+                var afterFile = afterEnumerator.Current;
+
+                int comparison = File.PathOnlyCompare(beforeFile, afterFile);
+
+                if (comparison < 0)
                 {
-                    var afterFile = afterFiles[afterFileIndex];
-                    afterFile.FileID = beforeFile.FileID;
-                    result.Modified.Add(afterFile);
-                    afterFiles.RemoveAt(afterFileIndex);
-                }
-                else // Otherwise, it wasn't found as modified, so it must be counted as removed
-                {
+                    // beforeFile is not in afterFiles, so it was removed
                     result.Removed.Add(beforeFile);
+                    beforeHasNext = beforeEnumerator.MoveNext();
+                }
+                else if (comparison > 0)
+                {
+                    // afterFile is not in beforeFiles, so it was added
+                    result.Added.Add(afterFile);
+                    afterHasNext = afterEnumerator.MoveNext();
+                }
+                else
+                {
+                    // Files are equal in terms of sorting, check for modifications
+                    if (!beforeFile.Equals(afterFile))
+                    {
+                        result.Modified.Add(afterFile);
+                    }
+                    beforeHasNext = beforeEnumerator.MoveNext();
+                    afterHasNext = afterEnumerator.MoveNext();
                 }
             }
 
-            // Remaining of afterFiles collection are the new files
-            result.Added.AddRange(afterFiles);
+            // Add remaining files in beforeFiles to Removed
+            while (beforeHasNext)
+            {
+                result.Removed.Add(beforeEnumerator.Current);
+                beforeHasNext = beforeEnumerator.MoveNext();
+            }
+
+            // Add remaining files in afterFiles to Added
+            while (afterHasNext)
+            {
+                result.Added.Add(afterEnumerator.Current);
+                afterHasNext = afterEnumerator.MoveNext();
+            }
 
             return result;
         }
