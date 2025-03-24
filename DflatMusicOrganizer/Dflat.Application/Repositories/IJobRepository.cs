@@ -19,15 +19,15 @@ public interface IJobRepository
     /// </summary>
     /// <typeparam name="JobType"></typeparam>
     /// <returns></returns>
-    JobType GetNextAvailable<JobType>() where JobType : Job;
+    JobType? GetNextAvailable<JobType>() where JobType : Job;
 
-    Job Get(int jobID);
+    Job? Get(int jobID);
 
     IEnumerable<JobInfo> GetJobInfoByCriteria(JobType jobType = JobType.None, JobStatus status = JobStatus.None);
 
     Task<IEnumerable<JobInfo>> GetJobInfoByCriteriaAsync(JobType jobType = JobType.None, JobStatus status = JobStatus.None);
 
-    JobInfo GetJobInfo(int jobID);
+    JobInfo? GetJobInfo(int jobID);
 
     int GetJobCount();
 

@@ -14,7 +14,7 @@ public interface IFileSourceFolderRepository
 
     Task AddOrUpdateAsync(FileSourceFolder fileSourceFolder);
 
-    FileSourceFolder Get(int fileSourceFolderID);
+    FileSourceFolder? Get(int fileSourceFolderID);
 
     /// <summary>
     /// Sets LastScanTime to the current time
