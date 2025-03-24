@@ -1,16 +1,13 @@
 ﻿using Dflat.Application.Services;
-using GalaSoft.MvvmLight.Command;
-using System;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class ConfirmShutdownViewModel : ViewModelBase
+    public partial class ConfirmShutdownViewModel : ViewModelBase
     {
         private enum ShutdownChoice
         {
@@ -19,11 +16,7 @@ namespace DflatCoreWPF.ViewModels
             CancelJobs
         }
 
-        private string jobsDescription;
-        private string title;
-        private string heading;
-        private string status;
-        private bool buttonsEnabled;
+        
         private ShutdownChoice shutdownChoice;
         private readonly JobMonitor jobMonitor;
 
@@ -40,62 +33,23 @@ namespace DflatCoreWPF.ViewModels
             shutdownChoice = ShutdownChoice.None;
         }
 
+        [ObservableProperty]
+        private string title;
 
-        public string Title
-        {
-            get => title;
-            set
-            {
-                title = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string heading;
 
-        public string Heading
-        {
-            get => heading;
-            set
-            {
-                heading = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string jobsDescription;
 
-        public string JobsDescription
-        {
-            get => jobsDescription;
-            set
-            {
-                jobsDescription = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string status;
 
-        public string Status
-        {
-            get => status;
-            set
-            {
-                status = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool ButtonsEnabled
-        {
-            get => buttonsEnabled;
-            set
-            {
-                buttonsEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private bool buttonsEnabled;
 
 
-        public ICommand FinishCommand { get => new RelayCommand(() => Finish()); }
-        public ICommand CancelRunningCommand { get => new RelayCommand(() => CancelRunning()); }
-        public ICommand ContinueRunningCommand { get => new RelayCommand(() => ContinueRunning()); }
-
+        [RelayCommand]
         private void Finish()
         {
             ButtonsEnabled = false;
@@ -108,6 +62,7 @@ namespace DflatCoreWPF.ViewModels
                 TryClose(true);
         }
 
+        [RelayCommand]
         private void CancelRunning()
         {
             ButtonsEnabled = false;
@@ -120,7 +75,7 @@ namespace DflatCoreWPF.ViewModels
                 TryClose(true);
         }
 
-
+        [RelayCommand]
         private void ContinueRunning()
         {
             TryClose(false);

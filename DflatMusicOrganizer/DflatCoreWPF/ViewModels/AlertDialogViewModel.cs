@@ -1,15 +1,13 @@
-﻿using GalaSoft.MvvmLight.Command;
-using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class AlertDialogViewModel : ViewModelBase
+    public partial class AlertDialogViewModel : ViewModelBase
     {
         public string Title { get; set; }
         public string Message { get; set; }
         
-        public ICommand OkayCommand { get => new RelayCommand(() => Okay()); }
-
+        [RelayCommand]
         public void Okay()
         {
             TryClose(true);

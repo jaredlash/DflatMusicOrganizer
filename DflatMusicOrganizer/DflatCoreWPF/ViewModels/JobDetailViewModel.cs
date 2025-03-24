@@ -1,6 +1,7 @@
-﻿using Dflat.Application.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Dflat.Application.Models;
 using Dflat.Application.Repositories;
-using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,20 +10,10 @@ using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class JobDetailViewModel : ViewModelBase
+    public partial class JobDetailViewModel : ViewModelBase
     {
         private readonly IJobRepository jobRepository;
         
-        
-        private int jobID;
-        private string jobType;
-        private DateTime creationTime;
-        private string description;
-        private bool ignoreCache;
-        private string status;
-        private string output;
-        private string errors;
-
         public JobDetailViewModel(IJobRepository jobRepository)
         {
             this.jobRepository = jobRepository;
@@ -30,26 +21,16 @@ namespace DflatCoreWPF.ViewModels
             JobParameters = new BindingList<string>();
         }
 
-        public ICommand InitializeCommand { get => new RelayCommand(() => LoadJobDetails()); }
-        public ICommand CloseCommand { get => new RelayCommand(() => Close()); }
-
         #region Bindable properties
 
-        public int JobID
-        {
-            get => jobID;
-            set
-            {
-                jobID = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(() => JobIDDisplay);
-                RaisePropertyChanged(() => Title);
-            }
-        }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(JobIDDisplay))]
+        [NotifyPropertyChangedFor(nameof(Title))]
+        private int jobID;
 
         public string JobIDDisplay
         {
-            get => $"(JobID {jobID})";
+            get => $"(JobID {JobID})";
         }
 
         public string Title
@@ -57,76 +38,27 @@ namespace DflatCoreWPF.ViewModels
             get => $"Details for {JobType} {JobIDDisplay}";
         }
 
-        public string JobType
-        {
-            get => jobType;
-            private set
-            {
-                jobType = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(() => Title);
-            }
-        }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Title))]
+        private string jobType;
 
-        public DateTime CreationTime
-        {
-            get => creationTime;
-            private set
-            {
-                creationTime = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private DateTime creationTime;
 
-        public string Description
-        {
-            get => description;
-            private set
-            {
-                description = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string description;
 
-        public bool IgnoreCache
-        {
-            get => ignoreCache;
-            private set
-            {
-                ignoreCache = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private bool ignoreCache;
 
-        public string Status
-        {
-            get => status;
-            private set
-            {
-                status = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string status;
 
-        public string Output
-        {
-            get => output;
-            private set
-            {
-                output = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string output;
 
-        public string Errors
-        {
-            get => errors;
-            private set
-            {
-                errors = value;
-                RaisePropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string errors;
 
         public BindingList<string> JobParameters { get; private set; }
 
@@ -147,7 +79,8 @@ namespace DflatCoreWPF.ViewModels
 
         #region Private methods
 
-        private void LoadJobDetails()
+        [RelayCommand]
+        private void Initialize()
         {
             var job = jobRepository.Get(JobID);
 
@@ -170,6 +103,7 @@ namespace DflatCoreWPF.ViewModels
             }
         }
 
+        [RelayCommand]
         private void Close()
         {
             TryClose();

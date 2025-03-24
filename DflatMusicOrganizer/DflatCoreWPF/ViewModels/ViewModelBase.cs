@@ -1,28 +1,25 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Xml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 
-namespace DflatCoreWPF.ViewModels
+namespace DflatCoreWPF.ViewModels;
+
+public class ViewModelBase : ObservableObject
 {
-    public class ViewModelBase : GalaSoft.MvvmLight.ViewModelBase
+    public Action<bool?> CloseAction { get; set; }
+
+
+    public void TryClose()
     {
-        public Action<bool?> CloseAction { get; set; }
+        CloseAction?.Invoke(true);
+    }
 
+    public void TryClose(bool? result)
+    {
+        CloseAction?.Invoke(result);
+    }
 
-        public void TryClose()
-        {
-            CloseAction?.Invoke(true);
-        }
+    public virtual void OnClose()
+    {
 
-        public void TryClose(bool? result)
-        {
-            CloseAction?.Invoke(result);
-        }
-
-        public virtual void OnClose()
-        {
-
-        }
     }
 }
