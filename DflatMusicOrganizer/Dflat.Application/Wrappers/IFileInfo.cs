@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Dflat.Application.Wrappers
+namespace Dflat.Application.Wrappers;
+
+public interface IFileInfo
 {
-    public interface IFileInfo
-    {
-        string DirectoryName { get; }
-        string Extension { get; }
-        DateTime LastWriteTime { get; }
-        long Length { get; }
-        string Name { get; }
-    }
+    string DirectoryName { get; }
+    string Extension { get; }
+    DateTime LastWriteTime { get; }
+    long Length { get; }
+    string Name { get; }
 }
