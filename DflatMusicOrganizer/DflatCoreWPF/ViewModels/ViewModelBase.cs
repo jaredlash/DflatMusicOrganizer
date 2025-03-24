@@ -5,7 +5,7 @@ namespace DflatCoreWPF.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {
-    public Action<bool?> CloseAction { get; set; }
+    public Action<bool?>? CloseAction { get; set; }
 
 
     public void TryClose()

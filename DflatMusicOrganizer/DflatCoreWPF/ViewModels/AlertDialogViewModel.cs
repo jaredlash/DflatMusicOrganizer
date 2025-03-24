@@ -1,16 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 
-namespace DflatCoreWPF.ViewModels
+namespace DflatCoreWPF.ViewModels;
+
+public partial class AlertDialogViewModel : ViewModelBase
 {
-    public partial class AlertDialogViewModel : ViewModelBase
+    public string Title { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+    
+    [RelayCommand]
+    public void Okay()
     {
-        public string Title { get; set; }
-        public string Message { get; set; }
-        
-        [RelayCommand]
-        public void Okay()
-        {
-            TryClose(true);
-        }
+        TryClose(true);
     }
 }

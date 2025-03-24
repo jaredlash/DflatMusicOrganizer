@@ -6,11 +6,11 @@ namespace DflatCoreWPF.Utilities
     public class FolderChooserDialog : IFolderChooserDialog
     {
 
-        public string InitialFolder { get; set; }
+        public string InitialFolder { get; set; } = string.Empty;
 
-        public string ResultFolder { get; set; }
+        public string ResultFolder { get; set; } = string.Empty;
 
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
 
 
@@ -28,7 +28,7 @@ namespace DflatCoreWPF.Utilities
 
             // Process open file dialog box results 
             var result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 ResultFolder = dialog.SelectedPath;
 
