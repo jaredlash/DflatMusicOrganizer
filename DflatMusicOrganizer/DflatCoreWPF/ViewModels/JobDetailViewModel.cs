@@ -3,10 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {

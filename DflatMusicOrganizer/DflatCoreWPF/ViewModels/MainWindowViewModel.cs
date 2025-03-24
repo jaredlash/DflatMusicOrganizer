@@ -2,9 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Dflat.Application.Services;
 using DflatCoreWPF.WindowService;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {

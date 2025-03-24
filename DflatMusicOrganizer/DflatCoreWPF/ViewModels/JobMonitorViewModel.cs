@@ -4,16 +4,12 @@ using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using Dflat.Application.Services;
 using Dflat.Application.Services.JobServices;
-using DflatCoreWPF.Views;
 using DflatCoreWPF.WindowService;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
