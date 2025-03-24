@@ -1,14 +1,14 @@
-﻿using Dflat.Application.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Dflat.Application.Models;
 using DflatCoreWPF.Utilities;
-using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class FileSourceFolderEditorViewModel : ViewModelBase
+    public partial class FileSourceFolderEditorViewModel : ViewModelBase
     {
         private readonly IFolderChooserDialog folderChooserDialog;
 
@@ -33,147 +33,68 @@ namespace DflatCoreWPF.ViewModels
 
         #region Bindable properties
 
+        [ObservableProperty]
         private int fileSourceFolderID;
-
-        public int FileSourceFolderID
+        partial void OnFileSourceFolderIDChanging(int value)
         {
-            get { return fileSourceFolderID; }
-            set
-            {
-                if (fileSourceFolderID != value)
-                {
-                    fileSourceFolderID = value;
-                    IsChanged = true;
-                }
-                RaisePropertyChanged(() => FileSourceFolderID);
-            }
+            IsChanged = true;
         }
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanOkay))]
+        [NotifyCanExecuteChangedFor(nameof(OkayCommand))]
         private string name;
-
-        public string Name
+        partial void OnNameChanging(string value)
         {
-            get { return name; }
-            set
-            {
-                if (name != value)
-                {
-                    name = value;
-                    IsChanged = true;
-                }
-                RaisePropertyChanged(() => Name);
-                RaisePropertyChanged(() => CanOkay);
-                (OkayCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            }
+            IsChanged = true;
         }
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanOkay))]
+        [NotifyCanExecuteChangedFor(nameof(OkayCommand))]
         private string path;
-
-        public string Path
+        partial void OnPathChanging(string value)
         {
-            get { return path; }
-            set
-            {
-                if (path != value)
-                {
-                    path = value;
-                    IsChanged = true;
-                }
-                RaisePropertyChanged(() => Path);
-                RaisePropertyChanged(() => CanOkay);
-                (OkayCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            }
+            IsChanged = true;
         }
 
+        [ObservableProperty]
         private bool isTemporaryMedia;
-
-        public bool IsTemporaryMedia
+        partial void OnIsTemporaryMediaChanging(bool value)
         {
-            get { return isTemporaryMedia; }
-            set
-            {
-                if (isTemporaryMedia != value)
-                {
-                    isTemporaryMedia = value;
-                    IsChanged = true;
-                }
-                RaisePropertyChanged(() => IsTemporaryMedia);
-            }
+            IsChanged = true;
         }
 
+        [ObservableProperty]
         private DateTime? lastScanStart;
-
-        public DateTime? LastScanStart
+        partial void OnLastScanStartChanging(DateTime? value)
         {
-            get { return lastScanStart; }
-            set
-            {
-                if (lastScanStart != value)
-                {
-                    lastScanStart = value;
-                    IsChanged = true;
-                }
-                RaisePropertyChanged(() => LastScanStart);
-            }
+            IsChanged = true;
         }
 
+        [ObservableProperty]
         private bool isChanged;
-
-        public bool IsChanged
-        {
-            get { return isChanged; }
-            set
-            {
-                isChanged = value;
-                RaisePropertyChanged(() => IsChanged);
-            }
-        }
 
 
         public ObservableCollection<ExcludePath> ExcludePaths { get; set; } = new ObservableCollection<ExcludePath>();
 
-        private ExcludePath selectedExcludePath;
-        public ExcludePath SelectedExcludePath
-        {
-            get
-            {
-                return selectedExcludePath;
-            }
-            set
-            {
-                selectedExcludePath = value;
-                RaisePropertyChanged(() => SelectedExcludePath);
-                RaisePropertyChanged(() => CanRemoveExcludePath);
-                (RemoveExcludePathCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            }
-        }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanRemoveExcludePath))]
+        [NotifyCanExecuteChangedFor(nameof(RemoveExcludePathCommand))]
+        private ExcludePath selectedExcludePath = null; // Explicitly set to null to raise a warning once nullable reference types are enabled.
 
-        public bool CanRemoveExcludePath { get => (selectedExcludePath != null); }
+        public bool CanRemoveExcludePath { get => (SelectedExcludePath != null); }
 
         public bool CanOkay { get => !string.IsNullOrWhiteSpace(Path) && !string.IsNullOrWhiteSpace(Name); }
 
         #endregion
 
-        #region Commands
-
-        public ICommand ChoosePathCommand { get => new RelayCommand(() => ChoosePath()); }
-
-        public ICommand AddExcludePathCommand { get => new RelayCommand(() => AddExcludePath()); }
-        
-        public ICommand RemoveExcludePathCommand { get => new RelayCommand(() => RemoveExcludePath(), CanRemoveExcludePath); }
-
-        public ICommand CancelCommand { get => new RelayCommand(() => Cancel()); }
-
-        public ICommand OkayCommand { get => new RelayCommand(() => Okay(), CanOkay); }
-        
-        
-        #endregion
-
 
         #region Private command methods
+        [RelayCommand]
         private void ChoosePath()
         {
-            folderChooserDialog.InitialFolder = path;
+            folderChooserDialog.InitialFolder = Path;
             folderChooserDialog.Title = "Choose File Source Folder";
             var result = folderChooserDialog.ShowDialog();
 
@@ -186,9 +107,10 @@ namespace DflatCoreWPF.ViewModels
             }
         }
 
+        [RelayCommand]
         private void AddExcludePath()
         {
-            folderChooserDialog.InitialFolder = path;
+            folderChooserDialog.InitialFolder = Path;
             folderChooserDialog.Title = "Chooser Folder to exclude";
             var result = folderChooserDialog.ShowDialog();
 
@@ -206,23 +128,26 @@ namespace DflatCoreWPF.ViewModels
             IsChanged = true;
         }
 
+        [RelayCommand]
         private void RemoveExcludePath()
         {
-            if (selectedExcludePath == null)
+            if (SelectedExcludePath == null)
                 return;
 
             IsChanged = true;
 
             ExcludePaths.Remove(SelectedExcludePath);
-            RaisePropertyChanged(() => CanOkay);
-            (OkayCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(CanOkay));
+            OkayCommand.NotifyCanExecuteChanged();
         }
 
+        [RelayCommand]
         private void Cancel()
         {
             TryClose(false);
         }
 
+        [RelayCommand(CanExecute = nameof(CanOkay))]
         private void Okay()
         {
             TryClose(true);

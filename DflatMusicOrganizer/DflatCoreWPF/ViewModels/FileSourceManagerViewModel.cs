@@ -1,23 +1,22 @@
-﻿using Dflat.Application.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Dflat.Application.Models;
 using Dflat.Application.Repositories;
 using Dflat.Application.Services.JobServices;
 using DflatCoreWPF.WindowService;
-using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class FileSourceManagerViewModel : ViewModelBase
+    public partial class FileSourceManagerViewModel : ViewModelBase
     {
         #region Private backing fields
 
-        private FileSourceFolder selectedFileSourceFolder;
-        private bool enableOverlay;
+        
         private readonly IFileSourceFolderRepository fileSourceFolderRepository;
         private readonly IJobService<FileSourceFolderScanJob> fileSourceFolderScanService;
         private readonly IWindowService windowService;
@@ -57,6 +56,7 @@ namespace DflatCoreWPF.ViewModels
 
         #region ViewModel Load
 
+        [RelayCommand]
         public void Initialize()
         {
             FileSourceFolders.Clear();
@@ -90,7 +90,7 @@ namespace DflatCoreWPF.ViewModels
             foreach (var fileSourceFolder in sources)
                 FileSourceFolders.Add(fileSourceFolder);
 
-            RaisePropertyChanged(() => Count);
+            OnPropertyChanged(nameof(Count));
         }
 
         #endregion
@@ -105,35 +105,18 @@ namespace DflatCoreWPF.ViewModels
             get { return FileSourceFolders.Count; }
         }
 
-        public FileSourceFolder SelectedFileSourceFolder
-        {
-            get
-            {
-                return selectedFileSourceFolder;
-            }
-            set
-            {
-                selectedFileSourceFolder = value;
-                RaisePropertyChanged(() => SelectedFileSourceFolder);
-                RaisePropertyChanged(() => CanEdit);
-                RaisePropertyChanged(() => CanSaveSelected);
-                (EditCommand as RelayCommand)?.RaiseCanExecuteChanged();
-                (RemoveCommand as RelayCommand)?.RaiseCanExecuteChanged();
-                RaisePropertyChanged(() => SelectedFileSourceFolderExcludeCount);
-            }
-        }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanEdit))]
+        [NotifyCanExecuteChangedFor(nameof(EditCommand))]
+        [NotifyPropertyChangedFor(nameof(CanSaveSelected))]
+        [NotifyCanExecuteChangedFor(nameof(SaveSelectedCommand))]
+        [NotifyPropertyChangedFor(nameof(SelectedFileSourceFolderExcludeCount))]
+        private FileSourceFolder selectedFileSourceFolder;
 
         public bool CanEdit { get => SelectedFileSourceFolder != null; }
 
-        public bool EnableOverlay
-        {
-            get { return enableOverlay; }
-            set
-            {
-                enableOverlay = value;
-                RaisePropertyChanged(() => EnableOverlay);
-            }
-        }
+        [ObservableProperty]
+        private bool enableOverlay;
 
         public string CancelButtonText
         {
@@ -145,32 +128,13 @@ namespace DflatCoreWPF.ViewModels
         public bool CanSave { get => HasChanges; }
 
         public bool CanSaveSelected { get => SelectedFileSourceFolder != null ? SelectedFileSourceFolder.IsChanged : false; }
-        #endregion
 
-
-        #region Commands
-        public ICommand InitializeCommand { get => new RelayCommand(() => Initialize()); }
-
-        public ICommand AddCommand { get => new RelayCommand(() => Add()); }
-
-        public ICommand EditCommand { get => new RelayCommand(() => Edit()); }
-
-        public ICommand RemoveCommand { get => new RelayCommand(() => Remove()); }
-
-        public ICommand QueueFolderScanCommand { get => new RelayCommand(async () => await QueueFolderScan()); }
-
-        public ICommand SaveCommand { get => new RelayCommand(async () => await Save()); }
-
-        public ICommand SaveSelectedCommand { get => new RelayCommand(async () => await SaveSelected()); }
-
-        public ICommand ClosingCommand { get => new RelayCommand<CancelEventArgs>((e) => OnClosing(e)); }
-
-        public ICommand CancelCommand { get => new RelayCommand(() => Cancel()); }
-
+        private bool HasChanges => removedFolders.Count > 0 || FileSourceFolders.Any(f => f.IsChanged);
         #endregion
 
 
         #region Private methods
+        [RelayCommand]
         private void Add()
         {
             var currentFolder = new FileSourceFolder();
@@ -182,13 +146,16 @@ namespace DflatCoreWPF.ViewModels
                 currentFolder.SetFromViewModel(sourceFolderEditorViewModel);
                 FileSourceFolders.Add(currentFolder);
             }
-            RaisePropertyChanged(() => HasChanges);
-            RaisePropertyChanged(() => CanSave);
-            RaisePropertyChanged(() => CanSaveSelected);
-            RaisePropertyChanged(() => CancelButtonText);
-            RaisePropertyChanged(() => Count);
+            OnPropertyChanged(nameof(HasChanges));;
+            OnPropertyChanged(nameof(CanSave));
+            SaveCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CanSaveSelected));
+            SaveSelectedCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CancelButtonText));
+            OnPropertyChanged(nameof(Count));
         }
 
+        [RelayCommand]
         private void Edit()
         {
             var currentFolder = SelectedFileSourceFolder;
@@ -199,12 +166,15 @@ namespace DflatCoreWPF.ViewModels
             {
                 currentFolder.SetFromViewModel(sourceFolderEditorViewModel);
             }
-            RaisePropertyChanged(() => HasChanges);
-            RaisePropertyChanged(() => CanSave);
-            RaisePropertyChanged(() => CanSaveSelected);
-            RaisePropertyChanged(() => CancelButtonText);
+            OnPropertyChanged(nameof(HasChanges));
+            OnPropertyChanged(nameof(CanSave));
+            SaveCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CanSaveSelected));
+            SaveSelectedCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CancelButtonText));
         }
 
+        [RelayCommand]
         private void Remove()
         {
             var currentFolder = SelectedFileSourceFolder;
@@ -214,13 +184,16 @@ namespace DflatCoreWPF.ViewModels
             if (currentFolder.FileSourceFolderID != 0) removedFolders.Add(currentFolder);
 
             FileSourceFolders.Remove(currentFolder);
-            RaisePropertyChanged(() => CanSave);
-            RaisePropertyChanged(() => CanSaveSelected);
-            RaisePropertyChanged(() => CancelButtonText);
-            RaisePropertyChanged(() => HasChanges);
-            RaisePropertyChanged(() => Count);
+            OnPropertyChanged(nameof(CanSave));
+            SaveCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CanSaveSelected));
+            SaveSelectedCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CancelButtonText));
+            OnPropertyChanged(nameof(HasChanges));
+            OnPropertyChanged(nameof(Count));
         }
 
+        [RelayCommand]
         private async Task QueueFolderScan()
         {
             var currentFolder = SelectedFileSourceFolder;
@@ -238,6 +211,7 @@ namespace DflatCoreWPF.ViewModels
             changedFoldersToScan.Remove(currentFolder); // Do not queue a job again unless we make additional changes
         }
 
+        [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task Save()
         {
             EnableOverlay = true;
@@ -257,12 +231,14 @@ namespace DflatCoreWPF.ViewModels
                 alertDialogViewModel.Message = $"Problem saving changes: {ex.Message}";
                 windowService.ShowDialog(alertDialogViewModel);
             }
-            RaisePropertyChanged(() => CanSave);
-            RaisePropertyChanged(() => CancelButtonText);
+            OnPropertyChanged(nameof(CanSave));
+            SaveCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CancelButtonText));
 
             EnableOverlay = false;
         }
 
+        [RelayCommand(CanExecute = nameof(CanSaveSelected))]
         private async Task SaveSelected()
         {
             var folder = SelectedFileSourceFolder;
@@ -280,14 +256,16 @@ namespace DflatCoreWPF.ViewModels
                 windowService.ShowDialog(alertDialogViewModel);
             }
             changedFoldersToScan.Add(folder);  // Individually saved folders should be scanned at the end too
-            RaisePropertyChanged(() => CanSave);
-            RaisePropertyChanged(() => CanSaveSelected);
-            RaisePropertyChanged(() => CancelButtonText);
-            RaisePropertyChanged(() => HasChanges);
+            OnPropertyChanged(nameof(CanSave));
+            SaveCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CanSaveSelected));
+            SaveSelectedCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CancelButtonText));
+            OnPropertyChanged(nameof(HasChanges));
         }
 
-
-        private void OnClosing(CancelEventArgs args)
+        [RelayCommand]
+        private void Closing(CancelEventArgs args)
         {
             if (HasChanges)
             {
@@ -339,12 +317,12 @@ namespace DflatCoreWPF.ViewModels
             return result;
         }
 
+        [RelayCommand]
         private void Cancel()
         {
             TryClose();
         }
 
-        private bool HasChanges => removedFolders.Count > 0 || FileSourceFolders.Any(f => f.IsChanged);
 
         private void SubmitFolderScanJobRequest(FileSourceFolder folder)
         {

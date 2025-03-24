@@ -1,13 +1,12 @@
-﻿using Dflat.Application.Services;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Dflat.Application.Services;
 using DflatCoreWPF.WindowService;
-using GalaSoft.MvvmLight.Command;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Input;
 
 namespace DflatCoreWPF.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelBase
     {
 
         #region Private backing fields
@@ -40,48 +39,34 @@ namespace DflatCoreWPF.ViewModels
         #endregion
 
         #region Bindable Properties
+
+        [ObservableProperty]
         private string jobStatus;
-
-        public string JobStatus
-        {
-            get { return jobStatus; }
-            set
-            {
-                jobStatus = value;
-                RaisePropertyChanged(() => JobStatus);
-            }
-        }
-        #endregion
-
-
-
-        #region Public Commands
-        public ICommand InitializeCommand { get => new RelayCommand(() => Initialize()); }
-        public ICommand OpenFileSourceManagerCommand { get => new RelayCommand(() => OpenFileSourceManager()); }
-        public ICommand OpenJobsViewCommand { get => new RelayCommand(() => OpenJobsView()); }
-        public ICommand ClosingCommand { get => new RelayCommand<CancelEventArgs>((e) => OnClosing(e)); }
 
         #endregion
 
 
         #region Private command methods
+        [RelayCommand]
         private void Initialize()
         {
             jobMonitor.StartProcessing();
         }
 
+        [RelayCommand]
         private void OpenFileSourceManager()
         {
             windowService.ShowDialog(fileSourceManagerViewModel);
         }
 
+        [RelayCommand]
         private void OpenJobsView()
         {
             windowService.ShowWindow(jobMonitorViewModel);
         }
 
-
-        private void OnClosing(CancelEventArgs args)
+        [RelayCommand]
+        private void Closing(CancelEventArgs args)
         {
             if (jobMonitor.RunningJobCount > 0 ||
                 (jobMonitor.ProcessingIsEnabled && jobMonitor.QueuedJobCount > 0))
