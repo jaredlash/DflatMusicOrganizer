@@ -40,11 +40,11 @@ public class JobMonitor : INotifyPropertyChanged
         if (success)
         {
             HandleJobChanged(this, new JobChangeEventArgs { JobID = jobID, ChangeType = JobChangeEventArgs.JobChangeType.Updated });
-            var job = jobRepository.Get(jobID);
+            var job = jobRepository.Get(jobID); // This really should not return null in this case since the job was successfully restarted.
 
             foreach (var jobService in jobServices)
             {
-                if (jobService.AcceptedRequestTypes.Contains(job.GetType()))
+                if (job is not null && jobService.AcceptedRequestTypes.Contains(job.GetType()))
                 {
                     jobService.RunJobs();
                     break;
