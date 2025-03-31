@@ -5,23 +5,21 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 
-namespace Dflat.Data.Dapper.Repositories
+namespace Dflat.Data.Dapper.Repositories;
+
+public class FileRepository : IFileRepository
 {
-    public class FileRepository : IFileRepository
+    private readonly string connectionString;
+
+    public FileRepository(string connectionString)
     {
-        private readonly string connectionString;
+        this.connectionString = connectionString;
+    }
 
-        public FileRepository(string connectionString)
-        {
-            this.connectionString = connectionString;
-        }
-
-        public void Add(File newFile)
-        {
-            const string sql = @"INSERT INTO [dbo].[Files]
+    public void Add(File newFile)
+    {
+        const string sql = @"INSERT INTO [dbo].[Files]
                                             ([FileID]
                                             ,[Filename]
                                             ,[Extension]
@@ -40,13 +38,13 @@ namespace Dflat.Data.Dapper.Repositories
                                             ,0
                                             ,@MD5Sum);";
 
-            using IDbConnection connection = new SqlConnection(connectionString);
-            connection.Execute(sql, newFile);
-        }
+        using IDbConnection connection = new SqlConnection(connectionString);
+        connection.Execute(sql, newFile);
+    }
 
-        public File Get(Guid fileID)
-        {
-            const string sql = @"SELECT [FileID]
+    public File Get(Guid fileID)
+    {
+        const string sql = @"SELECT [FileID]
                                        ,[Filename]
                                        ,[Extension]
                                        ,[Directory]
@@ -56,14 +54,14 @@ namespace Dflat.Data.Dapper.Repositories
                                        ,[MD5Sum]
                                    FROM [dbo].[Files]
                                   WHERE [FileID] = @FileID";
-            
-            using IDbConnection connection = new SqlConnection(connectionString);
-            return connection.QuerySingle<File>(sql, new { FileID = fileID });
-        }
+        
+        using IDbConnection connection = new SqlConnection(connectionString);
+        return connection.QuerySingle<File>(sql, new { FileID = fileID });
+    }
 
-        public IEnumerable<File> GetFromPath(string path, IEnumerable<string> excludePaths = null, bool recurse = true)
-        {
-            string sql = @"SELECT [FileID]
+    public IEnumerable<File> GetFromPath(string path, IEnumerable<string> excludePaths, bool recurse = true)
+    {
+        string sql = @"SELECT [FileID]
                                  ,[Filename]
                                  ,[Extension]
                                  ,[Directory]
@@ -73,47 +71,47 @@ namespace Dflat.Data.Dapper.Repositories
                                  ,[MD5Sum]
                              FROM [dbo].[Files]
                             WHERE [MarkedAsRemoved] = 0";
-            var queryParams = new DynamicParameters();
-            if (recurse)
-            {
-                queryParams.Add("@Directory", EncodeForLike(path));
-                sql += " AND Directory LIKE @Directory + '%'";
+        var queryParams = new DynamicParameters();
+        if (recurse)
+        {
+            queryParams.Add("@Directory", EncodeForLike(path));
+            sql += " AND Directory LIKE @Directory + '%'";
 
-                int i = 0;
-                foreach(var excludePath in excludePaths)
-                {
-                    queryParams.Add($"@ExcludeDir{i}", EncodeForLike(excludePath));
-                    sql += $" AND Directory NOT LIKE @ExcludeDir{i} + '%'";
-                    i++;
-                }
-            }
-            else
+            int i = 0;
+            foreach(var excludePath in excludePaths)
             {
-                // Only search on specified directory
-                // Exclude paths are not valid unless search includes sub-directories
-                queryParams.Add("@Directory", path);
-                sql += " AND Directory = @Directory";
+                queryParams.Add($"@ExcludeDir{i}", EncodeForLike(excludePath));
+                sql += $" AND Directory NOT LIKE @ExcludeDir{i} + '%'";
+                i++;
             }
-
-            using IDbConnection connection = new SqlConnection(connectionString);
-            return connection.Query<File>(sql, queryParams);
+        }
+        else
+        {
+            // Only search on specified directory
+            // Exclude paths are not valid unless search includes sub-directories
+            queryParams.Add("@Directory", path);
+            sql += " AND Directory = @Directory";
         }
 
-        public void MarkRemoved(Guid fileID)
-        {
-            const string sql = @"UPDATE [dbo].[Files]
+        using IDbConnection connection = new SqlConnection(connectionString);
+        return connection.Query<File>(sql, queryParams);
+    }
+
+    public void MarkRemoved(Guid fileID)
+    {
+        const string sql = @"UPDATE [dbo].[Files]
                                     SET [MarkedAsRemoved] = 1
                                   WHERE [FileID] = @FileID";
-            using IDbConnection connection = new SqlConnection(connectionString);
-            int rowsAffected = connection.Execute(sql, new { FileID = fileID });
+        using IDbConnection connection = new SqlConnection(connectionString);
+        int rowsAffected = connection.Execute(sql, new { FileID = fileID });
 
-            if (rowsAffected == 0)
-                throw new Exception($"File = {fileID} not found");
-        }
+        if (rowsAffected == 0)
+            throw new Exception($"File = {fileID} not found");
+    }
 
-        public void Update(File modifiedFile)
-        {
-            const string sql = @"UPDATE [dbo].[Files]
+    public void Update(File modifiedFile)
+    {
+        const string sql = @"UPDATE [dbo].[Files]
                                     SET [Filename] = @Filename
                                        ,[Extension] = @Extension
                                        ,[Directory] = @Directory
@@ -121,30 +119,26 @@ namespace Dflat.Data.Dapper.Repositories
                                        ,[LastModifiedTime] = @LastModifiedTime
                                        ,[MD5Sum] = @MD5Sum
                                   WHERE [FileID] = @FileID";
-            using IDbConnection connection = new SqlConnection(connectionString);
-            int rowsAffected = connection.Execute(sql, modifiedFile);
+        using IDbConnection connection = new SqlConnection(connectionString);
+        int rowsAffected = connection.Execute(sql, modifiedFile);
 
-            if (rowsAffected == 0)
-                throw new Exception($"File = {modifiedFile.FileID} not found");
-        }
+        if (rowsAffected == 0)
+            throw new Exception($"File = {modifiedFile.FileID} not found");
+    }
 
 
-        public void UpdateMD5(Guid fileID, string md5)
-        {
-            const string sql = @"UPDATE [dbo].[Files]
+    public void UpdateMD5(Guid fileID, string md5)
+    {
+        const string sql = @"UPDATE [dbo].[Files]
                                     SET [MD5Sum] = @MD5Sum
                                   WHERE [FileID] = @FileID";
 
-            if (md5 == null)
-                throw new Exception($"Attempted to set a null MD5 value for File = {fileID}");
+        using IDbConnection connection = new SqlConnection(connectionString);
+        int rowsAffected = connection.Execute(sql, new { MD5Sum = md5, FileID = fileID });
 
-            using IDbConnection connection = new SqlConnection(connectionString);
-            int rowsAffected = connection.Execute(sql, new { MD5Sum = md5, FileID = fileID });
-
-            if (rowsAffected == 0)
-                throw new Exception($"File = {fileID} not found");
-        }
-
-        private string EncodeForLike(string input) => input.Replace("[", "[[]").Replace("%", "[%]");
+        if (rowsAffected == 0)
+            throw new Exception($"File = {fileID} not found");
     }
+
+    private string EncodeForLike(string input) => input.Replace("[", "[[]").Replace("%", "[%]");
 }

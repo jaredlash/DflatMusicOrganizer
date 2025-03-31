@@ -22,7 +22,7 @@ namespace DflatCoreWPF
     /// </summary>
     public partial class App : Application
     {
-        private UnityContainer container;
+        private UnityContainer? container;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -46,7 +46,7 @@ namespace DflatCoreWPF
 
             var config = builder.Build();
 
-            string connectionString = config.GetConnectionString("DflatDB");
+            string connectionString = config.GetConnectionString("DflatDB") ?? throw new ArgumentNullException("Missing connection string 'DflatDB'");
 
 
             container.RegisterSingleton<IWindowService, WindowService.WindowService>()

@@ -12,7 +12,7 @@ namespace Dflat.Application.Services.JobServices
         bool EnableRunningJobs { get; set; }
         ICollection<Type> AcceptedRequestTypes { get; }
 
-        event EventHandler<JobChangeEventArgs> JobChanged;
+        event EventHandler<JobChangeEventArgs>? JobChanged;
 
         List<Task> RunJobs();
 

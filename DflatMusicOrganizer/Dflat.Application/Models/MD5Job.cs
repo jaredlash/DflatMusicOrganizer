@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Dflat.Application.Models
+namespace Dflat.Application.Models;
+
+public class MD5Job : Job
 {
-    public class MD5Job : Job
+    public Guid FileID { get; init; }
+
+    public override bool SameRequestAs(Job otherJob)
     {
-        public Guid FileID { get; set; }
+        if (!(otherJob is MD5Job compareJob))
+            return false;
 
-        public override bool SameRequestAs(Job otherJob)
-        {
-            if (!(otherJob is MD5Job compareJob))
-                return false;
+        return compareJob.FileID == FileID;
+    }
 
-            return compareJob.FileID == FileID;
-        }
-
-        public override string ToString()
-        {
-            return "MD5 Job";
-        }
+    public override string ToString()
+    {
+        return "MD5 Job";
     }
 }

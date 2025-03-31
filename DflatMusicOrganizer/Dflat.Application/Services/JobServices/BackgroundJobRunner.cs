@@ -1,8 +1,5 @@
 ﻿using Dflat.Application.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,13 +16,24 @@ namespace Dflat.Application.Services.JobServices
             {
                 try
                 {
-                    BackgroundWork(job, cancellationToken);
+                    if (BackgroundWork is not null) BackgroundWork(job, cancellationToken);
                 }
                 catch (Exception ex)
                 {
                     job.Status = JobStatus.Error;
                     job.Errors += $"Error running job: {ex.GetType()}: {ex.Message}";
                 }
+
+                if (FinishWork is null) return;
+
+                if (context == null)
+                {
+                    // If we don't have a synchronization context, we can't post back to the UI thread
+                    FinishWork(job, cancellationToken);
+                    return;
+                }
+
+                // Post back to the UI thread to finish the job
                 context.Post((o) => FinishWork(job, cancellationToken), null);
             });
 
@@ -35,8 +43,8 @@ namespace Dflat.Application.Services.JobServices
         }
 
 
-        public Action<JobType, CancellationToken> BackgroundWork { get; set; }
+        public Action<JobType, CancellationToken>? BackgroundWork { get; set; }
 
-        public Action<JobType, CancellationToken> FinishWork { get; set; }
+        public Action<JobType, CancellationToken>? FinishWork { get; set; }
     }
 }

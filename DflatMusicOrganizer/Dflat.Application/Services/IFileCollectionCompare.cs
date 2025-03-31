@@ -1,10 +1,9 @@
 ﻿using Dflat.Application.Models;
 using System.Collections.Generic;
 
-namespace Dflat.Application.Services
+namespace Dflat.Application.Services;
+
+public interface IFileCollectionCompare
 {
-    public interface IFileCollectionCompare
-    {
-        FileCollectionCompare.CompareResult Compare(IEnumerable<File> beforeFiles, IEnumerable<File> after);
-    }
+    FileCollectionCompare.CompareResult Compare(IEnumerable<File> beforeFiles, IEnumerable<File> after);
 }
