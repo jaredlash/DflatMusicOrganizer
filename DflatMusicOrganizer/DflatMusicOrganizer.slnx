@@ -42,6 +42,10 @@
       <BuildType Solution="Windows Debug|*" Project="Debug" />
       <BuildType Solution="Windows Release|*" Project="Release" />
     </Project>
+    <Project Path="Dflat.FileService.UnitTests/Dflat.FileService.UnitTests.csproj" Id="e14a4c39-7ce3-4afc-a27a-9530eb43320a">
+      <BuildType Solution="Windows Debug|*" Project="Release" />
+      <BuildType Solution="Windows Release|*" Project="Release" />
+    </Project>
   </Folder>
   <Folder Name="/Utilities/">
     <Project Path="DflatFileSourceScanner/DflatFileSourceScanner.csproj">
