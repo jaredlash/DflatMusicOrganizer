@@ -20,4 +20,7 @@ public class Result<T, TError>
     private Result(bool isSuccess, T? value, TError? error) => (IsSuccess, _value, _error) = (isSuccess, value, error);
     public static Result<T, TError> Success(T value) => new(true, value, default);
     public static Result<T, TError> Failure(TError error) => new(false, default, error);
+
+    public static implicit operator Result<T, TError>(T value) => Success(value);
+    public static implicit operator Result<T, TError>(TError error) => Failure(error);
 }

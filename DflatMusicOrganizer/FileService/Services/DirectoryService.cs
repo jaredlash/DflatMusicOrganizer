@@ -21,7 +21,7 @@ public class DirectoryService : IDirectoryService
         {
             if (relativePath.PathComponents.Any(p => !IsValidPath(p)))
             {
-                return Result<IEnumerable<DirectoryItem>, string>.Failure("Invalid path.");
+                return "Invalid path.";
             }
 
             targetDirectory = Path.Combine(_baseDirectory,
@@ -30,7 +30,7 @@ public class DirectoryService : IDirectoryService
 
         if (!_fileSystem.DirectoryExists(targetDirectory))
         {
-            return Result<IEnumerable<DirectoryItem>, string>.Failure("Directory not found.");
+            return "Directory not found.";
         }
 
         // TODO: This can probably throw an exception if the directory is not accessible
@@ -43,7 +43,7 @@ public class DirectoryService : IDirectoryService
         return Result<IEnumerable<DirectoryItem>, string>.Success(directoryItems);
     }
 
-    private bool IsValidPath(string path)
+    private static bool IsValidPath(string path)
     {
         if (string.IsNullOrEmpty(path))
         {
