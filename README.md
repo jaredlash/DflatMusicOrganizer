@@ -6,7 +6,7 @@ experimentation.  This is not intended for use by others.
 
 ## Structure
 - [`DflatMusicOrganizer`](DflatMusicOrganizer/) - .NET / C# project being migrated from a WPF / Desktop monolith to a microservice-based application.  This directory will eventually be renamed to something to indicate it is a microservice monorepo with the intention being that client applications will be in other top-level directories.
-- [`DflatMusicOrganizer/FileService`](DflatMusicOrganizer/FileService/) - Microservice to handle performing operations to files and folders on the host system.
+- [`DflatMusicOrganizer/FileService`](https://github.com/jaredlash/DflatMusicOrganizer/tree/File-Service-API/DflatMusicOrganizer/FileService) - Microservice to handle performing operations to files and folders on the host system.
 - [`DflatMusicOrganizer/Dflat.Application/Services/JobServices`](DflatMusicOrganizer/Dflat.Application/Services/JobServices/) - Home-grown implementation of a job queueing system.  This is slated to be replaced with RabbitMQ.
 
 ## Work in progress
